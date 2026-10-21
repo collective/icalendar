@@ -535,6 +535,133 @@ class vRecur(CaselessDict):
         self.pop("BYMONTHDAY", None)
 
     @property
+    def byhour(self) -> list[int] | None:
+        """The BYHOUR part of the recurrence rule.
+
+        This is a list of hours (0-23) on which the recurrence occurs
+        (:rfc:`5545#section-3.3.10`). When omitted, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;BYHOUR=9,17").byhour
+                [9, 17]
+                >>> vRecur.from_ical("FREQ=DAILY").byhour is None
+                True
+        """
+        values = self.get("BYHOUR")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        if not isinstance(values, SEQUENCE_TYPES):
+            values = [values]
+        return [int(v) for v in values]
+
+    @byhour.setter
+    def byhour(self, value: list[int] | int | None) -> None:
+        """Set the BYHOUR part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.byhour
+            return
+        if isinstance(value, int) and not isinstance(value, bool):
+            value = [value]
+        if not isinstance(value, (list, tuple)):
+            raise TypeError(f"byhour must be a list of int, got {value!r}")
+        self["BYHOUR"] = [vInt(v) for v in value]
+
+    @byhour.deleter
+    def byhour(self) -> None:
+        """Delete the BYHOUR part of the recurrence rule."""
+        self.pop("BYHOUR", None)
+
+    @property
+    def byminute(self) -> list[int] | None:
+        """The BYMINUTE part of the recurrence rule.
+
+        This is a list of minutes (0-59) on which the recurrence occurs
+        (:rfc:`5545#section-3.3.10`). When omitted, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;BYMINUTE=0,30").byminute
+                [0, 30]
+                >>> vRecur.from_ical("FREQ=DAILY").byminute is None
+                True
+        """
+        values = self.get("BYMINUTE")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        if not isinstance(values, SEQUENCE_TYPES):
+            values = [values]
+        return [int(v) for v in values]
+
+    @byminute.setter
+    def byminute(self, value: list[int] | int | None) -> None:
+        """Set the BYMINUTE part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.byminute
+            return
+        if isinstance(value, int) and not isinstance(value, bool):
+            value = [value]
+        if not isinstance(value, (list, tuple)):
+            raise TypeError(f"byminute must be a list of int, got {value!r}")
+        self["BYMINUTE"] = [vInt(v) for v in value]
+
+    @byminute.deleter
+    def byminute(self) -> None:
+        """Delete the BYMINUTE part of the recurrence rule."""
+        self.pop("BYMINUTE", None)
+
+    @property
+    def bysecond(self) -> list[int] | None:
+        """The BYSECOND part of the recurrence rule.
+
+        This is a list of seconds (0-59, or 60 for leap seconds) on which
+        the recurrence occurs (:rfc:`5545#section-3.3.10`). When omitted,
+        ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;BYSECOND=0,30").bysecond
+                [0, 30]
+                >>> vRecur.from_ical("FREQ=DAILY").bysecond is None
+                True
+        """
+        values = self.get("BYSECOND")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        if not isinstance(values, SEQUENCE_TYPES):
+            values = [values]
+        return [int(v) for v in values]
+
+    @bysecond.setter
+    def bysecond(self, value: list[int] | int | None) -> None:
+        """Set the BYSECOND part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.bysecond
+            return
+        if isinstance(value, int) and not isinstance(value, bool):
+            value = [value]
+        if not isinstance(value, (list, tuple)):
+            raise TypeError(f"bysecond must be a list of int, got {value!r}")
+        self["BYSECOND"] = [vInt(v) for v in value]
+
+    @bysecond.deleter
+    def bysecond(self) -> None:
+        """Delete the BYSECOND part of the recurrence rule."""
+        self.pop("BYSECOND", None)
+
+    @property
     def wkst(self) -> vWeekday | None:
         """The WKST part of the recurrence rule.
 
