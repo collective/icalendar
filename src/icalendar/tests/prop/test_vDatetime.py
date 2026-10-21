@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 
@@ -62,3 +62,20 @@ def test_transition(tzp):
 
     dat = vDatetime.from_ical("20101010T000000", "Europe/Vienna")
     assert vDatetime(dat).to_ical() == b"20101010T000000"
+
+def test_ical_value_returns_datetime():
+    """Verifies that ical_value returns the datetime object."""
+    dt = datetime(2025, 11, 10, 16, 52, 0)
+    value = vDatetime(dt)
+
+    assert value.ical_value == dt
+    assert isinstance(value.ical_value, datetime)
+
+
+def test_ical_value_keeps_timezone():
+    """Verifies that ical_value keeps the timezone of the datetime."""
+    dt = datetime(2025, 11, 10, 16, 52, 0, tzinfo=timezone.utc)
+    value = vDatetime(dt)
+
+    assert value.ical_value == dt
+    assert value.ical_value.tzinfo is timezone.utc

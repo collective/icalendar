@@ -272,6 +272,19 @@ class vDatetime(TimeBase):
             dt = tzp.localize_utc(dt)
         return dt
 
+    @property
+    def ical_value(self) -> datetime:
+        """
+        The datetime value of this property.
+
+        This is the :class:`datetime.datetime` used by this component,
+        as returned by :meth:`Component.decoded`.
+
+        Returns:
+            The datetime, timezone-aware if a timezone was set.
+        """
+        return self.dt
+
     @classmethod
     @from_xcal_wrapper
     def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:

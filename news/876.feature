@@ -1,0 +1,1 @@
+Added and documented meth: <src.icalendar.prop.dt.datetime.Ical_value> and added new tests to account for it.I used Claude AI (Sonnet 5.5) to assist me with this change @Mrbozz
