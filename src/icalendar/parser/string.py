@@ -252,11 +252,11 @@ _RFC_5545_IANA_TOKEN_REGEX = re.compile(r"^[A-Za-z0-9-]+$")
 
 
 __all__ = [
+    "_RFC_5545_IANA_TOKEN_REGEX",
     "_escape_char",
     "_escape_string",
     "_foldline",
     "_unescape_char",
     "_unescape_string",
     "validate_token",
-    "_RFC_5545_IANA_TOKEN_REGEX",
 ]
