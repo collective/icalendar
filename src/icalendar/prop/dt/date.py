@@ -83,12 +83,12 @@ class vDate(TimeBase):
         self.dt = dt
         self.params = Parameters(params or {})
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         s = f"{self.dt.year:04}{self.dt.month:02}{self.dt.day:02}"
         return s.encode("utf-8")
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical) -> date:
         # date-value = 4DIGIT 2DIGIT 2DIGIT, no separators,
         # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
         if len(ical) != 8 or not ical.isascii() or not ical.isdigit():
