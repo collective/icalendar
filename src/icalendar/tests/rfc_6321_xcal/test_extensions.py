@@ -1,5 +1,6 @@
 """Ignore foreign elements below properties (RFC 6321 section 4.1)."""
 
+from datetime import date
 from xml.etree.ElementTree import fromstring
 
 import pytest
@@ -62,3 +63,46 @@ def test_direct_property_extensions_remain_available_to_parser():
         )
     )
     assert parser.child.element.tag == "{http://example.com/custom-ns}extra"
+
+
+@pytest.mark.parametrize(
+    ("property_xml", "expected"),
+    [
+        (
+            "<geo><geo><c:latitude>99</c:latitude><latitude>1</latitude>"
+            "<c:longitude>99</c:longitude><longitude>2</longitude></geo></geo>",
+            b"GEO:1.0;2.0\r\n",
+        ),
+        (
+            "<freebusy><period><c:start>2000-01-01T00:00:00Z</c:start>"
+            "<start>2026-01-01T00:00:00Z</start>"
+            "<c:end>2000-01-01T01:00:00Z</c:end>"
+            "<end>2026-01-01T01:00:00Z</end></period></freebusy>",
+            b"FREEBUSY:20260101T000000Z/20260101T010000Z\r\n",
+        ),
+    ],
+)
+def test_foreign_elements_inside_structured_values_are_ignored(property_xml, expected):
+    """Nested semantic lookups must also respect XML namespaces."""
+    event = Event.from_xcal(
+        fromstring(
+            '<vevent xmlns="urn:ietf:params:xml:ns:icalendar-2.0" '
+            'xmlns:c="http://example.com/custom-ns"><properties>'
+            + property_xml
+            + "</properties></vevent>"
+        )
+    )[0]
+    assert expected in event.to_ical()
+
+
+def test_foreign_children_do_not_change_recurrence_date_parsing():
+    """A foreign child does not turn a plain date into a structured value."""
+    event = Event.from_xcal(
+        fromstring(
+            '<vevent xmlns="urn:ietf:params:xml:ns:icalendar-2.0" '
+            'xmlns:c="http://example.com/custom-ns"><properties><rrule><recur>'
+            "<freq>DAILY</freq><until>2026-01-01<c:extra>Ignored</c:extra></until>"
+            "</recur></rrule></properties></vevent>"
+        )
+    )[0]
+    assert event["RRULE"]["UNTIL"][0].dt == date(2026, 1, 1)
