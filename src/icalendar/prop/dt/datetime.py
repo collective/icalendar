@@ -276,9 +276,6 @@ class vDatetime(TimeBase):
     def ical_value(self) -> datetime:
         """The datetime value of this property.
 
-        This is the :class:`datetime.datetime` used by this component,
-        as returned by :meth:`~icalendar.Component.decoded`.
-
         Returns:
             The datetime, timezone-aware if a timezone was set.
         """
