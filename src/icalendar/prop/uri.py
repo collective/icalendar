@@ -115,8 +115,8 @@ class vUri(str):
 
     @property
     def ical_value(self) -> str:
-        """The URI."""
-        return self.uri
+        """Return the URI as a string."""
+        return str(self)
 
     @property
     def uri(self) -> str:
