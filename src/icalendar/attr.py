@@ -29,6 +29,7 @@ from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
+from icalendar.parser.string import _RFC_5545_IANA_TOKEN_REGEX
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -498,12 +499,12 @@ def single_string_property(
     """Create a property to access a single string value.
 
     Parameters:
-        name: The iCalendar property name (e.g. ``"UID"``).
-        docs: Documentation string for the generated property.
-        other_name: Alias name(s) to fall back on when the primary *name*
-            is not present in the component.
-        default: Value returned when the property is not set.
-        validate: Optional callable that receives the string form of the value
+        name (Required): The iCalendar property name (e.g. ``"UID"``).
+        docs (Required): Documentation string for the generated property.
+        other_name (Optional): Alias name(s) to fall back on when the primary
+            *name* is not present in the component.
+        default (Optional): Value returned when the property is not set.
+        validate (Optional): Callable that receives the string form of the value
             and raises an exception if it does not conform to the expected
             format. It is called on set, before any existing value is removed,
             and must not modify the value.
@@ -856,7 +857,7 @@ Examples:
 )
 
 #: An :rfc:`5545` ``iana-token``: one or more ASCII letters, digits or hyphens.
-_UID_IANA_TOKEN = re.compile(r"^[A-Za-z0-9-]+$")
+_UID_IANA_TOKEN = _RFC_5545_IANA_TOKEN_REGEX
 
 #: Maximum UID length in octets, per :rfc:`7986#section-5.3`.
 _UID_MAX_OCTETS = 255
@@ -978,16 +979,15 @@ Examples:
         >>> from icalendar import Event
         >>> from uuid import uuid4
         >>> event = Event()
-        >>> event.uid = str(uuid4())
-        >>> len(event.uid) > 0
-        True
+        >>> event.uid = uuid4()
+        >>> event.uid  # doctest: +ELLIPSIS
+        vText(b'...')
 
-    An invalid value raises an error:
+    Setting a valid token preserves its casing, while an invalid value raises
+    an error:
 
     .. code-block:: pycon
 
-        >>> from icalendar import Event
-        >>> event = Event()
         >>> event.uid = "AbC-123"  # a valid token, casing is preserved
         >>> print(event.uid)
         AbC-123

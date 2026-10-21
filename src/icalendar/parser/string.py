@@ -247,6 +247,10 @@ def validate_token(name: str) -> None:
     raise ValueError(name)
 
 
+#: An :rfc:`5545` ``iana-token``: one or more ASCII letters, digits or hyphens.
+_RFC_5545_IANA_TOKEN_REGEX = re.compile(r"^[A-Za-z0-9-]+$")
+
+
 __all__ = [
     "_escape_char",
     "_escape_string",
@@ -254,4 +258,5 @@ __all__ = [
     "_unescape_char",
     "_unescape_string",
     "validate_token",
+    "_RFC_5545_IANA_TOKEN_REGEX",
 ]

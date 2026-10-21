@@ -45,19 +45,19 @@ def test_uuid_object_is_accepted(cls):
 
 
 @pytest.mark.parametrize(
-    "value",
+    ("value", "match"),
     [
-        "",  # empty is not a usable identifier
-        "line1\r\nline2",  # CR/LF would break serialization
-        "null\x00byte",
-        "bell\x07",
-        "delete\x7f",
+        ("", "UID must be an RFC 5545 iana-token"),  # empty string
+        ("line1\r\nline2", "UID must be an RFC 5545 iana-token"),  # CR/LF
+        ("null\x00byte", "UID must be an RFC 5545 iana-token"),  # null byte
+        ("bell\x07", "UID must be an RFC 5545 iana-token"),  # BEL control char
+        ("delete\x7f", "UID must be an RFC 5545 iana-token"),  # DEL control char
     ],
 )
-def test_invalid_uid_is_rejected(cls, value):
+def test_invalid_uid_is_rejected(cls, value, match):
     """A value that cannot be serialized raises :exc:`InvalidCalendar`."""
     component = cls()
-    with pytest.raises(InvalidCalendar):
+    with pytest.raises(InvalidCalendar, match=match):
         component.uid = value
 
 
