@@ -151,7 +151,7 @@ test: .venv  ## Run code tests and coverage
 
 .PHONY: test-dist
 test-dist:  ## Build and test the distribution files
-	@src/icalendar/tests/test_create_release.sh
+	@scripts/test_create_release.sh
 # /test
 
 
