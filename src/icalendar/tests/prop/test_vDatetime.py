@@ -63,6 +63,7 @@ def test_transition(tzp):
     dat = vDatetime.from_ical("20101010T000000", "Europe/Vienna")
     assert vDatetime(dat).to_ical() == b"20101010T000000"
 
+
 def test_ical_value_returns_datetime():
     """Verifies that ical_value returns the datetime object."""
     dt = datetime(2025, 11, 10, 16, 52, 0)
