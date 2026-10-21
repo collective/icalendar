@@ -1,1 +1,1 @@
-Added and documented an :attr: '~icalendar.prop.dt.datetime.ical_value' property for the :class:`~icalendar.prop.dt.datetime.vDatetime` component.I used Claude AI (Sonnet 5.5) to assist me with this change @Mrbozz
+Added and documented the property :attr:`vDatetime.ical_value <icalendar.prop.dt.datetime.vDatetime.ical_value>`. I used Claude AI (Sonnet 5.5) to assist me with this change. @Mrbozz
