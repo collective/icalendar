@@ -948,6 +948,8 @@ class Component(CaselessDict):
 
         Raises:
             ValueError: If a component does not have a name.
+            TypeError: If a property value cannot be serialized.
+                Use :meth:`add` to convert raw values to property types.
 
         See also :attr:`to_json`.
 
@@ -973,8 +975,7 @@ class Component(CaselessDict):
         def make_node(comp: Component) -> list:
             properties = [
                 item.to_jcal(key.lower())
-                for key, value in comp.sorted_items()
-                for item in (value if isinstance(value, list) else [value])
+                for key, item in comp._serializable_property_items("jcal")
             ]
             comp._validate_name()
             return [comp.name.lower(), properties, []]
@@ -990,6 +991,19 @@ class Component(CaselessDict):
                 children.append(child_node)
                 stack.append((subcomponent, child_node))
         return root_node
+
+    def _serializable_property_items(
+        self, format_name: Literal["jcal", "xcal"]
+    ) -> Iterable[tuple[str, VPROPERTY]]:
+        """Yield sorted property values, checking their serializer is available."""
+        for key, values in self.sorted_items():
+            for value in values if isinstance(values, list) else [values]:
+                if not callable(getattr(value, f"to_{format_name}", None)):
+                    raise TypeError(
+                        f"Property {key} cannot be serialized to {format_name}; "
+                        "use add() to convert raw values to property types."
+                    )
+                yield key, value
 
     def to_json(self, indent: int | str | None = None) -> str:
         """Return this component as a jCal JSON string.
@@ -1178,6 +1192,10 @@ class Component(CaselessDict):
             - ``None`` if an argument is passed.
             - :class:`bytes` if called with no arguments.
 
+        Raises:
+            TypeError: If a property value cannot be serialized.
+                Use :meth:`add` to convert raw values to property types.
+
         Example:
             This example shows how to convert a new calendar to XML:
 
@@ -1239,16 +1257,19 @@ class Component(CaselessDict):
         return None
 
     def to_xcal_element(self, element: Element, /) -> None:
-        """Add the xCal representation of this component according to :rfc:`6321`."""
+        """Add the xCal representation of this component according to :rfc:`6321`.
+
+        Raises:
+            TypeError: If a property value cannot be serialized.
+                Use :meth:`add` to convert raw values to property types.
+        """
         self._validate_name()
         e_component = SubElement(element, self.name.lower())
         if len(self) > 0:
             e_properties = SubElement(e_component, "properties")
-            for key, prop_list in self.sorted_items():
-                for prop in prop_list if isinstance(prop_list, list) else [prop_list]:
-                    prop: VPROPERTY
-                    e_property = SubElement(e_properties, key.lower())
-                    prop.to_xcal(e_property)
+            for key, prop in self._serializable_property_items("xcal"):
+                e_property = SubElement(e_properties, key.lower())
+                prop.to_xcal(e_property)
         if self.subcomponents:
             e_components = SubElement(e_component, "components")
             for subcomponent in self.subcomponents:
