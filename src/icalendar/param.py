@@ -323,25 +323,18 @@ Description:
     This parameter identifies the language of the text in
     the property value and of all property parameter values of the
     property.  The value of the "LANGUAGE" property parameter is that
-    defined in :rfc:`5646`.
+    defined in :rfc:`Formatting of Language Tags <5646#section-2.1.1>`.
 
-    For transport in a MIME entity, the Content-Language header field
-    can be used to set the default language for the entire body part.
-    Otherwise, no default language is assumed.
-
-    The ``language`` property accesses ``self.params``,
-    returns ``None`` if no language is set, returns the language string,
-    and deletes the parameter when set to ``None`` or when using ``del``.
-
-    Values are defined in :rfc:`5646` (see :rfc:`5646#section-2.1.1` on
-    `Formatting of Language Tags <https://www.rfc-editor.org/info/rfc5646/>`_).
-    When setting ``language``, a :class:`ValueError` is raised if invalid
-    characters are present. When getting ``language``, any invalid characters
-    are removed.
+    The parameter is deleted when set to ``None`` or when using ``del``.
 
 Returns:
-    A string with only ``a-z``, ``A-Z``, ``0-9`` and ``-`` in it,
-    possibly a valid :rfc:`5646` language identifier.
+    ``None`` if no language is set, or a string with only ``a-z``, ``A-Z``,
+    ``0-9`` and ``-`` in it (any invalid characters are removed), possibly a
+    valid :rfc:`5646` language identifier.
+
+Raises:
+    ValueError: If invalid characters or format are present when setting the
+        language tag.
 
 .. note::
 
