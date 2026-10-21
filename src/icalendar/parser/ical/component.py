@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 from icalendar.parser.content_line import Contentline, Contentlines
-from icalendar.parser.property import split_on_unescaped_comma
-from icalendar.prop import vBroken
+from icalendar.parser.property import split_on_unescaped_comma, unescape_backslash
+from icalendar.prop import vBinary, vBroken
 from icalendar.timezone import tzp
 
 if TYPE_CHECKING:
@@ -186,12 +186,29 @@ class ComponentIcalParser:
             if name == "X-COMMENT":
                 return
             raise ValueError(f'Property "{name}" does not have a parent component.')
+
+        raw_value = None
+        encoding = params.get("ENCODING")
+        if (
+            isinstance(encoding, str)
+            and encoding.upper() == "BASE64"
+            and not issubclass(self.get_factory_for_property(name, params), vBinary)
+        ):
+            try:
+                raw_value = vBinary.from_ical(vals).decode("utf-8")
+            except (ValueError, TypeError) as e:
+                self.handle_property_parse_error(e, name, params, vals, line)
+                return
+            # Decode before splitting lists or unescaping TEXT values.
+            vals = unescape_backslash(raw_value)
+            del params["ENCODING"]
+
         # Determine TZID for datetime properties
         tzid = params.get("TZID") if params and name in self.datetime_names else None
 
         # Handle special cases for value list preparation
         if name == "CATEGORIES":
-            if self.handle_categories(params, vals, line):
+            if self.handle_categories(params, raw_value, line):
                 return
             # Fallback to normal processing if we can't find colon
             vals_list = [vals]
@@ -209,7 +226,11 @@ class ComponentIcalParser:
                 factory, "get_value_from_content_line", None
             )
             if get_value_from_content_line is not None:
-                vals = get_value_from_content_line(line)
+                vals = (
+                    get_value_from_content_line(line)
+                    if raw_value is None
+                    else raw_value
+                )
             vals_list = [vals]
 
         # Parse all properties eagerly
@@ -263,7 +284,7 @@ class ComponentIcalParser:
         self.component.add(name, broken_prop, encode=0)
 
     def handle_categories(
-        self, params: Parameters, vals: str, line: Contentline
+        self, params: Parameters, raw_value: str | None, line: Contentline
     ) -> bool:
         """Handle the special case of CATEGORIES property.
 
@@ -278,7 +299,8 @@ class ComponentIcalParser:
         # (``TEXT`` does not escape ``:``) and truncate the categories.
         colon_idx = line.value_separator_index()
         if colon_idx > 0:
-            raw_value = line_str[colon_idx + 1 :]
+            if raw_value is None:
+                raw_value = line_str[colon_idx + 1 :]
             # Parse categories immediately (not lazily) for both
             # strict and tolerant components.
             # CATEGORIES needs special comma handling
