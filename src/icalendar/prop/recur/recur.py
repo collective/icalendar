@@ -1,19 +1,30 @@
 """RECUR property type from :rfc:`5545`."""
 
-from typing import Any, ClassVar
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
 from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
-from icalendar.prop.integer import vInt
+from icalendar.prop.integer import vInt, vNonNegativeInt
 from icalendar.prop.recur.frequency import vFrequency
 from icalendar.prop.recur.month import vMonth
 from icalendar.prop.recur.skip import vSkip
 from icalendar.prop.recur.weekday import vWeekday
 from icalendar.prop.text import vText
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
+    from icalendar.prop import VPROPERTY
 
 
 class vRecur(CaselessDict):
@@ -135,13 +146,15 @@ class vRecur(CaselessDict):
         "SKIP",
     )
 
-    types = CaselessDict(
+    types: ClassVar[
+        dict[str, type[vInt | vMonth | vFrequency | vWeekday | vSkip | vText]]
+    ] = CaselessDict(
         {
-            "COUNT": vInt,
-            "INTERVAL": vInt,
-            "BYSECOND": vInt,
-            "BYMINUTE": vInt,
-            "BYHOUR": vInt,
+            "COUNT": vNonNegativeInt,
+            "INTERVAL": vNonNegativeInt,
+            "BYSECOND": vNonNegativeInt,
+            "BYMINUTE": vNonNegativeInt,
+            "BYHOUR": vNonNegativeInt,
             "BYWEEKNO": vInt,
             "BYMONTHDAY": vInt,
             "BYYEARDAY": vInt,
@@ -224,7 +237,7 @@ class vRecur(CaselessDict):
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
         recur = {}
-        for k, v in self.items():
+        for k, v in self.sorted_items():
             key = k.lower()
             if key.upper() in self.jcal_not_a_list:
                 value = v[0] if isinstance(v, list) and len(v) == 1 else v
@@ -340,12 +353,76 @@ class vRecur(CaselessDict):
             # (RFC 5545 doesn't say COUNT must be positive, only non-negative
             # per its digit-only grammar), and is stored as such.
             raise InvalidCalendar(f"COUNT must be >= 0, got {value}")
-        self["COUNT"] = [vInt(value)]
+        self["COUNT"] = [vNonNegativeInt(value)]
 
     @count.deleter
     def count(self) -> None:
         """Delete the COUNT part of the recurrence rule."""
         self.pop("COUNT", None)
+
+    @property
+    def wkst(self) -> vWeekday | None:
+        """The WKST part of the recurrence rule.
+
+        This defines the day on which the workweek starts. It is significant
+        when a weekly rule has an interval greater than one and when a yearly
+        rule uses ``BYWEEKNO`` (:rfc:`5545#section-3.3.10`). The value is one
+        of ``MO``, ``TU``, ``WE``, ``TH``, ``FR``, ``SA``, or ``SU``. When
+        omitted, RFC 5545 defines the default as ``MO``; this accessor returns
+        ``None`` so callers can distinguish an omitted value from an explicit
+        one.
+
+        Because only one value is expected according to :rfc:`5545`,
+        if multiple values are present, the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Raises:
+            InvalidCalendar: if a value cannot be read or set as a weekday.
+            TypeError: when setting a value that is not a weekday string
+                or :class:`~icalendar.prop.recur.weekday.vWeekday`.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur("FREQ=WEEKLY;WKST=SU").wkst
+                'SU'
+                >>> vRecur("FREQ=WEEKLY").wkst is None
+                True
+        """
+        values = self.get("WKST")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        if isinstance(value, vWeekday):
+            return value
+        try:
+            return vWeekday(value)
+        except (TypeError, ValueError) as e:
+            raise InvalidCalendar("WKST must be a weekday") from e
+
+    @wkst.setter
+    def wkst(self, value: str | vWeekday | None) -> None:
+        """Set the WKST part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.wkst
+            return
+        if not isinstance(value, (str, vWeekday)):
+            raise TypeError(f"wkst must be a weekday string or vWeekday, got {value!r}")
+        try:
+            weekday = value if isinstance(value, vWeekday) else vWeekday(value)
+        except ValueError as e:
+            raise InvalidCalendar("WKST must be a weekday") from e
+        # from_ical stores WKST as a one-item list via parse_type; keep
+        # that representation so assignment matches a parsed vRecur.
+        self["WKST"] = [weekday]
+
+    @wkst.deleter
+    def wkst(self) -> None:
+        """Delete the WKST part of the recurrence rule."""
+        self.pop("WKST", None)
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
@@ -365,6 +442,50 @@ class vRecur(CaselessDict):
         return True
 
     __hash__ = None
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        if parser.tag != cls.default_value.lower():
+            self = cls.from_xcal(parser.parse_tag(cls.default_value))
+            self.params = params
+            return self
+        self = cls(params=params)
+        while not parser.is_finished():
+            child = parser.child
+            key = child.tag
+            v_prop = cls.types.get(key, vText)
+            from_xcal: Callable[[XCalParser], VPROPERTY] | None = getattr(
+                v_prop, "from_xcal_in_recur", None
+            )
+            if from_xcal is None:
+                from_xcal = v_prop.from_xcal
+            value = from_xcal(parser)
+            # Keep UNTIL as a raw date/time, as from_ical and from_jcal do.
+            parsed_value = value.dt if isinstance(value, vDDDTypes) else value
+            self.setdefault(key, []).append(parsed_value)
+        return self
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        recur_element = SubElement(element, self.default_value.lower())
+        for key, value in self.sorted_items():
+            value = value if isinstance(value, list) else [value]
+            for v in value:
+                if not hasattr(v, "to_xcal"):
+                    v_prop = self.types.get(key, vText)
+                    v = v_prop(v)
+                v.to_xcal(recur_element)
+                recur_element[-1].tag = key.lower()
 
 
 __all__ = ["vRecur"]

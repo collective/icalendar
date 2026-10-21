@@ -19,10 +19,10 @@ jobs:
     steps:
       - uses: peakoss/anti-slop@57858eead489d08b255fab2af45a506c2ca6eab2 # v0.3.0
         with:
-          max-failures: 1
+          max-failures: 4
           max-description-length: 1500
           max-emoji-count: 1
-          max-code-references: 3
+          max-code-references: 5
           require-linked-issue: true
           require-pr-template: true
           strict-pr-template-sections: Linked issue,Description,Checklist
@@ -32,6 +32,11 @@ jobs:
           exempt-users: abe-101,angatha,niccokunzmann,sashankbhamidi,stevepiercy,maurits,tobixen
           success-add-pr-labels: 'PR quality: good'
           failure-add-pr-labels: 'ai-suspicion'
-          failure-pr-message: 'This pull request did not pass quality checks and AI use is suspected. Please review [Contribute](https://icalendar.readthedocs.io/en/latest/contribute/index.html) and make any necessary amendments.'
+          failure-pr-message: |
+            One or more PR-quality checks did not pass. Review the PR Quality Checks summary in the workflow run for the failed checks and their details, then make any necessary updates.
+
+            Checklist items may remain unchecked while work is in progress. Please tick each item as you complete it.
+
+            If you used AI assistance, follow the project's [Responsible AI use policy](https://icalendar.readthedocs.io/en/latest/contribute/index.html#responsible-ai-use) and provide the required disclosures.
           close-pr: false
           min-profile-completeness: 1

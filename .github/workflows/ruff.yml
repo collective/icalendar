@@ -7,7 +7,7 @@ jobs:
       MESSAGE: |
         Your code is not formatted!
         Please set up your development environment and run the formatting command.
-        https://icalendar.readthedocs.io/en/stable/contribute/development.html#code-format
+        https://icalendar.readthedocs.io/en/stable/contribute/development.html#format-code
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Set up Python
