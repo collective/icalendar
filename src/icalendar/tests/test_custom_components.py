@@ -53,7 +53,7 @@ class TestCustomComponentWithComponentFromIcal:
 
     def test_parse_standalone_custom_component(self, calendars):
         """Parse a standalone custom component (issue #178)."""
-        # MYCOMP is not a standard RFC 5545 component
+        # X-MYCOMP is not a standard RFC 5545 component
         calendar = calendars.issue_178_component_with_invalid_name_represented
         # Should parse without error
         assert calendar.to_ical() == calendar.raw_ics
@@ -89,7 +89,7 @@ END:X-VENDOR
 
     def test_custom_component_can_contain_standard_components(self, calendars):
         """Custom component can contain standard components (issue #178)."""
-        # MYCOMPTOO contains a VEVENT
+        # X-MYCOMPTOO contains a VEVENT
         calendar = calendars.issue_178_custom_component_contains_other
         assert calendar.to_ical() == calendar.raw_ics
 
@@ -118,7 +118,7 @@ class TestCustomComponentWithCalendarFromIcal:
 
     def test_calendar_with_custom_component(self, calendars):
         """Calendar can contain custom components (issue #178)."""
-        # VCALENDAR with UNKNOWN component
+        # VCALENDAR with X-UNKNOWN component
         calendar = calendars.issue_178_custom_component_inside_other
         assert calendar.to_ical() == calendar.raw_ics
 
