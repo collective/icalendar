@@ -1,8 +1,14 @@
-"""Functions for manipulating strings and bytes."""
+"""Functions for manipulating strings and bytes.
+
+..  versionremoved:: 8.0.0
+    Removed ``escape_char``, ``escape_string``, ``foldline``, ``unescape_char``,
+    ``unescape_string``.
+
+    .. seealso:: :ref:`removed-from-icalendar-parser-string`.
+"""
 
 import re
 
-from icalendar.compatibility import deprecate_for_version_8
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 
@@ -18,6 +24,9 @@ def _escape_char(text: str | bytes) -> str:
 
     Returns:
         The escaped text with special characters escaped.
+
+    Raises:
+        TypeError: If ``text`` is neither ``str`` nor ``bytes``.
 
     Note:
         The replacement order is critical:
@@ -37,7 +46,8 @@ def _escape_char(text: str | bytes) -> str:
         not part of :rfc:`5545`, which only defines ``\n`` or ``\N`` for an
         intentional line break, and doesn't give an escape form for a lone ``\r``.
     """
-    assert isinstance(text, (str, bytes))
+    if not isinstance(text, (str, bytes)):
+        raise TypeError(f"Expected str or bytes, got {type(text).__name__}")
     text = to_unicode(text)
     # NOTE: ORDER MATTERS!
     return (
@@ -51,17 +61,7 @@ def _escape_char(text: str | bytes) -> str:
     )
 
 
-escape_char = deprecate_for_version_8(_escape_char)
-"""Format value according to iCalendar TEXT escaping rules.
-
-.. deprecated:: 7.0.0
-    Use the private :func:`_escape_char` internally. For external use,
-    this function is deprecated. Please use alternative escaping methods
-    or contact the maintainers.
-"""
-
-
-def _unescape_char(text: str | bytes) -> str | bytes | None:
+def _unescape_char(text: str | bytes) -> str | bytes:
     r"""Unescape iCalendar TEXT values.
 
     Reverses the escaping applied by :func:`_escape_char` according to
@@ -71,7 +71,10 @@ def _unescape_char(text: str | bytes) -> str | bytes | None:
         text: The escaped text.
 
     Returns:
-        The unescaped text, or ``None`` if ``text`` is neither ``str`` nor ``bytes``.
+        The unescaped text.
+
+    Raises:
+        TypeError: If ``text`` is neither ``str`` nor ``bytes``.
 
     Note:
         The replacement order is critical to avoid double-unescaping:
@@ -83,7 +86,8 @@ def _unescape_char(text: str | bytes) -> str | bytes | None:
         5. ``\;`` -> ``;`` (unescape semicolons)
         6. ``\\`` -> ``\`` (unescape backslashes last)
     """
-    assert isinstance(text, (str, bytes))
+    if not isinstance(text, (str, bytes)):
+        raise TypeError(f"Expected str or bytes, got {type(text).__name__}")
     # NOTE: ORDER MATTERS!
     if isinstance(text, str):
         return (
@@ -94,30 +98,18 @@ def _unescape_char(text: str | bytes) -> str | bytes | None:
             .replace("\\;", ";")
             .replace("\\\\", "\\")
         )
-    if isinstance(text, bytes):
-        return (
-            text.replace(b"\\N", b"\\n")
-            .replace(b"\r\n", b"\n")
-            .replace(b"\\n", b"\n")
-            .replace(b"\\,", b",")
-            .replace(b"\\;", b";")
-            .replace(b"\\\\", b"\\")
-        )
-    return None
-
-
-unescape_char = deprecate_for_version_8(_unescape_char)
-"""Unescape iCalendar TEXT values.
-
-.. deprecated:: 7.0.0
-    Use the private :func:`_unescape_char` internally. For external use,
-    this function is deprecated. Please use alternative unescaping methods
-    or contact the maintainers.
-"""
+    return (
+        text.replace(b"\\N", b"\\n")
+        .replace(b"\r\n", b"\n")
+        .replace(b"\\n", b"\n")
+        .replace(b"\\,", b",")
+        .replace(b"\\;", b";")
+        .replace(b"\\\\", b"\\")
+    )
 
 
 def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
-    """Make a string folded as defined in RFC5545.
+    r"""Make a string folded as defined in :rfc:`5545#section-3.1`.
 
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
@@ -125,9 +117,16 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     line can be split between any two characters by inserting a CRLF
     immediately followed by a single linear white-space character (i.e.,
     SPACE or HTAB).
+
+    Raises:
+        TypeError: If ``line`` is not a ``str``.
+        ValueError: If ``line`` contains ``\n``.
+
     """
-    assert isinstance(line, str)
-    assert "\n" not in line
+    if not isinstance(line, str):
+        raise TypeError(f"Expected str, got {type(line).__name__}")
+    if "\n" in line:
+        raise ValueError("Line must not contain unescaped new line characters.")
 
     folded_lines: list[str] = []
     current_chars: list[str] = []
@@ -154,14 +153,6 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
         folded_lines.append("".join(current_chars))
 
     return fold_sep.join(folded_lines)
-
-
-foldline = deprecate_for_version_8(_foldline)
-"""Make a string folded as defined in RFC5545.
-
-.. deprecated:: 7.0.0
-    Use the private :func:`_foldline` internally.
-"""
 
 
 def _escape_string(val: str) -> str:
@@ -200,15 +191,6 @@ def _escape_string(val: str) -> str:
     )
 
 
-escape_string = deprecate_for_version_8(_escape_string)
-"""Escape backslash sequences to URL-encoded hex values.
-
-.. deprecated:: 7.0.0
-    Use the private :func:`_escape_string` internally. For external use,
-    this function is deprecated.
-"""
-
-
 def _unescape_string(val: str) -> str:
     r"""Unescape URL-encoded hex values to their original characters.
 
@@ -242,15 +224,6 @@ def _unescape_string(val: str) -> str:
     )
 
 
-unescape_string = deprecate_for_version_8(_unescape_string)
-"""Unescape URL-encoded hex values to their original characters.
-
-.. deprecated:: 7.0.0
-    Use the private :func:`_unescape_string` internally. For external use,
-    this function is deprecated.
-"""
-
-
 # [\w-] because of the iCalendar RFC
 # . because of the vCard RFC
 NAME = re.compile(r"[\w.-]+")
@@ -280,10 +253,5 @@ __all__ = [
     "_foldline",
     "_unescape_char",
     "_unescape_string",
-    "escape_char",
-    "escape_string",
-    "foldline",
-    "unescape_char",
-    "unescape_string",
     "validate_token",
 ]

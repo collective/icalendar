@@ -8,7 +8,7 @@ class Enum(_Enum):
 
     def __reduce_ex__(self, _p):
         """For pickling."""
-        return self.__class__, (self._name_,)
+        return self.__class__, (self._value_,)
 
 
 class StrEnum(str, Enum):

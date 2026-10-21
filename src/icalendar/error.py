@@ -8,6 +8,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from collections.abc import Generator
 
+    from icalendar.parser.xcal.adapter import ElementAdapter
+
 
 class InvalidCalendar(ValueError):
     """The calendar given is not valid.
@@ -345,6 +347,41 @@ class JCalParsingError(InvalidCalendar):
             raise cls(f"The {kind} must be lowercase.", parser, path, value=name)
 
 
+class XCalParsingError(InvalidCalendar):
+    """Could not parse a part of the xCal."""
+
+    message: str
+    """A description of the error that occurred while parsing."""
+
+    value: str | None
+    """The value that caused the error."""
+
+    element: ElementAdapter
+    """The XML element that caused the error."""
+
+    def __init__(
+        self,
+        message: str,
+        value: str | None,
+        element: ElementAdapter,
+    ) -> None:
+        """Create a new XCalParsingError.
+
+        Parameters:
+            message: A description of the error that occurred while parsing.
+            value: The value that caused the error.
+            element: The XML element that caused the error.
+        """
+        self.value = value
+        self.element = element
+        self.short_message = message
+        if value is not None:
+            self.message = f"{message}, got {value!r} in {element.get_xpath()}."
+        else:
+            self.message = f"{message} in {element.get_xpath()}."
+        super().__init__(self.message)
+
+
 __all__ = [
     "BrokenCalendarProperty",
     "ComponentEndMissing",
@@ -356,4 +393,5 @@ __all__ = [
     "InvalidCalendar",
     "JCalParsingError",
     "LocalTimezoneMissing",
+    "XCalParsingError",
 ]

@@ -70,7 +70,7 @@ class IcalendarTestCase(unittest.TestCase):
         # N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
 
         # Newlines are not allowed in content lines
-        self.assertRaises(AssertionError, Contentline, b"1234\r\n\r\n1234")
+        self.assertRaises(ValueError, Contentline, b"1234\r\n\r\n1234")
 
         assert Contentline("1234\\n\\n1234").to_ical() == b"1234\\n\\n1234"
 
@@ -256,7 +256,7 @@ class IcalendarTestCase(unittest.TestCase):
         # I don't really get this test
         # at least just but bytes in there
         # porting it to "run" under python 2 & 3 makes it not much better
-        with pytest.raises(AssertionError):
+        with pytest.raises(TypeError):
             _foldline("привет".encode(), limit=3)
 
         assert _foldline("foobar", limit=4) == "foo\r\n bar"

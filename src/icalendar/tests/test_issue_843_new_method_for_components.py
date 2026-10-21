@@ -15,6 +15,7 @@ import itertools
 import traceback
 from datetime import date, datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Any
+from uuid import UUID
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -90,6 +91,7 @@ COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
 COMPONENTS_REQUEST_STATUS = {Event, Todo, Journal, FreeBusy}
+COMPONENTS_RESOURCES = {Event, Todo}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
 COMPONENTS_ATTACHMENTS = {Alarm, Event, Journal, Todo}
 # RFC 9253 properties are defines on ALL
@@ -368,6 +370,15 @@ new_test_cases = [
         "test UID",
         True,
         "Set the UID property",
+    ),
+    (
+        COMPONENTS_UID,
+        "uid",
+        "uid",
+        UUID("12345678-1234-5678-1234-567812345678"),
+        "12345678-1234-5678-1234-567812345678",
+        True,
+        "Set the UID property using uuid.UUID",
     ),
     (
         COMPONENTS_UID_AUTOMATIC,
@@ -894,6 +905,43 @@ rfc_9253_related_to_values = [
     vText("nananana", params={"RELTYPE": "SIBLING"}),
 ]
 rfc_9253_test_cases = [
+    # #1592: the single-value forms of links.
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        "https://123",
+        [vUri("https://123")],
+        True,
+        "a plain str is accepted",
+    ),
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        vUri("https://123"),
+        [vUri("https://123")],
+        True,
+        "a single vUri is accepted",
+    ),
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        vUid("123-123-123"),
+        [vUid("123-123-123")],
+        True,
+        "a single vUid is accepted",
+    ),
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        vXmlReference("http://example.com"),
+        [vXmlReference("http://example.com")],
+        True,
+        "a single vXmlReference is accepted",
+    ),
     (
         COMPONENTS_LINKS,
         "links",
@@ -994,6 +1042,24 @@ rfc_9253_test_cases = [
         "set two values",
     ),
     (
+        COMPONENTS_CONCEPTS,
+        "concepts",
+        "CONCEPT",
+        "https://example.com/concept",
+        [vUri("https://example.com/concept")],
+        True,
+        "a single concept str is accepted",
+    ),
+    (
+        COMPONENTS_CONCEPTS,
+        "concepts",
+        "CONCEPT",
+        vUri("https://example.com/concept"),
+        [vUri("https://example.com/concept")],
+        True,
+        "a single concept vUri is accepted",
+    ),
+    (
         COMPONENTS_REFID,
         "refids",
         "REFID",
@@ -1064,6 +1130,33 @@ rfc_9253_test_cases = [
         ["2.0;Success", "3.1;Invalid property value"],
         True,
         "set two values",
+    ),
+    (
+        COMPONENTS_RESOURCES,
+        "RESOURCES",
+        "RESOURCES",
+        None,
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_RESOURCES,
+        "RESOURCES",
+        "RESOURCES",
+        "EASEL",
+        ["EASEL"],
+        True,
+        "set a value",
+    ),
+    (
+        COMPONENTS_RESOURCES,
+        "RESOURCES",
+        "RESOURCES",
+        ["EASEL", "PROJECTOR", "VCR"],
+        ["EASEL", "PROJECTOR", "VCR"],
+        True,
+        "set several values",
     ),
 ]
 
@@ -1152,6 +1245,16 @@ def test_properties_and_new(
         ("links", ["https://example.com/link"], [vUri("https://example.com/link")]),
         ("related_to", ["parent-uid"], [vText("parent-uid")]),
         ("refids", ["reference-id"], [vText("reference-id")]),
+        (
+            "concepts",
+            "https://example.com/concept",
+            [vUri("https://example.com/concept")],
+        ),
+        (
+            "concepts",
+            vUri("https://example.com/concept"),
+            [vUri("https://example.com/concept")],
+        ),
         (
             "concepts",
             ["https://example.com/concept"],

@@ -6,9 +6,13 @@ import json
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
+from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Literal, overload
+from typing import IO, TYPE_CHECKING, Any, BinaryIO, ClassVar, Literal, overload
+from xml.etree.ElementTree import Element, ElementTree, SubElement
+from xml.etree.ElementTree import indent as indent_xml
 
+from icalendar import config
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
@@ -121,6 +125,8 @@ class Component(CaselessDict):
     """
 
     types_factory: ClassVar[TypesFactory] = TypesFactory.instance()
+    """The factory class to parse and wrap properties."""
+
     _components_factory: ClassVar[ComponentFactory | None] = None
 
     subcomponents: list[Component]
@@ -478,6 +484,15 @@ class Component(CaselessDict):
         """
         return self.walk(select=lambda c: c.uid == uid)
 
+    def _validate_name(self):
+        """Make sure the component has a name.
+
+        Raises:
+            ValueError: If this component does not have a name.
+        """
+        if self.name is None:
+            raise ValueError("This component needs a name for serialization.", self)
+
     #####################
     # Generation
 
@@ -499,6 +514,7 @@ class Component(CaselessDict):
         stack = [(self, False)]
         while stack:
             comp, is_end = stack.pop()
+            comp._validate_name()
             if is_end:
                 result.append(("END", v_text(comp.name).to_ical()))
             else:
@@ -527,12 +543,14 @@ class Component(CaselessDict):
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes, multiple: Literal[False] = False
+        cls, st: str | bytes | Path, multiple: Literal[False] = False
     ) -> Component: ...
 
     @overload
     @classmethod
-    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Component]: ...
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: Literal[True]
+    ) -> list[Component]: ...
 
     @classmethod
     def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
@@ -549,7 +567,7 @@ class Component(CaselessDict):
 
         Parameters:
             st: iCalendar data as bytes or string, or a path to an iCalendar file as
-                :class:`pathlib.Path` or string.
+                :class:`pathlib.Path`.
             multiple: If ``True``, returns list. If ``False``, returns single component.
 
         Returns:
@@ -560,22 +578,6 @@ class Component(CaselessDict):
         """
         if isinstance(st, Path):
             st = st.read_bytes()
-        elif isinstance(st, str) and "\n" not in st and "\r" not in st:
-            # A string is only probed as a file path when it contains no line
-            # breaks. Valid iCalendar data is always folded with CRLF line
-            # endings (RFC 5545), so real calendar content never reaches this
-            # branch and is never read from disk. File paths, conversely, do
-            # not contain line breaks on the platforms we support.
-            try:
-                is_file = Path(st).is_file()
-            except (OSError, ValueError):
-                # The string is not usable as a path on this platform (e.g. it
-                # is too long, or contains characters the OS rejects such as an
-                # embedded null byte). Treat it as calendar data, not a file, so
-                # the parser raises a consistent ValueError across platforms.
-                is_file = False
-            if is_file:
-                st = Path(st).read_bytes()
         parser = cls._get_ical_parser(st)
         components = parser.parse()
         if multiple:
@@ -727,7 +729,7 @@ class Component(CaselessDict):
                 )
         return child_result
 
-    DTSTAMP = stamp = single_utc_property(
+    DTSTAMP = single_utc_property(
         "DTSTAMP",
         """The UTC datetime stamp recording when this component instance was created or last revised.
 
@@ -751,10 +753,26 @@ class Component(CaselessDict):
             datetime.datetime(2024, 6, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`CREATED`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`CREATED`, :attr:`LAST_MODIFIED`,
         :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
+
+    @property
+    def stamp(self) -> datetime | None:
+        """Datetime stamp of this component, as a :class:`~datetime.datetime` in UTC.
+
+        This is the lowercase property counterpart to, and accessor for, :attr:`DTSTAMP`.
+        """
+        return self.DTSTAMP
+
+    @stamp.setter
+    def stamp(self, value: datetime) -> None:
+        self.DTSTAMP = value
+
+    @stamp.deleter
+    def stamp(self) -> None:
+        del self.DTSTAMP
 
     LAST_MODIFIED = single_utc_property(
         "LAST-MODIFIED",
@@ -777,7 +795,7 @@ class Component(CaselessDict):
             datetime.datetime(2024, 6, 1, 9, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`CREATED`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`CREATED`, :attr:`DTSTAMP`,
         :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
@@ -854,7 +872,7 @@ class Component(CaselessDict):
             datetime.datetime(2024, 1, 1, 8, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`CREATED`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
         :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
@@ -928,6 +946,9 @@ class Component(CaselessDict):
         Returns:
             jCal object
 
+        Raises:
+            ValueError: If a component does not have a name.
+
         See also :attr:`to_json`.
 
         In this example, we create a simple VEVENT component and convert it to jCal:
@@ -940,10 +961,10 @@ class Component(CaselessDict):
             >>> event = Event.new(summary="My Event", start=date(2025, 11, 22))
             >>> pprint(event.to_jcal())
             ['vevent',
-             [['dtstamp', {}, 'date-time', '2025-05-17T08:06:12Z'],
-              ['summary', {}, 'text', 'My Event'],
-              ['uid', {}, 'text', 'd755cef5-2311-46ed-a0e1-6733c9e15c63'],
-              ['dtstart', {}, 'date', '2025-11-22']],
+             [['summary', {}, 'text', 'My Event'],
+              ['dtstart', {}, 'date', '2025-11-22'],
+              ['dtstamp', {}, 'date-time', '2025-05-17T08:06:12Z'],
+              ['uid', {}, 'text', 'd755cef5-2311-46ed-a0e1-6733c9e15c63']],
              []]
         """
 
@@ -952,9 +973,10 @@ class Component(CaselessDict):
         def make_node(comp: Component) -> list:
             properties = [
                 item.to_jcal(key.lower())
-                for key, value in comp.items()
+                for key, value in comp.sorted_items()
                 for item in (value if isinstance(value, list) else [value])
             ]
+            comp._validate_name()
             return [comp.name.lower(), properties, []]
 
         root_node = make_node(self)
@@ -969,15 +991,27 @@ class Component(CaselessDict):
                 stack.append((subcomponent, child_node))
         return root_node
 
-    def to_json(self) -> str:
+    def to_json(self, indent: int | str | None = None) -> str:
         """Return this component as a jCal JSON string.
+
+        Parameters:
+            indent: If a non-negative integer or string is provided,
+                    then JSON will be pretty-printed with that indent level.
 
         Returns:
             JSON string
 
+        Raises:
+            ValueError: If a component does not have a name.
+
         See also :attr:`to_jcal`.
         """
-        return json.dumps(self.to_jcal())
+        return json.dumps(
+            self.to_jcal(),
+            indent=indent,
+            sort_keys=True,
+            separators=(",", ":") if indent is None else None,
+        )
 
     @classmethod
     def from_jcal(cls, jcal: str | list) -> Component:
@@ -1113,6 +1147,174 @@ class Component(CaselessDict):
         For lazy components, this parses the component and returns the result.
         """
         return self
+
+    @overload
+    def to_xcal(
+        self,
+        destination: Element | IO[bytes],
+    ) -> None: ...
+
+    @overload
+    def to_xcal(
+        self, destination: Element | IO[bytes], *, indent: int | str | None = None
+    ) -> None: ...
+
+    @overload
+    def to_xcal(self, *, indent: int | str | None = None) -> bytes: ...
+
+    def to_xcal(
+        self,
+        destination: Element | IO[bytes] | None = None,
+        *,
+        indent: int | str | None = None,
+    ) -> bytes | None:
+        """The xCal representation of this component according to :rfc:`6321`.
+
+        Parameters:
+            destination: The iCalendar stream or a file.
+            indent: The indentation for pretty printing the XML.
+
+        Returns:
+            - ``None`` if an argument is passed.
+            - :class:`bytes` if called with no arguments.
+
+        Example:
+            This example shows how to convert a new calendar to XML:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> cal = Calendar.new()
+                >>> print(cal.to_xcal(indent=2).decode())
+                <?xml version="1.0" encoding="UTF-8"?>
+                <icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+                  <vcalendar>
+                    <properties>
+                      <version>
+                        <text>2.0</text>
+                      </version>
+                      <prodid>
+                        <text>-//collective//icalendar//7.0.0//EN</text>
+                      </prodid>
+                      <uid>
+                        <text>d755cef5-2311-46ed-a0e1-6733c9e15c63</text>
+                      </uid>
+                    </properties>
+                  </vcalendar>
+                </icalendar>
+        """
+        from io import BytesIO
+
+        input_is_element = isinstance(destination, Element)
+        if input_is_element:
+            stream = destination
+        else:
+            stream = Element("icalendar", xmlns="urn:ietf:params:xml:ns:icalendar-2.0")
+            if destination is not None and not hasattr(destination, "write"):
+                raise TypeError(
+                    "Expected an XML Element or a file-like "
+                    f"object for destination, got {destination!r}"
+                )
+        self.to_xcal_element(stream)
+        if indent is not None:
+            if isinstance(indent, int):
+                indent = " " * indent
+            elif not isinstance(indent, str):
+                raise TypeError(
+                    f"Expected an integer or string for indent, got {type(indent)}"
+                )
+        if input_is_element:
+            return None
+        return_bytes = destination is None
+        file = BytesIO() if return_bytes else destination
+        file.write(b'<?xml version="1.0" encoding="UTF-8"?>')
+        if indent is not None:
+            file.write(b"\n")
+            indent_xml(stream, space=indent)
+        ElementTree(stream).write(file, "utf-8", xml_declaration=False, method="xml")
+        if indent is not None:
+            file.write(b"\n")
+        if return_bytes:
+            return file.getvalue()
+        return None
+
+    def to_xcal_element(self, element: Element, /) -> None:
+        """Add the xCal representation of this component according to :rfc:`6321`."""
+        self._validate_name()
+        e_component = SubElement(element, self.name.lower())
+        if len(self) > 0:
+            e_properties = SubElement(e_component, "properties")
+            for key, prop_list in self.sorted_items():
+                for prop in prop_list if isinstance(prop_list, list) else [prop_list]:
+                    prop: VPROPERTY
+                    e_property = SubElement(e_properties, key.lower())
+                    prop.to_xcal(e_property)
+        if self.subcomponents:
+            e_components = SubElement(e_component, "components")
+            for subcomponent in self.subcomponents:
+                subcomponent.to_xcal(e_components)
+
+    @classmethod
+    def from_xcal(cls, xcal: Element | bytes | Path | BinaryIO) -> list[Self]:
+        """Parse xCal according to :rfc:`6321`.
+
+        Parameters:
+            xcal: The xCal element or data to parse.
+
+        Returns:
+            The parsed component.
+
+        Raises:
+            ~icalendar.error.XCalParsingError: If the provided XML does not conform with :rfc:`6321`.
+            TypeError: If ``xcal`` is not one of the valid types.
+            xml.etree.ElementTree.ParseError: If the provided data is not valid XML.
+
+        Example:
+
+            Parse an xCal object from a bytes object in XML format.
+
+            >>> from icalendar import Calendar
+            >>> xml = b'''<?xml version="1.0" encoding="utf-8"?>
+            ... <icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+            ...     <vcalendar>
+            ...         <properties>
+            ...             <prodid>
+            ...                 <text>-//Example Inc.//Example Client//EN</text>
+            ...             </prodid>
+            ...             <version>
+            ...                 <text>2.0</text>
+            ...             </version>
+            ...         </properties>
+            ...     </vcalendar>
+            ... </icalendar>
+            ... '''
+            >>> cal = Calendar.from_xcal(xml)[0]
+            >>> cal.prodid == '-//Example Inc.//Example Client//EN'
+            True
+
+        """
+        from icalendar.parser.xcal.component import XCalComponentParser
+
+        if isinstance(xcal, Path):
+            xcal = xcal.open("rb")
+        elif isinstance(xcal, bytes):
+            xcal = BytesIO(xcal)
+        if hasattr(xcal, "read"):
+            element = config.parse_xml(xcal).getroot()
+        elif isinstance(xcal, Element):
+            element = xcal
+        else:
+            raise TypeError(
+                f"Expected an XML Element, bytes, Path, or file object. Got {xcal}"
+            )
+        parser = XCalComponentParser(
+            element, cls._get_component_factory(), cls.types_factory
+        )
+        components = []
+        while not parser.is_finished():
+            component = parser.parse_component()
+            components.append(component)
+        return components
 
 
 def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:

@@ -1,14 +1,16 @@
 Args
 backported
 (?i)datetime
+defusedxml
 dicts
 [Dd]ocstrings?
 fuzzer
 Hacktoberfest
 Hanoka
-\.ical
+icalendar(\.[a-z]+)+
 iCal
 (?i)icalendar
+IDEs?
 jCal
 Kunzmann
 Napolean
@@ -34,5 +36,6 @@ towncrier
 uv
 vCard
 xCal
+xinclude
 Xcode
 zizmor
