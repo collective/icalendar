@@ -237,7 +237,7 @@ class vRecur(CaselessDict):
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
         recur = {}
-        for k, v in self.items():
+        for k, v in self.sorted_items():
             key = k.lower()
             if key.upper() in self.jcal_not_a_list:
                 value = v[0] if isinstance(v, list) and len(v) == 1 else v
@@ -469,7 +469,9 @@ class vRecur(CaselessDict):
             if from_xcal is None:
                 from_xcal = v_prop.from_xcal
             value = from_xcal(parser)
-            self.setdefault(key, []).append(value)
+            # Keep UNTIL as a raw date/time, as from_ical and from_jcal do.
+            parsed_value = value.dt if isinstance(value, vDDDTypes) else value
+            self.setdefault(key, []).append(parsed_value)
         return self
 
     def to_xcal(self, element: Element) -> None:
