@@ -13,6 +13,12 @@ from icalendar import Calendar
 from icalendar.error import ICalParsingError
 from icalendar.prop import vDuration
 
+OVERFLOWING_DURATIONS = [
+    "P999999999999999999W",
+    "P1000000000000000000000D",
+    "PT999999999999999999999H",
+]
+
 
 @pytest.mark.parametrize(
     "value",
@@ -34,14 +40,7 @@ def test_vduration_invalid_ical_raises_parsing_error(value):
     assert error.line_number is None
 
 
-@pytest.mark.parametrize(
-    "value",
-    [
-        "P999999999999999999W",
-        "P1000000000000000000000D",
-        "PT999999999999999999999H",
-    ],
-)
+@pytest.mark.parametrize("value", OVERFLOWING_DURATIONS)
 def test_vDuration_from_ical_rejects_overflowing_duration(value):
     """Overflowing DURATION values raise ICalParsingError (issue #1448)."""
     with pytest.raises(ICalParsingError) as exc_info:

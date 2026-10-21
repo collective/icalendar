@@ -23,14 +23,14 @@ else:
     from typing_extensions import TypeIs
 
 
-def deprecate_for_version_8(func):
-    """Issue a warning for deprecated functions to be removed in version 8."""
+def deprecate_for_version_9(func):
+    """Issue a warning for deprecated functions to be removed in version 9."""
     public_name = func.__name__.removeprefix("_")
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         warnings.warn(
-            f"{public_name} is deprecated and will be removed in icalendar 8",
+            f"{public_name} is deprecated and will be removed in icalendar 9",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -44,5 +44,5 @@ __all__ = [
     "Self",
     "TypeGuard",
     "TypeIs",
-    "deprecate_for_version_8",
+    "deprecate_for_version_9",
 ]
