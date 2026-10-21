@@ -154,6 +154,7 @@ exclude = [
 # Tests for files included in the distribution reside here:
 # src/icalendar/tests/test_create_release.sh
 "funding.json" = "funding.json"
+"generate_windows_to_olson_mapping.py" = "generate_windows_to_olson_mapping.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/icalendar"]
@@ -218,6 +219,7 @@ ignore = [
     "PERF401", # Use a list comprehension to create a transformed list
     "ARG002",  # Unused method argument: ...
     "ARG001",  # Unused function argument: ...
+    "CPY001",  # Files should start with a copyright notice
 ]
 extend-safe-fixes = [
     "PT006", # Wrong type passed to first argument of @pytest.mark.parametrize; expected {expected_string}
@@ -249,6 +251,10 @@ extend-safe-fixes = [
     "T201",   # print found
     "T203",   # `pprint` found
 ]
+"src/icalendar/tests/rfc_6321_xcal/**" = [
+    "S314",   # unsafe XML parsing
+]
+
 "src/icalendar/cal/**" = [
     "A002",    # argument shadowing builtin (sorted)
     "DTZ001",  # datetime() called without tzinfo

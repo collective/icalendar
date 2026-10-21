@@ -23,6 +23,7 @@ Submodules
    icalendar.prop.cal_address
    icalendar.prop.categories
    icalendar.prop.conference
+   icalendar.prop.empty
    icalendar.prop.factory
    icalendar.prop.float
    icalendar.prop.geo
