@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import itertools
-import re
 from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, TypeAlias
@@ -11,6 +10,7 @@ from uuid import UUID
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
+from icalendar.parser.string import _RFC_5545_IANA_TOKEN_REGEX
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import (
     vBinary,
@@ -29,7 +29,6 @@ from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
-from icalendar.parser.string import _RFC_5545_IANA_TOKEN_REGEX
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -856,8 +855,6 @@ Examples:
 """,
 )
 
-#: An :rfc:`5545` ``iana-token``: one or more ASCII letters, digits or hyphens.
-_UID_IANA_TOKEN = _RFC_5545_IANA_TOKEN_REGEX
 
 #: Maximum UID length in octets, per :rfc:`7986#section-5.3`.
 _UID_MAX_OCTETS = 255
@@ -882,7 +879,7 @@ def validate_uid(value: str) -> None:
         raise InvalidCalendar(
             f"UID must be shorter than {_UID_MAX_OCTETS} octets, got {octets}"
         )
-    if _UID_IANA_TOKEN.match(value) is None:
+    if _RFC_5545_IANA_TOKEN_REGEX.match(value) is None:
         raise InvalidCalendar(f"UID must be an RFC 5545 iana-token, got {value!r}")
 
 
