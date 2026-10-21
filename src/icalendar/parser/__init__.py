@@ -41,6 +41,8 @@ __all__ = [
     "_escape_char",
     "_escape_string",
     "_foldline",
+    "_rfc_6868_escape",
+    "_rfc_6868_unescape",
     "_unescape_char",
     "_unescape_string",
     "dquote",
