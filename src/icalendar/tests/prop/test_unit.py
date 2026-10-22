@@ -301,7 +301,6 @@ class TestProp(unittest.TestCase):
 
         # Test ical_value
         assert vUTCOffset(timedelta(hours=2)).ical_value == timedelta(hours=2)
-        
         assert vUTCOffset(timedelta(hours=-5)).ical_value == timedelta(hours=-5)
 
         # Support seconds
