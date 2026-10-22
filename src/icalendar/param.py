@@ -107,13 +107,13 @@ def string_parameter(
             return default()
         return convert(value) if convert else value
 
-    def fset(self: VPROPERTY, value: str | None):
+    def fset(self: VPROPERTY, value: str | None) -> None:
         if value is None:
             fdel(self)
         else:
             self.params[name] = convert_to(value) if convert_to else value
 
-    def fdel(self: VPROPERTY):
+    def fdel(self: VPROPERTY) -> None:
         self.params.pop(name, None)
 
     return property(fget, fset, fdel, doc=doc)
@@ -189,6 +189,7 @@ Description:
 
 
 def quoted_list_parameter(name: str) -> property:
+
     """Create a property for a parameter that contains a quoted list.
 
     Parameters:
@@ -206,13 +207,13 @@ def quoted_list_parameter(name: str) -> property:
             return tuple(value.split(","))
         return value
 
-    def fset(self: VPROPERTY, value: str | tuple[str]):
+    def fset(self: VPROPERTY, value: str | tuple[str]) -> None:
         if value == ():
             fdel(self)
         else:
             self.params[name] = (value,) if isinstance(value, str) else value
 
-    def fdel(self: VPROPERTY):
+    def fdel(self: VPROPERTY) -> None:
         self.params.pop(name, None)
 
     return property(fget, fset, fdel)
