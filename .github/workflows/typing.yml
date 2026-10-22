@@ -22,5 +22,4 @@ jobs:
         enable-cache: false
         version: "0.13.4"
     - name: Check icalendar
-      # This check is optional until we have fixed enough
-      run: make test-types || true
+      run: make test-types
