@@ -1,0 +1,7 @@
+BEGIN:VTODO
+UID:empty-duration-todo@example.com
+DTSTAMP:20240101T000000Z
+DTSTART:20240101T000000Z
+DURATION:P
+SUMMARY:Todo with an empty duration
+END:VTODO

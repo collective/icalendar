@@ -1,0 +1,1 @@
+``vDuration.from_ical()`` treated a duration with no week, day, or time component, such as ``P`` or ``PT``, as ``timedelta(0)``. Those values now raise :exc:`~icalendar.error.InvalidCalendar`. ``P0D`` and ``PT0S`` still parse as zero. I used AI to assist me with this change, and I reviewed the result. @SashaMIT
