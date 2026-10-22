@@ -5,7 +5,9 @@ from datetime import timedelta
 import pytest
 
 from icalendar import ACTION
+from icalendar.attr import single_string_enum_property
 from icalendar.cal.alarm import Alarm
+from icalendar.cal.component import Component
 from icalendar.error import InvalidCalendar
 
 
@@ -48,6 +50,18 @@ def test_ACTION_uses_first_repeated_property():
     alarm.add("ACTION", "EMAIL")
 
     assert alarm.ACTION is ACTION.DISPLAY
+
+
+def test_enum_property_rejects_unknown_values_by_default():
+    """Unknown values still raise unless a property opts into preserving them."""
+
+    class StrictActionComponent(Component):
+        ACTION = single_string_enum_property("ACTION", ACTION, "", "")
+
+    component = StrictActionComponent({"ACTION": "X-CUSTOM"})
+
+    with pytest.raises(ValueError, match="X-CUSTOM"):
+        component.ACTION
 
 
 @pytest.mark.parametrize("action", ["AUDIO", "DISPLAY", "EMAIL"])
