@@ -100,6 +100,7 @@ dev = [
   {include-group = "test"},
   {include-group = "docs"},
   {include-group = "formatting"},
+  "pyright>=1.1.414",
   "towncrier>=25.8.0",
   "tox",
   "tox-uv",
@@ -254,6 +255,9 @@ extend-safe-fixes = [
 "src/icalendar/tests/rfc_6321_xcal/**" = [
     "S314",   # unsafe XML parsing
 ]
+"src/icalendar/tests/typing/**" = [
+    "F841",   # unused variable - we need them for type checks
+]
 
 "src/icalendar/cal/**" = [
     "A002",    # argument shadowing builtin (sorted)
@@ -381,3 +385,70 @@ icalendar = { workspace = true, editable = true }
 members = [
     ".",
 ]
+
+[tool.pyright]
+# See https://github.com/microsoft/pyright/blob/main/docs/configuration.md
+strict = [
+    "src/icalendar/tests/typing/"
+]
+
+exclude = [
+    "**/__pycache__",
+]
+
+ignore = [
+    # Test files can be ignored
+    "src/icalendar/tests/**/test_*",
+    # These files already have typing issues.
+    "src/icalendar/alarms.py",
+    "src/icalendar/attr.py",
+    "src/icalendar/cal/alarm.py",
+    "src/icalendar/cal/availability.py",
+    "src/icalendar/cal/available.py",
+    "src/icalendar/cal/calendar.py",
+    "src/icalendar/cal/component_factory.py",
+    "src/icalendar/cal/component.py",
+    "src/icalendar/cal/event.py",
+    "src/icalendar/cal/free_busy.py",
+    "src/icalendar/cal/journal.py",
+    "src/icalendar/cal/lazy.py",
+    "src/icalendar/cal/timezone.py",
+    "src/icalendar/cal/todo.py",
+    "src/icalendar/caselessdict.py",
+    "src/icalendar/fuzzing/ical_fuzzer.py",
+    "src/icalendar/param.py",
+    "src/icalendar/parser/content_line.py",
+    "src/icalendar/parser/ical/component.py",
+    "src/icalendar/parser/ical/lazy.py",
+    "src/icalendar/parser/parameter.py",
+    "src/icalendar/parser_tools.py",
+    "src/icalendar/parser/xcal/property.py",
+    "src/icalendar/prop/binary.py",
+    "src/icalendar/prop/broken.py",
+    "src/icalendar/prop/categories.py",
+    "src/icalendar/prop/conference.py",
+    "src/icalendar/prop/dt/base.py",
+    "src/icalendar/prop/dt/datetime.py",
+    "src/icalendar/prop/dt/list.py",
+    "src/icalendar/prop/dt/period.py",
+    "src/icalendar/prop/dt/time.py",
+    "src/icalendar/prop/dt/types.py",
+    "src/icalendar/prop/empty.py",
+    "src/icalendar/prop/factory.py",
+    "src/icalendar/prop/float.py",
+    "src/icalendar/prop/image.py",
+    "src/icalendar/prop/recur/skip.py",
+    "src/icalendar/prop/text.py",
+    "src/icalendar/prop/uid.py",
+    "src/icalendar/prop/unknown.py",
+    "src/icalendar/prop/uri.py",
+    "src/icalendar/prop/xml_reference.py",
+    "src/icalendar/timezone/equivalent_timezone_ids.py",
+    "src/icalendar/timezone/__init__.py",
+    "src/icalendar/timezone/pytz.py",
+    "src/icalendar/timezone/tzid.py",
+    "src/icalendar/timezone/tzp.py",
+    "src/icalendar/timezone/zoneinfo.py",
+]
+
+reportMissingImports = "error"
