@@ -2,7 +2,7 @@ default_install_hook_types: [pre-commit, prepare-commit-msg, post-commit]
 
 repos:
   - repo: https://github.com/pycalendar/ai-prompt-auto-commit
-    rev: v0.0.9
+    rev: v0.0.10
     hooks:
       - id: prepare-ai-repository
       - id: unstage-ai-prompts
@@ -15,7 +15,7 @@ repos:
       - id: debug-statements
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.2 # also update pyproject.toml
+    rev: v0.17.1 # also update pyproject.toml
     hooks:
       # Run the linter.
       - id: ruff-check

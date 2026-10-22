@@ -103,7 +103,7 @@ dev = [
   "towncrier>=25.8.0",
   "tox",
   "tox-uv",
-  "zizmor==1.29.0", # also update .github/workflows/zizmor.yml
+  "zizmor==1.31.1", # also update .github/workflows/zizmor.yml
 ]
 
 test = [
@@ -117,7 +117,7 @@ test = [
 ]
 
 formatting = [
-    "ruff==0.15.2", # also update .pre-commit-config.yaml
+    "ruff==0.17.1", # also update .pre-commit-config.yaml
     "pre-commit",
 ]
 
