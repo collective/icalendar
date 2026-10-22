@@ -21,5 +21,7 @@ jobs:
       with:
         enable-cache: false
         version: "0.13.4"
+    - name: Install dependencies
+      run: make .venv
     - name: Check icalendar
       run: make test-types

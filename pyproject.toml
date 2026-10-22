@@ -399,6 +399,7 @@ exclude = [
 ignore = [
     # Test files can be ignored
     "src/icalendar/tests/**/test_*",
+    "src/icalendar/tests/conftest.py",
     # These files already have typing issues.
     "src/icalendar/alarms.py",
     "src/icalendar/attr.py",
