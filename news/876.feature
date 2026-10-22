@@ -1,0 +1,1 @@
+Created an :attr:`~icalendar.prop.dt.utc_offset.vUTCOffset.ical_value` property for the :class:`~icalendar.prop.dt.utc_offset.vUTCOffset` component. @GabrielGervasio

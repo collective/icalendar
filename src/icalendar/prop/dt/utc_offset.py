@@ -85,6 +85,11 @@ class vUTCOffset:
         self.td = td
         self.params = Parameters(params)
 
+    @property
+    def ical_value(self) -> timedelta:
+        """UTC offset as a :class:`datetime.timedelta` according to :rfc:`5545#section-3.3.14`."""
+        return self.td
+
     def to_ical(self) -> str:
         """Return the ical representation."""
         return self.format("")
