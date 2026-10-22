@@ -124,7 +124,7 @@ class vDate(TimeBase):
         """Parse a jCal string to a :class:`datetime.date`.
 
         Raises:
-            ~error.JCalParsingError: If it can't parse a date.
+            ~icalendar.error.JCalParsingError: If it can't parse a date.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
@@ -140,7 +140,7 @@ class vDate(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):

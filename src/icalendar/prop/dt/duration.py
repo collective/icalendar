@@ -198,7 +198,7 @@ class vDuration(TimeBase):
         """Parse a jCal string to a :class:`datetime.timedelta`.
 
         Raises:
-            ~error.JCalParsingError: If it can't parse a duration."""
+            ~icalendar.error.JCalParsingError: If it can't parse a duration."""
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
             return cls.from_ical(jcal)
@@ -213,7 +213,7 @@ class vDuration(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
