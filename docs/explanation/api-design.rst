@@ -368,8 +368,8 @@ For conversion, this is the guidance:
 
 #. icalendar should correct values where examples are already provided.
 
-#. Calendars should round-trip losslessly when possible.
-   Invalid values behave differently from valid ones and should not loose invalidity during round-tripping.
+#. When calendars :term:`round-trip`, they should not lose any information.
+   Invalid values behave differently from valid ones and should not lose invalidity during round-tripping.
 
 Examples for preservation:
     :class:`~icalendar.prop.broken.vBroken` preserves invalid values.
@@ -382,11 +382,16 @@ Examples for checking:
     :class:`~icalendar.prop.integer.vInt` has ``MAX`` and ``MIN`` values to check if the value is in range.
     :class:`~icalendar.prop.request_status.vRequestStatus` returns default values for invalid ``code``.
 
+Examples for errors:
+    :attr:`vEmpty.ical_value <icalendar.prop.empty.vEmpty.ical_value>` raises :class:`~icalendar.error.InvalidCalendar` when accessed whereas :attr:`vText.ical_value <icalendar.prop.text.vText.ical_value>` returns the text.
+
 Not all of the calendar is interesting to the developer.
 Sensible default values and error-tolerant parsing enable compatibility to a wide range of faulty calendar files.
 A value that is not of interest should not prevent the calendar from being parsed.
 Then all interesting values would also get lost.
 
-.. seealso:
+The approach to this is error tolerant parsing and raising errors or providing defaults when the values are used for calculations.
+
+.. seealso::
 
     :issue:`1888`
