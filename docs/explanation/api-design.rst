@@ -2,8 +2,6 @@
 API design
 ==========
 
-.. include:: <isonum.txt>
-
 This chapter describes the API design of icalendar.
 
 icalendar's API aligns with iCalendar components and properties as defined in :rfc:`5545` and related RFCs.
@@ -366,7 +364,7 @@ For conversion, this is the guidance:
 
 #. Calendars must round-trip with all examples provided.
    Exceptions can be made for broken calendars.
-   A round trip is for example iCal |rarr| :class:`~icalendar.cal.calendar.Calendar` |rarr| iCal or :class:`~icalendar.cal.calendar.Calendar` |rarr| iCal |rarr| :class:`~icalendar.cal.calendar.Calendar`.
+   A round trip is for example iCal ⇨ :class:`~icalendar.cal.calendar.Calendar` ⇨ iCal or :class:`~icalendar.cal.calendar.Calendar` ⇨ iCal ⇨ :class:`~icalendar.cal.calendar.Calendar`.
 
 #. icalendar should correct values where examples are already provided.
 
