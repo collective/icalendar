@@ -277,7 +277,7 @@ class vDatetime(TimeBase):
         """The datetime value of this property.
 
         Returns:
-            The datetime, timezone-aware if a timezone was set.
+            The datetime,timezone-aware if a timezone was set, otherwise its ``tzinfo`` is set to ``None``.
         """
         return self.dt
 
