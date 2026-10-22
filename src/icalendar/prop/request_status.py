@@ -38,7 +38,7 @@ class vRequestStatus(vText):
 
     Examples:
 
-        The attributes of a valid request status return the parsed data:
+        The attributes of a valid request status return the parsed data.
 
         .. code-block:: pycon
 
