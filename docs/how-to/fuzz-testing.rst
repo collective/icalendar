@@ -128,10 +128,10 @@ To reproduce fuzzing issues locally, install `OSS-Fuzz`_ locally, following its
 `setup instructions <https://google.github.io/oss-fuzz/advanced-topics/reproducing/#reproduce-using-local-source-checkout>`_.
 
 Then, you can run the script ``generate_python_test_cases_from_downloaded_clusterfuzz_test_cases.sh``
-in ``src/icalendar/tests/fuzzed/`` to generate python test cases from the downloaded fuzzer test cases.
+in ``scripts/`` to generate python test cases from the downloaded fuzzer test cases.
 
 .. code-block:: shell
 
-    src/icalendar/tests/fuzzed/generate_python_test_cases_from_downloaded_clusterfuzz_test_cases.sh
+    scripts/generate_python_test_cases_from_downloaded_clusterfuzz_test_cases.sh
 
 .. _OSS-Fuzz: https://google.github.io/oss-fuzz/

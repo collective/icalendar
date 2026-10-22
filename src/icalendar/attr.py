@@ -1776,7 +1776,8 @@ def get_start_end_duration_with_validation(
         tuple: (start, end, duration) values from the component.
 
     Raises:
-        ~error.InvalidCalendar: If the component violates RFC 5545 constraints.
+        ~icalendar.error.InvalidCalendar: If the component violates
+            RFC 5545 constraints.
 
     """
     start = getattr(component, start_property, None)
@@ -1824,7 +1825,7 @@ def get_start_property(component: Event | Todo) -> date | datetime:
         The ``DTSTART`` value.
 
     Raises:
-        ~error.IncompleteComponent: If no ``DTSTART`` is present.
+        ~icalendar.error.IncompleteComponent: If no ``DTSTART`` is present.
 
     """
     # Trigger validation by calling _get_start_end_duration
@@ -1850,7 +1851,7 @@ def get_end_property(
         The computed end value.
 
     Raises:
-        ~error.IncompleteComponent: If the provided information is incomplete
+        ~icalendar.error.IncompleteComponent: If the provided information is incomplete
             to compute the end property.
 
     """
