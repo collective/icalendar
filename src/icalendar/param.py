@@ -189,7 +189,6 @@ Description:
 
 
 def quoted_list_parameter(name: str) -> property:
-
     """Create a property for a parameter that contains a quoted list.
 
     Parameters:
