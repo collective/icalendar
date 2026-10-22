@@ -10,26 +10,29 @@ Glossary
 
     iCalendar
         The RFC called :rfc:`Internet Calendaring and Scheduling Core Object Specification (iCalendar)<5545>`, with an upper-case "C".
-        Files that follow the iCalendar specification are called :term:`iCalendar files <iCalendar file>`.
+        Files that follow the iCalendar specification are called :term:`iCalendar files`.
 
     iCalendar file
+    iCalendar files
         A file with :term:`iCalendar` content.
         The file ending is ``.ics``.
 
     xCal
         The RFC called :rfc:`xCal: The XML Format for iCalendar <6321>`, with an upper-case "C".
-        Files that follow the xCal specification are called :term:`xCal files <xCal file>`.
+        Files that follow the xCal specification are called :term:`xCal files`.
 
     xCal file
+    xCal files
         A file with :term:`xCal` content.
         No file ending is standardized.
         :term:`icalendar` uses ``.xml``.
 
     jCal
         The RFC called :rfc:`jCal: The JSON Format for iCalendar <7265>`, with an upper-case "C".
-        Files that follow the jCal specification are called :term:`jCal files <jCal file>`.
+        Files that follow the jCal specification are called :term:`jCal files`.
 
     jCal file
+    jCal files
         A file with :term:`iCalendar` content.
         The recommended file ending is ``.json``.
         :term:`icalendar` uses ``.jcal`` in tests and examples.
