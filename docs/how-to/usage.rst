@@ -197,15 +197,26 @@ You can also choose to use the :meth:`icalendar.cal.component.Component.decoded`
     datetime.datetime(2005, 4, 4, 8, 0)
 
 
-BASE64 values
-'''''''''''''
+.. _read-base64-values:
+
+Read BASE64 values
+''''''''''''''''''
 
 Use :meth:`~icalendar.cal.component.Component.from_ical` to read values with ``ENCODING=BASE64``.
-The parser decodes non-BINARY values as UTF-8 before it parses their value type.
-For example, ``SUMMARY;ENCODING=BASE64:SGVsbG8=`` gives the text ``Hello``.
-The parser removes ``ENCODING`` from these values and keeps their other parameters.
-Conversion to jCal or xCal uses the decoded values, as required by :rfc:`7265#section-3.1` and :rfc:`6321#section-3.1`.
-Values with ``VALUE=BINARY`` keep their binary data.
+
+.. code-block:: pycon
+
+    >>> event = Event.from_ical(
+    ...     "BEGIN:VEVENT\r\n"
+    ...     "SUMMARY;ENCODING=BASE64;LANGUAGE=en:SGVsbG8=\r\n"
+    ...     "END:VEVENT\r\n"
+    ... )
+    >>> print(event["SUMMARY"])
+    Hello
+    >>> event["SUMMARY"].params["LANGUAGE"]
+    'en'
+
+See :doc:`../explanation/base64` for the format rules and the difference between text and binary values.
 
 
 Property parameters
