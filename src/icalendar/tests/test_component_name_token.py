@@ -8,7 +8,13 @@ then used it verbatim as the XML element name, so a name containing ``<`` or
 
 import pytest
 
-from icalendar import Calendar, ICalParsingError, LazyCalendar
+from icalendar import (
+    Calendar,
+    ComponentFactory,
+    ICalParsingError,
+    LazyCalendar,
+    XCalParsingError,
+)
 
 INVALID_COMPONENT_NAMES = [
     "X-A><INJECTED/><X-A",
@@ -17,6 +23,14 @@ INVALID_COMPONENT_NAMES = [
     "X-A:B",
     'X-A"B',
     "",
+    " X-A",
+    "X-A ",
+    "X-A\tB",
+    "X-A\x0bB",
+    "X-A\xa0B",
+    "X-A\u3000B",
+    "X-A\x00",
+    "X-A\x7f",
 ]
 
 VALID_COMPONENT_NAMES = ["X-VENDOR-COMP", "x-lower", "X-1.2_3", "VEVENT"]
@@ -60,3 +74,26 @@ def test_valid_component_name_round_trips_through_xcal(name):
     assert calendar.subcomponents[0].name == name.upper()
     xcal = calendar.to_xcal()
     assert Calendar.from_xcal(xcal)[0].subcomponents[0].name == name.upper()
+
+
+@pytest.mark.parametrize("name", INVALID_COMPONENT_NAMES)
+def test_component_factory_rejects_invalid_name(name):
+    """The component factory does not create a class for an invalid name."""
+    factory = ComponentFactory()
+    with pytest.raises(ValueError):
+        factory.get_component_class(name)
+    assert name not in factory
+
+
+def test_invalid_xcal_component_name_is_rejected():
+    """An XML element name that is not a valid token is rejected."""
+    xcal = (
+        '<icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">'
+        "<vcalendar><components><x-a\u00b7b/></components></vcalendar>"
+        "</icalendar>"
+    ).encode()
+    with pytest.raises(
+        XCalParsingError,
+        match=r"The component name must be a valid iCalendar token",
+    ):
+        Calendar.from_xcal(xcal)

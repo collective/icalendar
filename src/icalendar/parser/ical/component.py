@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, ClassVar
 from icalendar.error import ICalParsingError
 from icalendar.parser.content_line import Contentline, Contentlines
 from icalendar.parser.property import split_on_unescaped_comma
-from icalendar.parser.string import validate_token
 from icalendar.prop import vBroken
 from icalendar.timezone import tzp
 
@@ -97,15 +96,8 @@ class ComponentIcalParser:
             raise exception
         component.errors.append((None, str(exception)))
 
-    @staticmethod
-    def validate_component_name(name: str) -> None:
-        r"""Check that a component name is a valid iCalendar token.
-
-        A component name is an ``iana-token`` or ``x-name``
-        (:rfc:`5545#section-3.6`). It is written verbatim into the ``BEGIN``
-        and ``END`` content lines and used as the XML element name in xCal,
-        so a name with characters outside of ``[\w.-]+`` would inject
-        structure into the serialized output.
+    def get_component_class(self, name: str) -> type[Component]:
+        """Get the component class for a name from the ``BEGIN`` line.
 
         Parameters:
             name: The component name from the ``BEGIN`` line.
@@ -114,21 +106,19 @@ class ComponentIcalParser:
             ~icalendar.error.ICalParsingError: If the name is not a valid token.
         """
         try:
-            validate_token(name)
-        except ValueError:
+            return self._component_factory.get_component_class(name.upper())
+        except ValueError as error:
             raise ICalParsingError(
-                r"The component name must be a valid iCalendar token, matching "
-                r"the regular expression pattern `[\w.-]+`.",
+                "The component name must be a valid iCalendar token",
                 value=name,
-            ) from None
+            ) from error
 
     def handle_begin_component(self, vals: str) -> None:
         """Handle the beginning of a component."""
-        self.validate_component_name(vals)
         # try and create one of the components defined in the spec,
         # otherwise get a general Components for robustness.
         c_name = vals.upper()
-        c_class = self._component_factory.get_component_class(c_name)
+        c_class = self.get_component_class(vals)
         # If component factory cannot resolve ``c_name``, the generic
         # ``Component`` class is used which does not have the name set.
         # That's opposed to the usage of ``cls``, which represents a
