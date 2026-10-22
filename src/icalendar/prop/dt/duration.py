@@ -6,7 +6,12 @@ from typing import Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import ICalParsingError, InvalidCalendar, JCalParsingError, XCalParsingError
+from icalendar.error import (
+    ICalParsingError,
+    InvalidCalendar,
+    JCalParsingError,
+    XCalParsingError,
+)
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
