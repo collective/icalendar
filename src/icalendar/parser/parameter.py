@@ -7,9 +7,10 @@ import os
 import re
 from datetime import datetime, time
 from typing import TYPE_CHECKING, Any, Protocol
+from xml.etree.ElementTree import Element
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.compatibility import deprecate_for_version_8
+from icalendar.compatibility import Self, deprecate_for_version_9
 from icalendar.error import JCalParsingError
 from icalendar.parser.string import validate_token
 from icalendar.parser_tools import (
@@ -19,9 +20,10 @@ from icalendar.parser_tools import (
 from icalendar.timezone.tzid import tzid_from_dt
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Sequence
+    from collections.abc import Callable, KeysView, Sequence
 
     from icalendar.enums import VALUE
+    from icalendar.parser.xcal.adapter import ElementAdapter
     from icalendar.prop import VPROPERTY
 
 
@@ -51,10 +53,10 @@ def param_value(
         The formatted parameter value, escaped and quoted as needed.
     """
     if isinstance(value, SEQUENCE_TYPES):
-        return q_join(map(rfc_6868_escape, value), always_quote=always_quote)
+        return q_join(map(_rfc_6868_escape, value), always_quote=always_quote)
     if isinstance(value, str):
-        return dquote(rfc_6868_escape(value), always_quote=always_quote)
-    return dquote(rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
+        return dquote(_rfc_6868_escape(value), always_quote=always_quote)
+    return dquote(_rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
 
 
 # Could be improved
@@ -190,7 +192,7 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def _single_string_parameter(func: Callable | None = None, upper=False):
+def _single_string_parameter(func: Callable | None = None, upper: bool = False):
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
@@ -202,7 +204,7 @@ def _single_string_parameter(func: Callable | None = None, upper=False):
         if func is ``None``.
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> property:
         name = func.__name__
 
         @functools.wraps(func)
@@ -233,10 +235,10 @@ def _single_string_parameter(func: Callable | None = None, upper=False):
     return decorator(func)
 
 
-single_string_parameter = deprecate_for_version_8(_single_string_parameter)
+single_string_parameter = deprecate_for_version_9(_single_string_parameter)
 
 
-class Parameters(CaselessDict):
+class Parameters(CaselessDict[str | list[str]]):
     """Parser and generator of Property parameter strings.
 
     It knows nothing of datatypes.
@@ -308,13 +310,13 @@ class Parameters(CaselessDict):
         "CN": " '",
     }
 
-    def params(self):
+    def params(self) -> KeysView[str]:
         """In RFC 5545 keys are called parameters, so this is to be consitent
         with the naming conventions.
         """
         return self.keys()
 
-    def to_ical(self, sorted: bool = True):  # noqa: A002
+    def to_ical(self, sorted: bool = True) -> bytes:  # noqa: A002
         """Returns an :rfc:`5545` representation of the parameters.
 
         Parameters:
@@ -345,7 +347,7 @@ class Parameters(CaselessDict):
         return b";".join(result)
 
     @classmethod
-    def from_ical(cls, st, strict=False):
+    def from_ical(cls, st: str, strict: bool = False) -> Self:
         """Parses the parameter format from ical text format."""
 
         # parse into strings
@@ -356,24 +358,24 @@ class Parameters(CaselessDict):
                 validate_token(key)
                 # Property parameter values that are not in quoted
                 # strings are case insensitive.
-                vals = []
+                string_values = []
                 for v in q_split(val, ","):
                     if v.startswith('"') and v.endswith('"'):
                         v2 = v.strip('"')
                         validate_param_value(v2, quoted=True)
-                        vals.append(rfc_6868_unescape(v2))
+                        string_values.append(_rfc_6868_unescape(v2))
                     else:
                         validate_param_value(v, quoted=False)
                         if strict:
-                            vals.append(rfc_6868_unescape(v.upper()))
+                            string_values.append(_rfc_6868_unescape(v.upper()))
                         else:
-                            vals.append(rfc_6868_unescape(v))
-                if not vals:
-                    result[key] = val
-                elif len(vals) == 1:
-                    result[key] = vals[0]
-                else:
-                    result[key] = vals
+                            string_values.append(_rfc_6868_unescape(v))
+
+                if not string_values:
+                    string_values = [val]
+                result[key] = (
+                    string_values[0] if len(string_values) == 1 else string_values
+                )
             except ValueError as exc:  # noqa: PERF203
                 raise ValueError(
                     f"{param!r} is not a valid parameter string: {exc}"
@@ -463,17 +465,23 @@ class Parameters(CaselessDict):
         """Whether the TZID parameter is UTC."""
         return self.tzid == "UTC"
 
-    def update_tzid_from(self, dt: datetime | time | Any) -> None:
+    def update_tzid_from(
+        self, dt: datetime | time | tuple[datetime, Any] | Any
+    ) -> None:
         """Update the TZID parameter from a datetime object.
 
         This sets the TZID parameter or deletes it according to the datetime.
         :rfc:`5545#section-3.2.19` prohibits TZID on UTC datetimes,
         which use the ``Z`` suffix instead.
         """
+        if isinstance(dt, tuple) and len(dt) >= 1:
+            dt = dt[0]
         if isinstance(dt, (datetime, time)):
             tzid = tzid_from_dt(dt)
-            if tzid != "UTC":
-                # UTC uses Z suffix and does not appear as TZID parameter
+            # UTC uses Z suffix and does not appear as TZID parameter
+            if tzid == "UTC":
+                del self.tzid
+            else:
                 self.tzid = tzid
 
     @classmethod
@@ -481,6 +489,7 @@ class Parameters(CaselessDict):
         """Parse jCal parameters."""
         if not isinstance(jcal, dict):
             raise JCalParsingError("The parameters must be a mapping.", cls)
+        result = cls()
         for name, value in jcal.items():
             if not isinstance(name, str):
                 raise JCalParsingError(
@@ -502,7 +511,10 @@ class Parameters(CaselessDict):
                     name,
                     value=value,
                 )
-        return cls(jcal)
+            result[name] = (
+                value[0] if isinstance(value, list) and len(value) == 1 else value
+            )
+        return result
 
     @classmethod
     def from_jcal_property(cls, jcal_property: list):
@@ -524,11 +536,101 @@ class Parameters(CaselessDict):
             del self.tzid  # we do not want this parameter
         return self
 
+    @classmethod
+    def from_xcal(cls, element: Element | ElementAdapter) -> Parameters:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+
+        Returns:
+            :Parameters: The parsed parameters.
+
+        Example:
+
+            This parses the parameters from an xCal string.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Parameters
+                >>> from xml.etree.ElementTree import fromstring
+                >>> xcal_string = '''
+                ... <parameters>
+                ...     <language>
+                ...         <text>en-US</text>
+                ...     </language>
+                ... </parameters>
+                ... '''
+                >>> xml_element = fromstring(xcal_string)
+                >>> parameters = Parameters.from_xcal(xml_element)
+                >>> parameters['language'] == 'en-US'
+                True
+
+        """
+        from icalendar.parser.xcal.parameters import XCalParametersParser
+
+        parser = XCalParametersParser(element)
+        return parser.parse_parameters()
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of the parameters according to :rfc:`6321`.
+
+        No parameters are added when they are empty or parameters are already present
+        in the element.
+
+        Parameters:
+            element: The parameters are added to this element as first child.
+        """
+        if not self or (len(element) >= 1 and element[0].tag == "parameters"):
+            return  # exit quickly
+        from icalendar.prop.factory import TypesFactory
+
+        result = Element("parameters")
+        factory = TypesFactory.instance()
+        for key in sorted(self):
+            if key == "VALUE":
+                continue
+            value_factory = factory.for_property(key)
+            param_element = Element(key.lower())
+            for value in self.get_multiple(key):
+                # value is expected to be str or a subclass of str
+                if hasattr(value, "to_xcal"):
+                    # str subclass
+                    value.to_xcal(param_element)
+                else:
+                    parsed_value = value_factory.from_ical(value)
+                    if hasattr(parsed_value, "to_xcal"):
+                        # property type
+                        parsed_value.to_xcal(param_element)  # type: ignore  # noqa: PGH003
+                    else:
+                        # native type
+                        v_prop = value_factory(parsed_value)  # type: ignore  # noqa: PGH003
+                        v_prop.to_xcal(param_element)
+            result.append(param_element)
+        if len(result) > 0:
+            # Parameters always go first.
+            element.insert(0, result)
+
+    def get_multiple(self, key: str) -> list:
+        """Get mulitple values as a list.
+
+        .. note::
+
+            Do not modify the list. This is only for iteration.
+        """
+        result = self.get(key, [])
+        if not isinstance(result, list):
+            return [result]
+        return result
+
 
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
 
 
-def rfc_6868_unescape(param_value: str) -> str:
+def _rfc_6868_unescape(param_value: str) -> str:
     """Take care of :rfc:`6868` unescaping.
 
     - ^^ -> ^
@@ -549,7 +651,7 @@ def rfc_6868_unescape(param_value: str) -> str:
 RFC_6868_ESCAPE_REGEX = re.compile(r'\^|\r\n|\r|\n|"')
 
 
-def rfc_6868_escape(param_value: str) -> str:
+def _rfc_6868_escape(param_value: str) -> str:
     """Take care of :rfc:`6868` escaping.
 
     - ^ -> ^^
@@ -568,13 +670,15 @@ def rfc_6868_escape(param_value: str) -> str:
     )
 
 
+rfc_6868_escape = deprecate_for_version_9(_rfc_6868_escape)
+rfc_6868_unescape = deprecate_for_version_9(_rfc_6868_unescape)
+
+
 __all__ = [
     "Parameters",
     "dquote",
     "param_value",
     "q_join",
     "q_split",
-    "rfc_6868_escape",
-    "rfc_6868_unescape",
     "validate_param_value",
 ]
