@@ -36,7 +36,9 @@ class vRequestStatus(vText):
     :rfc:`6321#appendix-A` in subsection 3.8.8.3 Request Status and,
     :rfc:`7265#section-3.4.1.2`.
 
-    Example:
+    Examples:
+
+        The attributes of a valid request status return the parsed data:
 
         .. code-block:: pycon
 
@@ -46,6 +48,19 @@ class vRequestStatus(vText):
             (2, 0)
             >>> r.description
             'Success'
+            >>> r.data is None
+            True
+
+        An invalid :attr:`code` is indicated by an empty tuple and
+        an empty description.
+
+        .. code-block:: pycon
+
+            >>> r = vRequestStatus("2.10;invalid")
+            >>> r.code
+            ()
+            >>> r.description
+            ''
             >>> r.data is None
             True
 
