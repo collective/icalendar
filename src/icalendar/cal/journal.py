@@ -188,12 +188,12 @@ class Journal(Component):
         return "\r\n\r\n".join(descriptions)
 
     @description.setter
-    def description(self, description: str | None):
+    def description(self, description: str | None) -> None:
         """Set the description"""
         self.descriptions = description
 
     @description.deleter
-    def description(self):
+    def description(self) -> None:
         """Delete all descriptions."""
         del self.descriptions
 
