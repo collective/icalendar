@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 from datetime import date, datetime
-from typing import Any, ClassVar
+from typing import ClassVar
 from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
@@ -21,7 +21,9 @@ class vDDDLists:
     params: Parameters
     dts: list[vDDDTypes]
 
-    def __init__(self, dt_list, params: dict[str, Any] | None = None) -> None:
+    def __init__(
+        self, dt_list: list[datetime], params: dict[datetime] | None = None
+    ) -> None:
         if params is None:
             params = {}
         if not hasattr(dt_list, "__iter__") or (

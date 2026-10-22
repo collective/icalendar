@@ -162,7 +162,7 @@ class vTime(TimeBase):
         return self.params.is_utc() or is_utc(self.dt)
 
     @staticmethod
-    def from_ical(ical: str, timezone: str | None | tzinfo = None) -> time:
+    def from_ical(ical: str, timezone: str | tzinfo | None = None) -> time:
         """Convert an ical string into a time.
 
         This method supports parsing the three forms of time values defined in :rfc:`5545#section-3.3.12`:

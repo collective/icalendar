@@ -132,7 +132,7 @@ class JCalParsingError(InvalidCalendar):
         self,
         message: str,
         parser: str | type = "",
-        path: list[str | int] | None | str | int = None,
+        path: list[str | int] | str | int | None = None,
         value: object = _default_value,
     ) -> None:
         """Create a new JCalParsingError.
@@ -183,7 +183,7 @@ class JCalParsingError(InvalidCalendar):
             ).with_traceback(e.__traceback__) from e
 
     @staticmethod
-    def _get_path(path: list[str | int] | None | str | int) -> list[str | int]:
+    def _get_path(path: list[str | int] | str | int | None) -> list[str | int]:
         """Return the path as a list."""
         if path is None:
             path = []
@@ -196,7 +196,7 @@ class JCalParsingError(InvalidCalendar):
         cls,
         jcal_property: list[object],
         parser: str | type,
-        path: list[str | int] | None | str | int = None,
+        path: list[str | int] | str | int | None = None,
     ) -> None:
         """Validate a jCal property.
 
@@ -256,7 +256,7 @@ class JCalParsingError(InvalidCalendar):
         expected_type: type[str | int | float | bool]
         | tuple[type[str | int | float | bool], ...],
         parser: str | type = "",
-        path: list[str | int] | None | str | int = None,
+        path: list[str | int] | str | int | None = None,
     ) -> None:
         """Validate the type of a jCal value."""
         if not isinstance(jcal, expected_type):
@@ -278,7 +278,7 @@ class JCalParsingError(InvalidCalendar):
         jcal: object,
         expected_type: type[str | int | float | bool],
         parser: str | type = "",
-        path: list[str | int] | None | str | int = None,
+        path: list[str | int] | str | int | None = None,
     ) -> None:
         """Validate the type of each item in a jCal list."""
         path = cls._get_path(path)
@@ -305,7 +305,7 @@ class JCalParsingError(InvalidCalendar):
         name: str,
         kind: str,
         parser: str | type = "",
-        path: list[str | int] | None | str | int = None,
+        path: list[str | int] | str | int | None = None,
     ) -> None:
         r"""Validate a jCal ``name`` as a lowercase iCalendar token.
 
