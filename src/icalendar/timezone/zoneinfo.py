@@ -87,7 +87,7 @@ class ZONEINFO(TZProvider):
             # zoninfo does not know any transition dates after 2038
             rrule._until = datetime(2038, 12, 31, tzinfo=self.utc)  # noqa: SLF001
 
-    def create_timezone(self, tz: Timezone.Timezone) -> tzinfo:
+    def create_timezone(self, tz: Timezone) -> tzinfo:
         """Create a timezone from the given information."""
         try:
             return self._create_timezone(tz)
@@ -109,7 +109,7 @@ class ZONEINFO(TZProvider):
             except ValueError as e:
                 raise ValueError(f"Invalid iCalendar VTIMEZONE: {e}") from e
 
-    def _create_timezone(self, tz: Timezone.Timezone) -> tzinfo:
+    def _create_timezone(self, tz: Timezone) -> tzinfo:
         """Create a timezone and maybe fail"""
         file = StringIO(tz.to_ical().decode("UTF-8", "replace"))
         return tzical(file).get()
