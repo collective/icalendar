@@ -12,6 +12,11 @@ jobs:
   pyright:
     name: Check Typing
     runs-on: ubuntu-latest
+    env:
+      MESSAGE: |
+        Your code contains type errors.
+        Please set up your development environment and run the type checking command.
+        https://icalendar.readthedocs.io/en/stable/contribute/development.html#check-typing
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
@@ -24,4 +29,8 @@ jobs:
     - name: Install dependencies
       run: make .venv
     - name: Check icalendar
-      run: make test-types
+      run: |
+        if ! make test-types; then
+          echo "$MESSAGE"
+          exit 1
+        fi
