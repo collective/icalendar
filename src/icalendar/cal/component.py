@@ -39,7 +39,7 @@ from icalendar.parser import (
 from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown
-from icalendar.prop.xml import _hide_xml_properties
+from icalendar.prop.xml import _preserve_indentation_of_xcal_extension_properties
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -1239,7 +1239,7 @@ class Component(CaselessDict):
         file.write(b'<?xml version="1.0" encoding="UTF-8"?>')
         if indent is not None:
             file.write(b"\n")
-            with _hide_xml_properties(stream):
+            with _preserve_indentation_of_xcal_extension_properties(stream):
                 indent_xml(stream, space=indent)
         ElementTree(stream).write(file, "utf-8", xml_declaration=False, method="xml")
         if indent is not None:
@@ -1267,9 +1267,6 @@ class Component(CaselessDict):
     @classmethod
     def from_xcal(cls, xcal: Element | bytes | Path | BinaryIO) -> list[Self]:
         """Parse xCal according to :rfc:`6321`.
-
-        Elements in other namespaces directly in ``properties`` become XML
-        properties, see :class:`~icalendar.prop.xml.vXml`.
 
         Parameters:
             xcal: The xCal element or data to parse.

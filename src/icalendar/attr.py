@@ -2726,7 +2726,8 @@ Its value is an XML element in a namespace other than the iCalendar namespace.
 In xCal, the element is part of the properties of the component,
 see :rfc:`6321#section-4.1`.
 
-Note:
+.. note::
+
     To change the values, assign a new list or use ``add()``.
     Changing the returned list does not always change the component.
 

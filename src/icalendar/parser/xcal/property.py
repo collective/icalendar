@@ -59,8 +59,6 @@ class XCalPropertiesParser(XCalParser):
 
             XML:<ns0:kml xmlns:ns0="http://www.opengis.net/kml/2.2" />
 
-        Elements in other namespaces inside of a property are not XML properties.
-
     """
 
     def __init__(

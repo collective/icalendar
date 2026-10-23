@@ -19,6 +19,7 @@ https://github.com/collective/icalendar/pull/1958#discussion_r4324499271
 """
 
 import base64
+import re
 import xml.etree.ElementTree as ET
 from io import BytesIO
 from xml.etree.ElementTree import Element, ParseError, fromstring, tostring
@@ -38,6 +39,7 @@ from icalendar import (
     vXml,
 )
 from icalendar.parser.xcal.adapter import ElementAdapter
+from icalendar.parser.xcal.property import XCalPropertyParser
 
 XML = '<a xmlns="http://example.com/ns">text</a>'
 XML_BASE64 = base64.b64encode(XML.encode()).decode()
@@ -118,12 +120,44 @@ def test_xml_property_from_xcal_example_file(calendars):
 
 
 def test_xml_property_from_xcal_keeps_the_element():
-    """The value keeps its own element, not the one in the xCal."""
-    xcal = fromstring(xcal_event(XML))
-    xml = Event.from_xcal(xcal)[0]["XML"]
-    xcal[0][0][0].text = "changed"
-    assert isinstance(xml._element, ElementAdapter)
+    """The value keeps the element with its path in the xCal, without parsing."""
+    xml = Event.from_xcal(xcal_event(XML))[0]["XML"]
+    assert xml._element.get_xpath() == "/icalendar/vevent[1]/properties[1]/a[1]"
     assert xml.element.text == "text"
+    assert xml.element.tail is None
+
+
+def test_xml_property_from_xcal_without_the_icalendar_namespace():
+    """xCal without the iCalendar namespace still has XML properties."""
+    xcal = (
+        "<icalendar><vevent><properties>"
+        "<summary><text>Meeting</text></summary>"
+        '<kml xmlns="http://www.opengis.net/kml/2.2"><Document/></kml>'
+        "</properties></vevent></icalendar>"
+    )
+    event = Event.from_xcal(xcal.encode())[0]
+    assert event["SUMMARY"] == "Meeting"
+    assert event["XML"].element.tag == "{http://www.opengis.net/kml/2.2}kml"
+
+
+@pytest.mark.parametrize(
+    "xcal",
+    [
+        pytest.param(lambda: fromstring(XML), id="Element"),
+        pytest.param(lambda: ElementAdapter(fromstring(XML)), id="ElementAdapter"),
+        pytest.param(lambda: XCalPropertyParser(fromstring(XML)), id="parser"),
+    ],
+)
+def test_xml_property_from_xcal_of_the_element(xcal):
+    """The XML element is the value, also when a parser is given."""
+    assert vXml.from_xcal(xcal()).element.text == "text"
+
+
+def test_xml_property_from_xcal_of_an_xml_property_element():
+    """An xml property element is parsed like other TEXT properties."""
+    element = fromstring("<xml><text>&lt;a xmlns=&quot;urn:x&quot;/&gt;</text></xml>")
+    assert str(vXml.from_xcal(XCalPropertyParser(element))) == '<a xmlns="urn:x"/>'
+    assert str(vXml.from_xcal(element)) == '<a xmlns="urn:x"/>'
 
 
 def test_xml_property_from_xcal_reads_what_to_xcal_writes():
@@ -308,7 +342,8 @@ def test_xml_property_from_ical_is_vxml():
     """The XML property is a vXml."""
     event = Event.from_ical(f"BEGIN:VEVENT\r\nXML:{XML}\r\nEND:VEVENT\r\n")
     assert isinstance(event["XML"], vXml)
-    assert event["XML"].ical_value == XML
+    assert event["XML"] == vXml(XML)
+    assert event["XML"].ical_value.tag == "{http://example.com/ns}a"
     assert event["XML"].element.text == "text"
 
 
@@ -316,7 +351,7 @@ def test_xml_property_from_ical_rfc_example(calendars):
     """The KML example of RFC 6321 keeps its content."""
     xml = calendars.rfc_6321_xml_property_ical.events[0]["XML"]
     assert isinstance(xml, vXml)
-    assert xml.ical_value == KML
+    assert str(xml) == KML
     assert xml.element[0][0].text == "KML Sample"
 
 
@@ -460,13 +495,21 @@ def test_xml_to_xcal_element_with_control_characters():
     assert Event.from_xcal(event.to_xcal())[0]["XML"].element.text == "ab"
 
 
-def test_xml_to_xcal_element_with_xmlns_attribute():
-    """An xmlns attribute sets the namespace like in the XML text."""
+@pytest.mark.parametrize(
+    "data",
+    [
+        '<?xml version="1.0" encoding="ISO-8859-1"?><a xmlns="urn:x">café</a>'.encode(
+            "ISO-8859-1"
+        ),
+        '<a xmlns="urn:x">café</a>'.encode(),
+    ],
+)
+def test_xml_to_xcal_bytes(data):
+    """Bytes are decoded with the encoding of their XML declaration."""
     event = Event()
-    event.add("XML", Element("a", xmlns="http://example.com/ns"))
-    assert event["XML"].element.tag == "{http://example.com/ns}a"
-    copy = Event.from_xcal(event.to_xcal())[0]
-    assert copy["XML"].element.tag == "{http://example.com/ns}a"
+    event.add("XML", data)
+    assert event["XML"].element.text == "café"
+    assert Event.from_xcal(event.to_xcal())[0]["XML"].element.text == "café"
 
 
 def test_xml_to_ical_without_the_tail_of_the_element():
@@ -482,16 +525,11 @@ def test_xml_to_ical_without_the_tail_of_the_element():
 # vXml
 
 
-@pytest.mark.parametrize("source", ["text", "Element", "ElementAdapter"])
-def test_vxml_element_is_a_copy(source):
+@pytest.mark.parametrize("from_element", [True, False])
+def test_vxml_element_is_a_copy(from_element):
     """Changing an element does not change the value."""
     element = fromstring(XML)
-    sources = {
-        "text": XML,
-        "Element": element,
-        "ElementAdapter": ElementAdapter(element),
-    }
-    value = vXml(sources[source])
+    value = vXml(element if from_element else XML)
     element.text = "changed"
     value.element.text = "changed"
     assert value.element.text == "text"
@@ -541,6 +579,9 @@ def test_vxml_is_not_equal_to_other_types():
     assert vXml(XML) != 1
     assert vXml(XML) != object()
     assert (vXml(XML) == 1) is False
+    assert 1 != vXml(XML)
+    assert object() != vXml(XML)
+    assert (1 == vXml(XML)) is False
 
 
 def test_vxml_equality_of_text_that_is_not_xml():
@@ -637,6 +678,22 @@ def test_to_xcal_broken_xml(text):
     event = Event()
     event.add("XML", text)
     with pytest.raises(InvalidCalendar, match="Cannot write the XML property"):
+        event.to_xcal()
+
+
+def test_to_xcal_broken_xml_in_another_property():
+    """vXml can only be written to xCal as the value of the XML property."""
+    event = Event()
+    event.add("DESCRIPTION", vXml(XML))
+    with pytest.raises(InvalidCalendar, match="value of the XML property"):
+        event.to_xcal()
+
+
+def test_to_xcal_broken_xml_tells_how_to_add_a_namespace():
+    """The error says how to add a namespace."""
+    event = Event()
+    event.add("XML", "<a>no namespace</a>")
+    with pytest.raises(InvalidCalendar, match=re.escape('<a xmlns="http://')):
         event.to_xcal()
 
 

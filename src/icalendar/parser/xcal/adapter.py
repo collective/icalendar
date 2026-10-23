@@ -46,6 +46,10 @@ class ElementAdapter:
         Elements without a namespace belong to iCalendar.
         Extension elements directly in ``properties`` are XML properties,
         see :rfc:`6321#section-4.1`.
+
+        Returns:
+            ``True`` for an element in another namespace, and ``False`` for an
+            element in the iCalendar namespace or without a namespace.
         """
         tag = self._element.tag
         return tag.startswith("{") and not tag.startswith(
