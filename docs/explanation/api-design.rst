@@ -156,6 +156,8 @@ Based on the created event above, the following example shows how to access valu
     >>> print(event.start)
     2022-01-01
 
+..  _property-naming-convention:
+
 Property naming convention
 ==========================
 Property names are either in lower case or upper case.
@@ -168,6 +170,8 @@ Property names are either in lower case or upper case.
 
 All properties can be accessed as attributes.
 
+
+..  _lower-case-properties:
 
 Lower case properties
 ---------------------
@@ -197,6 +201,8 @@ While some attributes might be empty, they can have useful default values.
 
     >>> event.rdates  # no RDATE is set
     []
+
+..  _upper-case-properties:
 
 Upper case properties
 ---------------------
@@ -348,28 +354,24 @@ Strictness during parsing
 =========================
 
 icalendar parses :rfc:`iCal <5545>`, :rfc:`xCal <6321>` and :rfc:`jCal <7265>`.
-The issue we are facing is calendars not being constructed according to the RFCs and passed to icalendar for parsing.
+When calendars are not constructed according to the RFCs, icalendar may have issues parsing them.
 
-When implementing parsing support, this is the guidance:
+When implementing parsing support in icalendar, follow these guidelines:
 
-#. Serialization should stay close to the standard.
-
-#. Errors are raised when values are wrong.
-
-#. When the case is made later through a real-world example, then we become less strict.
+#.  Serialization should stay close to the standard.
+#.  Raise errors when values are wrong.
+#.  If an actual example that is an issue with parsing is provided, then adjust how strict parsing should be accordingly.
 
 
-icalendar also offers to convert between the different formats :rfc:`iCal <5545>`, :rfc:`xCal <6321>` and :rfc:`jCal <7265>`.
-For conversion, this is the guidance:
+icalendar also offers conversion between the different calendar formats of :rfc:`iCal <5545>`, :rfc:`xCal <6321>`, and :rfc:`jCal <7265>`.
+Conversion follows these guidelines:
 
-#. Calendars must round-trip with all examples provided.
-   Exceptions can be made for broken calendars.
-   A round trip is for example iCal ⇨ :class:`~icalendar.cal.calendar.Calendar` ⇨ iCal or :class:`~icalendar.cal.calendar.Calendar` ⇨ iCal ⇨ :class:`~icalendar.cal.calendar.Calendar`.
-
-#. icalendar should correct values where examples are already provided.
-
-#. When calendars :term:`round-trip`, they should not lose any information.
-   Invalid values behave differently from valid ones and should not lose invalidity during round-tripping.
+#.  Calendars must :term:`round-trip` with all examples provided.
+    Exceptions can be made for broken calendars.
+    Round trips are, for example, iCal ⇨ :class:`~icalendar.cal.calendar.Calendar` ⇨ iCal and :class:`~icalendar.cal.calendar.Calendar` ⇨ iCal ⇨ :class:`~icalendar.cal.calendar.Calendar`.
+#.  icalendar should correct values where examples are already provided.
+#.  When calendars round-trip, they should not lose any information.
+    Invalid values behave differently from valid ones and should not lose invalidity during round-tripping.
 
 Examples for preservation:
     :class:`~icalendar.prop.broken.vBroken` preserves invalid values.
@@ -383,14 +385,14 @@ Examples for checking:
     :class:`~icalendar.prop.request_status.vRequestStatus` returns default values for invalid ``code``.
 
 Examples for errors:
-    :attr:`vEmpty.ical_value <icalendar.prop.empty.vEmpty.ical_value>` raises :class:`~icalendar.error.InvalidCalendar` when accessed whereas :attr:`vText.ical_value <icalendar.prop.text.vText.ical_value>` returns the text.
+    :attr:`vEmpty.ical_value <icalendar.prop.empty.vEmpty.ical_value>` raises :class:`~icalendar.error.InvalidCalendar` when accessed, whereas :attr:`vText.ical_value <icalendar.prop.text.vText.ical_value>` returns the text.
 
 Not all of the calendar is interesting to the developer.
 Sensible default values and error-tolerant parsing enable compatibility to a wide range of faulty calendar files.
 A value that is not of interest should not prevent the calendar from being parsed.
-Then all interesting values would also get lost.
+If it were, then all interesting values would also get lost.
 
-The approach to this is error tolerant parsing and raising errors or providing defaults when the values are used for calculations.
+In summary, icalendar's approach to parsing is tolerant of errors, while raising errors or providing defaults when the values are used for calculations as described in :ref:`lower-case-properties`.
 
 .. seealso::
 

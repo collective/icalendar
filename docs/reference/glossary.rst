@@ -6,7 +6,7 @@ Glossary
     :sorted:
 
     icalendar
-        This Python package, with a lower-case "c", used for parsing and generating :term:`iCalendar` files following :doc:`different standards <rfc-support>`.
+        This Python package, with a lower-case "c", used for parsing and generating :term:`iCalendar` files following :doc:`various RFC standards <rfc-support>`.
 
     iCalendar
         The RFC called :rfc:`Internet Calendaring and Scheduling Core Object Specification (iCalendar)<5545>`, with an upper-case "C".
@@ -15,7 +15,7 @@ Glossary
     iCalendar file
     iCalendar files
         A file with :term:`iCalendar` content.
-        The file ending is ``.ics``.
+        The file name extension is ``ics``.
 
     xCal
         The RFC called :rfc:`xCal: The XML Format for iCalendar <6321>`, with an upper-case "C".
@@ -24,8 +24,8 @@ Glossary
     xCal file
     xCal files
         A file with :term:`xCal` content.
-        No file ending is standardized.
-        :term:`icalendar` uses ``.xml``.
+        No file name extension is standardized.
+        :term:`icalendar` uses ``xml``.
 
     jCal
         The RFC called :rfc:`jCal: The JSON Format for iCalendar <7265>`, with an upper-case "C".
@@ -34,14 +34,14 @@ Glossary
     jCal file
     jCal files
         A file with :term:`iCalendar` content.
-        The recommended file ending is ``.json``.
-        :term:`icalendar` uses ``.jcal`` in tests and examples.
+        The recommended file name extension is ``json``.
+        :term:`icalendar` uses ``jcal`` in tests and examples.
 
     round-trip
-        A round-trip happens when a calendar is converted into at leat one other representation and back.
+        A round-trip happens when a calendar is converted into at least one other representation and back.
         Examples of a round-trip are:
 
-        - A calendar is read from an ``.ics`` file and converted back to an ``.ics`` file.
+        - A calendar file is read into icalendar and converted back to the original calendar file format.
         - A calendar is created with :meth:`Calendar.new <icalendar.cal.calendar.Calendar.new>`, converted to :term:`xCal` using :meth:`Calendar.to_xcal <icalendar.cal.calendar.Calendar.to_xcal>` and then read back into a :class:`~icalendar.cal.calendar.Calendar` object using :meth:`Calendar.from_xcal <icalendar.cal.calendar.Calendar.from_xcal>`.
 
     Vale
