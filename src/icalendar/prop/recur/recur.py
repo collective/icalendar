@@ -260,7 +260,7 @@ class vRecur(CaselessDict):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
@@ -469,7 +469,9 @@ class vRecur(CaselessDict):
             if from_xcal is None:
                 from_xcal = v_prop.from_xcal
             value = from_xcal(parser)
-            self.setdefault(key, []).append(value)
+            # Keep UNTIL as a raw date/time, as from_ical and from_jcal do.
+            parsed_value = value.dt if isinstance(value, vDDDTypes) else value
+            self.setdefault(key, []).append(parsed_value)
         return self
 
     def to_xcal(self, element: Element) -> None:
