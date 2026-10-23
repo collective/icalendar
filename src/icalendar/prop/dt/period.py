@@ -1,7 +1,9 @@
 """PERIOD property type from :rfc:`5545`."""
 
+from __future__ import annotations
+
 from datetime import date, datetime, timedelta, tzinfo
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
@@ -15,6 +17,10 @@ from icalendar.tools import is_date, is_datetime, is_pytz, normalize_pytz, to_da
 from .base import TimeBase
 from .datetime import vDatetime
 from .duration import vDuration
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
 
 
 def _to_midnight(dt: date, tz: tzinfo | None) -> datetime:
@@ -168,12 +174,12 @@ class vPeriod(TimeBase):
         self.by_duration = by_duration
         self.duration = duration
 
-    def overlaps(self, other):
+    def overlaps(self, other: vPeriod) -> bool:
         if self.start > other.start:
             return other.overlaps(self)
         return self.start <= other.start < self.end
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         if self.by_duration:
             return (
                 vDatetime(self.start).to_ical()
@@ -194,7 +200,7 @@ class vPeriod(TimeBase):
             raise ValueError(f"Expected period format, got: {ical}") from e
         return _to_period_datetimes(start, end_or_duration)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         p = (self.start, self.duration) if self.by_duration else (self.start, self.end)
         return f"vPeriod({p!r})"
 
@@ -239,7 +245,7 @@ class vPeriod(TimeBase):
         """Parse a jCal value.
 
         Raises:
-            ~error.JCalParsingError: If the period is not a list with exactly two items,
+            ~icalendar.error.JCalParsingError: If the period is not a list with exactly two items,
                 or it can't parse a date-time or duration.
         """
         if isinstance(jcal, str) and "/" in jcal:
@@ -274,7 +280,7 @@ class vPeriod(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):

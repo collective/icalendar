@@ -97,7 +97,7 @@ class vWeekday(str):
         self.params = Parameters(params)
         return self
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return self.encode(DEFAULT_ENCODING).upper()
 
     @classmethod
@@ -122,7 +122,7 @@ class vWeekday(str):
         """Parse a jCal value for vWeekday.
 
         Raises:
-            ~error.JCalParsingError: If the value is not a valid weekday.
+            ~icalendar.error.JCalParsingError: If the value is not a valid weekday.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:

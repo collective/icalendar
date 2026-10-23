@@ -170,7 +170,7 @@ class JCalParsingError(InvalidCalendar):
         """Automatically re-raise the exception with path components added.
 
         Raises:
-            ~error.JCalParsingError: If there was an exception in the context.
+            ~icalendar.error.JCalParsingError: If there was an exception in the context.
         """
         try:
             yield
@@ -208,7 +208,7 @@ class JCalParsingError(InvalidCalendar):
             path: The location in the jCal structure where the error occurred.
 
         Raises:
-            ~error.JCalParsingError: if the property is not valid.
+            ~icalendar.error.JCalParsingError: if the property is not valid.
 
         ..  versionchanged:: 7.3.0
             The name (first item of the list) is validated by
@@ -323,7 +323,7 @@ class JCalParsingError(InvalidCalendar):
             path: The jCal path to ``name``, used to locate it in the error.
 
         Raises:
-            ~error.JCalParsingError: If ``name`` is not a valid lowercase
+            ~icalendar.error.JCalParsingError: If ``name`` is not a valid lowercase
                 iCalendar token.
 
         See also:
