@@ -23,6 +23,7 @@ from icalendar.cal.examples import get_example
 from icalendar.cal.timezone import Timezone
 from icalendar.error import IncompleteComponent
 from icalendar.parser.ical.calendar import CalendarIcalParser
+from icalendar.timezone.tzid import is_utc
 from icalendar.version import __version__
 
 if TYPE_CHECKING:
@@ -260,10 +261,11 @@ class Calendar(Component):
         To create a :rfc:`5545` compatible calendar,
         all of these timezones should be added.
 
-        UTC is excluded: per :rfc:`5545#section-3.2.19`, UTC datetimes use
-        the ``Z`` suffix and never require a VTIMEZONE component.
+        UTC and timezones equivalent to it are excluded: per
+        :rfc:`5545#section-3.2.19`, UTC datetimes use the ``Z`` suffix and
+        never require a VTIMEZONE component.
         """
-        tzids = self.get_used_tzids() - {"UTC"}
+        tzids = {tzid for tzid in self.get_used_tzids() if not is_utc(tzid)}
         for timezone in self.timezones:
             # discard (not remove) — a VTIMEZONE may exist for a timezone not
             # referenced by any event TZID (e.g. added by x-wr-timezone conversion)

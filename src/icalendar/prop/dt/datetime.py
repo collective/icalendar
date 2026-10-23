@@ -1,6 +1,6 @@
 """DATE-TIME property type from :rfc:`5545`."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
@@ -108,7 +108,7 @@ class vDatetime(TimeBase):
         self.params.update_tzid_from(dt)
 
     def to_ical(self) -> bytes:
-        dt = self.dt
+        dt = self._utc_dt() if self.is_utc() else self.dt
 
         s = (
             f"{dt.year:04}{dt.month:02}{dt.day:02}"
@@ -168,14 +168,25 @@ class vDatetime(TimeBase):
 
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
-        value = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
         if self.is_utc():
-            value += "Z"
+            value = self._utc_dt().strftime("%Y-%m-%dT%H:%M:%SZ")
+        else:
+            value = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
         return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
 
     def is_utc(self) -> bool:
         """Whether this datetime is UTC."""
         return self.params.is_utc() or is_utc(self.dt)
+
+    def _utc_dt(self) -> datetime:
+        """The datetime in UTC, for writing it with a ``Z``.
+
+        A timezone equivalent to UTC may still have had another offset in
+        the past, such as ``Africa/Abidjan`` before 1912.
+        """
+        if self.dt.tzinfo is None or not self.dt.utcoffset():
+            return self.dt
+        return self.dt.astimezone(timezone.utc)
 
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> datetime:
@@ -236,9 +247,10 @@ class vDatetime(TimeBase):
             tag: The tag to use.
         """
         element = SubElement(element, tag.lower())
-        text = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
         if is_utc(self.dt):
-            text += "Z"
+            text = self._utc_dt().strftime("%Y-%m-%dT%H:%M:%SZ")
+        else:
+            text = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
         element.text = text
 
     @classmethod

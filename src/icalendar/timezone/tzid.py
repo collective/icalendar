@@ -134,8 +134,19 @@ def _get_equivalent_tzids(tzid: str) -> tuple[str]:
     return (tzid,) + tuple(sorted(ids - {tzid}))
 
 
-def is_utc(t: datetime | time | date | tzinfo) -> bool:
-    """Whether this date is in UTC."""
+def is_utc(t: datetime | time | date | tzinfo | str) -> bool:
+    """Whether this date, timezone or timezone id is UTC.
+
+    A timezone id equivalent to UTC, such as ``Etc/UTC``, counts as UTC.
+
+    >>> from icalendar.timezone.tzid import is_utc
+    >>> is_utc("Etc/UTC")
+    True
+    >>> is_utc("Europe/London")
+    False
+    """
+    if isinstance(t, str):
+        return "UTC" in _get_equivalent_tzids(t)
     if is_date(t):
         return False
     tzid = tzid_from_dt(t) if hasattr(t, "tzinfo") else tzid_from_tzinfo(t)
