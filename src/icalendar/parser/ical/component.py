@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from icalendar.error import ICalParsingError
+from icalendar.error import ICalParsingError, InvalidToken
 from icalendar.parser.content_line import Contentline, Contentlines
 from icalendar.parser.property import split_on_unescaped_comma
 from icalendar.prop import vBroken
@@ -100,14 +100,14 @@ class ComponentIcalParser:
         """Get the component class for a name from the ``BEGIN`` line.
 
         Parameters:
-            name: The component name from the ``BEGIN`` line.
+            name: Required. The component name from the ``BEGIN`` line.
 
         Raises:
             ~icalendar.error.ICalParsingError: If the name is not a valid token.
         """
         try:
-            return self._component_factory.get_component_class(name.upper())
-        except ValueError as error:
+            return self._component_factory.get_component_class(name)
+        except InvalidToken as error:
             raise ICalParsingError(
                 "The component name must be a valid iCalendar token",
                 value=name,

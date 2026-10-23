@@ -90,7 +90,8 @@ class ComponentFactory(CaselessDict):
             The registered component class.
 
         Raises:
-            ValueError: If the name is not a valid iCalendar token.
+            ~icalendar.error.InvalidToken: If the name is not a valid iCalendar
+                token.
         """
         component_class = self.get(name)
         if component_class is None:

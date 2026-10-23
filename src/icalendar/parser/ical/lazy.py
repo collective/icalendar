@@ -44,7 +44,6 @@ class LazyCalendarIcalParser(ComponentIcalParser):
             # these components are parsed immediately
             super().handle_begin_component(vals)
         else:
-            self.get_component_class(vals)
             self.handle_lazy_begin_component(c_name)
 
     def handle_lazy_begin_component(self, component_name: str) -> None:
@@ -59,7 +58,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
             content_lines.append(line)
             if (
                 line[:4].upper() == "END:"
-                and line[4:].strip().upper() == component_name
+                and line[4:].strip().upper() == component_name.strip()
             ):
                 break
         if self.component is None:

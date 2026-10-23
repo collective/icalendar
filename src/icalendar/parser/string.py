@@ -9,6 +9,7 @@
 
 import re
 
+from icalendar.error import InvalidToken
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 
@@ -226,25 +227,29 @@ def _unescape_string(val: str) -> str:
 
 # [\w-] because of the iCalendar RFC
 # . because of the vCard RFC
-NAME = re.compile(r"[\w.-]+")
+NAME = re.compile(r"[\w.-]+", re.ASCII)
 
 
 def validate_token(name: str) -> None:
     r"""Validate that a name is a valid iCalendar token.
 
     Checks if the name matches the :rfc:`5545` token syntax using the NAME
-    regex pattern (``[\w.-]+``).
+    regex pattern (``[\w.-]+``), with ``\w`` matching ASCII characters only.
 
     Parameters:
-        name: The token name to validate.
+        name: Required. The token name to validate.
 
     Raises:
-        ValueError: If the name is not a valid token.
+        ~icalendar.error.InvalidToken: If the name is not a valid token.
+
+    ..  versionchanged:: 8.0.0
+        Raise :exc:`~icalendar.error.InvalidToken`, a subclass of
+        :exc:`ValueError`, and reject non-ASCII characters.
     """
     match = NAME.findall(name)
     if len(match) == 1 and name == match[0]:
         return
-    raise ValueError(name)
+    raise InvalidToken(name)
 
 
 __all__ = [

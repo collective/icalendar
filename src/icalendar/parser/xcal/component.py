@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from icalendar.error import XCalParsingError
+from icalendar.error import InvalidToken, XCalParsingError
 from icalendar.parser.xcal.adapter import ElementAdapter
 from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.property import XCalPropertiesParser
@@ -120,7 +120,7 @@ class XCalComponentParser(XCalParser):
             component_class = self._component_factory.get_component_class(
                 self.child.tag
             )
-        except ValueError as error:
+        except InvalidToken as error:
             raise XCalParsingError(
                 "The component name must be a valid iCalendar token",
                 self.child.tag,
