@@ -17,7 +17,7 @@ from icalendar.parser_tools import (
     DEFAULT_ENCODING,
     SEQUENCE_TYPES,
 )
-from icalendar.timezone.tzid import is_utc, tzid_from_dt
+from icalendar.timezone.tzid import tzid_from_dt
 
 if TYPE_CHECKING:
     from collections.abc import Callable, KeysView, Sequence
@@ -320,9 +320,6 @@ class Parameters(CaselessDict[str | list[str]]):
     def to_ical(self, sorted: bool = True) -> bytes:  # noqa: A002
         """Returns an :rfc:`5545` representation of the parameters.
 
-        A TZID that is UTC or equivalent to it is left out: the value is
-        written with a ``Z`` instead (:rfc:`5545#section-3.3.5`).
-
         Parameters:
             sorted (bool): Sort the parameters before encoding.
         """
@@ -332,7 +329,7 @@ class Parameters(CaselessDict[str | list[str]]):
             items.sort()
 
         for key, value in items:
-            if key == "TZID" and is_utc(value):
+            if key == "TZID" and value == "UTC":
                 # The "TZID" property parameter MUST NOT be applied to DATE-TIME
                 # properties whose time values are specified in UTC.
                 continue
@@ -456,7 +453,7 @@ class Parameters(CaselessDict[str | list[str]]):
             for k, v in self.items()
             if k.lower() != "value"
         }
-        if exclude_utc and is_utc(jcal.get("tzid", "")):
+        if exclude_utc and jcal.get("tzid") == "UTC":
             del jcal["tzid"]
         return jcal
 
@@ -465,8 +462,8 @@ class Parameters(CaselessDict[str | list[str]]):
         """The TZID parameter from :rfc:`5545`."""
 
     def is_utc(self) -> bool:
-        """Whether the TZID parameter is UTC or a timezone equivalent to it."""
-        return self.tzid is not None and is_utc(self.tzid)
+        """Whether the TZID parameter is UTC."""
+        return self.tzid == "UTC"
 
     def update_tzid_from(
         self, dt: datetime | time | tuple[datetime, Any] | Any

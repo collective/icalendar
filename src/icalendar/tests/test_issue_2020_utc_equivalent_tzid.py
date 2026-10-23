@@ -72,13 +72,9 @@ def test_jcal_has_no_tzid_next_to_z(tzp, tzid):
     assert value.endswith("Z")
 
 
-@UTC_EQUIVALENT
-def test_parameters_know_the_tzid_is_utc(tzid):
-    assert Parameters({"TZID": tzid}).is_utc()
-
-
-def test_a_tzid_that_is_not_utc_is_not_utc():
-    assert not Parameters({"TZID": "Europe/London"}).is_utc()
+def test_a_tzid_alone_does_not_decide_utc():
+    """Whether a time in a zone equivalent to UTC is UTC depends on the time."""
+    assert not Parameters({"TZID": "Etc/UTC"}).is_utc()
 
 
 @UTC_EQUIVALENT
@@ -89,14 +85,58 @@ def test_no_vtimezone_is_added_for_it(tzp, tzid):
     assert not calendar.timezones
 
 
-def test_a_historical_offset_is_converted(tzp):
+@UTC_EQUIVALENT
+def test_xcal_has_no_tzid_next_to_z(tzp, tzid):
+    """The xCal form leaves out the TZID as well."""
+    calendar = Calendar.from_ical(ICS.format(tzid=tzid))
+    xcal = calendar.to_xcal().decode()
+    assert "<tzid>" not in xcal
+    assert "<date-time>2027-11-05T09:00:00Z</date-time>" in xcal
+
+
+ICS_1900 = ICS.format(tzid="Africa/Abidjan").replace("2027110", "1900010")
+
+
+def test_a_historical_offset_is_not_utc(tzp):
     """Before 1912, Africa/Abidjan was 16 minutes behind UTC.
 
-    A time written with a ``Z`` must be the moment in UTC, not the local time.
+    Then, it is a time zone like any other and keeps its TZID.
     """
+    calendar = Calendar.from_ical(ICS_1900)
+    ical = calendar.to_ical().decode()
+    assert "DTSTART;TZID=Africa/Abidjan:19000105T090000" in ical.splitlines()
+    again = Calendar.from_ical(ical).events[0].start
+    assert again == calendar.events[0].start
+
+
+def test_a_historical_offset_needs_a_vtimezone(tzp):
+    calendar = Calendar.from_ical(ICS_1900)
+    assert calendar.get_missing_tzids() == {"Africa/Abidjan"}
+
+
+def test_a_historical_offset_in_xcal(tzp):
+    xcal = Calendar.from_ical(ICS_1900).to_xcal().decode()
+    assert "<tzid><text>Africa/Abidjan</text></tzid>" in xcal
+    assert "<date-time>1900-01-05T09:00:00</date-time>" in xcal
+
+
+def test_a_historical_offset_in_jcal(tzp):
+    calendar = Calendar.from_ical(ICS_1900)
+    _, params, _, value = calendar.events[0]["DTSTART"].to_jcal("dtstart")
+    assert params["tzid"] == "Africa/Abidjan"
+    assert value == "1900-01-05T09:00:00"
+
+
+@pytest.mark.parametrize(
+    "values", ["19130105T090000,19000105T090000", "19000105T090000,19130105T090000"]
+)
+def test_a_list_across_the_offset_change_keeps_its_tzid(tzp, values):
+    """If only some times of a list are UTC, the TZID is still needed."""
     calendar = Calendar.from_ical(
-        ICS.format(tzid="Africa/Abidjan").replace("2027110", "1900010")
+        ICS_1900.replace(
+            "END:VEVENT", f"EXDATE;TZID=Africa/Abidjan:{values}\r\nEND:VEVENT"
+        )
     )
-    start = calendar.events[0].start
-    again = Calendar.from_ical(calendar.to_ical()).events[0].start
-    assert again == start
+    exdate = calendar.events[0]["EXDATE"]
+    again = Calendar.from_ical(calendar.to_ical()).events[0]["EXDATE"]
+    assert [d.dt for d in again.dts] == [d.dt for d in exdate.dts]

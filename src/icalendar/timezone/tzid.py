@@ -91,8 +91,14 @@ def tzid_from_tzinfo(tzinfo: tzinfo | None) -> str | None:
 
 
 def tzid_from_dt(dt: datetime | time) -> str | None:
-    """Retrieve the timezone id from the datetime object."""
+    """Retrieve the timezone id from the datetime object.
+
+    A timezone equivalent to UTC, such as ``Africa/Abidjan``, is UTC only
+    while its offset is zero.  Before 1912, it was 16 minutes behind UTC.
+    """
     tzid = tzid_from_tzinfo(dt.tzinfo)
+    if tzid == "UTC" and dt.utcoffset():
+        return tzids_from_tzinfo(dt.tzinfo)[0]
     if tzid is None:
         return dt.tzname()
     return tzid
@@ -134,19 +140,8 @@ def _get_equivalent_tzids(tzid: str) -> tuple[str]:
     return (tzid,) + tuple(sorted(ids - {tzid}))
 
 
-def is_utc(t: datetime | time | date | tzinfo | str) -> bool:
-    """Whether this date, timezone or timezone id is UTC.
-
-    A timezone id equivalent to UTC, such as ``Etc/UTC``, counts as UTC.
-
-    >>> from icalendar.timezone.tzid import is_utc
-    >>> is_utc("Etc/UTC")
-    True
-    >>> is_utc("Europe/London")
-    False
-    """
-    if isinstance(t, str):
-        return "UTC" in _get_equivalent_tzids(t)
+def is_utc(t: datetime | time | date | tzinfo) -> bool:
+    """Whether this date is in UTC."""
     if is_date(t):
         return False
     tzid = tzid_from_dt(t) if hasattr(t, "tzinfo") else tzid_from_tzinfo(t)
