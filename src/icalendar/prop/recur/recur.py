@@ -424,6 +424,79 @@ class vRecur(CaselessDict):
         """Delete the WKST part of the recurrence rule."""
         self.pop("WKST", None)
 
+    @property
+    def skip(self) -> vSkip | None:
+        """The SKIP part of the recurrence rule, from :rfc:`7529`.
+
+        This says how the calendar adjusts occurrences that would land on a
+        leap day or leap second: ``OMIT`` drops them (the default when absent),
+        ``FORWARD`` moves them ahead and ``BACKWARD`` moves them back.
+
+        The value is read as a :class:`~icalendar.prop.recur.skip.vSkip` enum
+        member, so comparisons against ``vSkip.OMIT`` and friends work.
+
+        If multiple values are present, the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Raises:
+            InvalidCalendar: when setting a string that is not one of
+                ``OMIT``, ``FORWARD`` or ``BACKWARD``, or when reading a
+                value that was assigned directly past the parser and is not
+                a valid skip value.
+            TypeError: when setting a value that is neither a vSkip nor a str.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;SKIP=FORWARD").skip
+                vSkip('FORWARD')
+                >>> vRecur.from_ical("FREQ=DAILY;SKIP=BACKWARD").skip
+                vSkip('BACKWARD')
+                >>> vRecur.from_ical("FREQ=DAILY").skip is None
+                True
+        """
+        values = self.get("SKIP")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        if isinstance(value, vSkip):
+            return value
+        try:
+            # A plain string can only get here by direct assignment past the
+            # parser; parsing itself rejects invalid names earlier.
+            return vSkip(value)
+        except (ValueError, TypeError) as e:
+            raise InvalidCalendar("SKIP must be OMIT, FORWARD or BACKWARD") from e
+
+    @skip.setter
+    def skip(self, value: vSkip | str | None) -> None:
+        """Set the SKIP part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.skip
+            return
+        if not isinstance(value, (vSkip, str)):
+            raise TypeError(f"skip must be a vSkip or a skip name, got {value!r}")
+        if isinstance(value, vSkip):
+            skip = value
+        else:
+            try:
+                skip = vSkip(value)
+            except ValueError as e:
+                raise InvalidCalendar(
+                    f"SKIP must be OMIT, FORWARD or BACKWARD, got {value!r}"
+                ) from e
+        # from_ical stores SKIP as a one-item list via parse_type; keep that
+        # representation so assignment matches a parsed vRecur.
+        self["SKIP"] = [skip]
+
+    @skip.deleter
+    def skip(self) -> None:
+        """Delete the SKIP part of the recurrence rule."""
+        self.pop("SKIP", None)
+
     def __eq__(self, other: object) -> bool:
         """self == other"""
         if not isinstance(other, vRecur):
