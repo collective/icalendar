@@ -123,7 +123,9 @@ class vXml(vText):
         self = super().__new__(cls, value, encoding, params=params)
         self._normal_form = None
         # TEXT removes control characters. Then the element is not the value.
-        self._element = element if str.__eq__(self, value) else None
+        self._element = (
+            element if element is not None and str.__eq__(self, value) else None
+        )
         return self
 
     def _parse(self) -> Element:
