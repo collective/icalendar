@@ -231,23 +231,9 @@ def test_uid_is_present_but_not_in_the_uid_property(calendars):
     assert len(components) == 0
 
 
-NESTED_COMPONENTS_WITH_THE_SAME_NAME = """BEGIN:VCALENDAR
-BEGIN:X-WRAPPER
-BEGIN:X-WRAPPER
-X-INNER:1
-END:X-WRAPPER
-X-OUTER:2
-END:X-WRAPPER
-BEGIN:VEVENT
-UID:after-the-wrapper
-END:VEVENT
-END:VCALENDAR
-"""
-
-
-def test_nested_component_with_the_same_name():
+def test_nested_component_with_the_same_name(calendars):
     """A nested component with the same name does not end the outer one early."""
-    calendar = LazyCalendar.from_ical(NESTED_COMPONENTS_WITH_THE_SAME_NAME)
+    calendar = calendars.pr_2006_nested_components_with_the_same_name
     assert [component.name for component in calendar.walk()] == [
         "VCALENDAR",
         "X-WRAPPER",
