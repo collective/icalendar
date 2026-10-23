@@ -1,4 +1,4 @@
-"""A list-like view for RFC 5545 component property values."""
+"""A list-like view for :rfc:`5545#section-3.8` component property values."""
 
 from __future__ import annotations
 
@@ -13,10 +13,10 @@ if TYPE_CHECKING:
 
 
 class PropertyListView(MutableSequence):
-    """A list-like view of an RFC 5545 property within a component.
+    """A list-like view of an :rfc:`5545#section-3.8` property within a component.
 
-    This view synchronizes modifications (such as append, extend, insert,
-    clear, and delete) with the underlying component dictionary.
+    This view synchronizes modifications, such as ``append``, ``extend``, ``insert``,
+    ``clear``, and ``delete``, with the underlying component dictionary.
     """
 
     __hash__ = None
@@ -69,7 +69,12 @@ class PropertyListView(MutableSequence):
         return len(raw)
 
     def insert(self, index: int, value: Any) -> None:
-        """Insert an item into the property list at a given index."""
+        """Insert an item into the property list at a given index.
+
+        Parameters:
+            index: The position at which to insert the item into the property list.
+            value: The value to insert in the property list at the given index.
+        """
         with self._values() as values:
             values.insert(index, value)
 
@@ -78,13 +83,18 @@ class PropertyListView(MutableSequence):
         self._component.pop(self._name, None)
 
     def replace_with(self, values: Any) -> None:
-        """Replace all values with ``values``.
+        """Replace all values in the property with ``values``.
 
         The values are added with
         :meth:`Component.add <icalendar.cal.component.Component.add>`,
         so they are converted to the correct types.
-        ``values`` can be ``None`` (remove the property), a single value,
-        a list or another view, also one of the same property.
+
+        Parameters:
+            values: The values to replace in the property list.
+
+                - ``None`` removes all values from the property.
+                - A single string value or any sequence type replaces all values
+                  in the property and is stored as a list.
         """
         if values is None:
             new_values = []
