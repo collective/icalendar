@@ -4,11 +4,11 @@
 
 set -ev
 
-apt update
 
 # upgrade certificates
 # see https://discuss.python.org/t/information-for-python-users-regarding-emudhra-emsign-ca-certificate-security-incident/109576/10
-sudo apt install --upgrade ca-certificates
+sudo apt update
+sudo apt install --upgrade -y ca-certificates
 
 python -m pip --version
 
