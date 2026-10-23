@@ -1,0 +1,1 @@
+Ignored foreign XML namespace elements below xCal properties instead of interpreting them as additional values or parameters, following :rfc:`6321#section-4.1`. AI assisted with implementation and regression tests. @jihtsan
