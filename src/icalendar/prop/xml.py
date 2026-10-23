@@ -196,10 +196,13 @@ class vXml(vText):
         return super().from_xcal(xcal)
 
     def to_xcal(self, element: Element) -> None:
-        """Add the xCal representation of this property according to :rfc:`6321`.
+        """Copy the attribute :attr:`element` into the parameter ``element``.
 
-        The ``xml`` property element becomes the XML element,
-        see :rfc:`6321#section-4.1`.
+        All other property classes in :mod:`icalendar.prop` add children to the ``element`` parameter.
+        :class:`vXml` is special because it holds a single XML 1.0 element, see :rfc:`6321#section-4.1`.
+        Such an element resides directly inside the ``<properties>``.
+        Because of this, the tag, attributes, text and children of ``element``
+        are replaced with the XML 1.0 element contained in this object.
 
         Parameters:
             element: The ``xml`` property element in the xCal properties.
