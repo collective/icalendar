@@ -52,6 +52,10 @@ jobs:
       with:
         # zizmor: ignore[cache-poisoning] - run-tests does not produce release artifacts
         enable-cache: true
+        # UV_VERSION can be set in the repository settings:
+        # Settings -> Secrets and variables -> Actions or click here:
+        # https://github.com/collective/icalendar/settings/variables/actions
+        # -> Variables -> UV_VERSION
         version: "${{ vars.UV_VERSION }}"
         python-version: ${{ matrix.python_version }}
     - name: Install dependencies
@@ -126,6 +130,10 @@ jobs:
       uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
       with:
         enable-cache: false
+        # UV_VERSION can be set in the repository settings:
+        # Settings -> Secrets and variables -> Actions or click here:
+        # https://github.com/collective/icalendar/settings/variables/actions
+        # -> Variables -> UV_VERSION
         version: "${{ vars.UV_VERSION }}"
         python-version: "3.14"
     - name: Unpack source distribution
