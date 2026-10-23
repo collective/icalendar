@@ -272,6 +272,38 @@ class vDatetime(TimeBase):
             dt = tzp.localize_utc(dt)
         return dt
 
+    @property
+    def ical_value(self) -> datetime:
+        """The datetime value of this property.
+
+        Returns:
+            The datetime,timezone-aware if a timezone was set, otherwise its ``tzinfo`` is set to ``None``.
+
+        Examples:
+           The following represents a datetime where ``tzinfo`` is set to ``None``:
+
+            .. code-block:: pycon
+
+                >>> from datetime import datetime, timezone
+                >>> from icalendar import vDatetime
+                >>> naive = vDatetime(datetime(2025, 11, 10, 16, 52))
+                >>> naive.ical_value
+                datetime.datetime(2025, 11, 10, 16, 52)
+                >>> print(naive.ical_value.tzinfo)
+                None
+
+            The following represents a datetime where ``tzinfo`` is set to ``timezone.utc``:
+
+            .. code-block:: pycon
+
+                >>> aware = vDatetime(datetime(2025, 11, 10, 16, 52, tzinfo=timezone.utc))
+                >>> aware.ical_value
+                datetime.datetime(2025, 11, 10, 16, 52, tzinfo=datetime.timezone.utc)
+                >>> print(aware.ical_value.tzinfo)
+                UTC
+        """
+        return self.dt
+
     @classmethod
     @from_xcal_wrapper
     def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
