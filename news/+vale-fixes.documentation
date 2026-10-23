@@ -1,1 +1,1 @@
-Fixed Vale check by adding entries to :file`accept.txt` and overriding Microsoft's style with a custom style that allows a single letter within quotes followed by a comma or period. @stevepiercy
+Fixed Vale check by adding entries to :file:`accept.txt` and overriding Microsoft's style with a custom style that allows a single letter within quotes followed by a comma or period. @stevepiercy
