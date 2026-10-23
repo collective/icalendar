@@ -122,6 +122,12 @@ class vDatetime(TimeBase):
     def from_ical(ical, timezone=None):
         """Create a datetime from the RFC string.
 
+        Parameters:
+            ical (str | bytes): Required. The iCalendar DATE-TIME value to parse.
+            timezone (str | datetime.tzinfo | None): The time zone name or object
+                used to localize the result. If ``None``, a trailing ``Z`` selects
+                UTC and other values remain floating.
+
         Raises:
             ~icalendar.error.ICalParsingError: If the value is not a valid DATE-TIME.
         """

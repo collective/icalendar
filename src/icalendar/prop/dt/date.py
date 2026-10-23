@@ -91,6 +91,9 @@ class vDate(TimeBase):
     def from_ical(ical) -> date:
         """Parse an iCalendar DATE value.
 
+        Parameters:
+            ical (str | bytes): Required. The DATE value in ``YYYYMMDD`` format.
+
         Raises:
             ~icalendar.error.ICalParsingError: If the value is not a valid DATE.
         """
