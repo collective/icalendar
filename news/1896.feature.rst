@@ -1,0 +1,1 @@
+Added `__eq__` and `__hash__` to `vCalAddress` for case-insensitive, mailto-agnostic equality checking. I used AI to assist me with this change.
