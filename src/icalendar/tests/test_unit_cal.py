@@ -357,6 +357,38 @@ def test_cal_Component_to_ical_parameter_order():
     assert preserved_str == component_str
 
 
+def test_calendar_url_precedes_compatibility_properties():
+    """A URL must not split the calendar name and its X-WR equivalents (#1968)."""
+    original = b"\r\n".join(
+        [
+            b"BEGIN:VCALENDAR",
+            b"VERSION:2.0",
+            b"PRODID:test",
+            b"NAME:Calendar",
+            b"X-WR-CALNAME:Calendar",
+            b"X-WR-TIMEZONE:Europe/Berlin",
+            b"URL:https://example.com",
+            b"END:VCALENDAR",
+        ]
+    )
+    calendar = Calendar.from_ical(original)
+    names = [name for name, _ in calendar.property_items()]
+    assert names == [
+        "BEGIN",
+        "VERSION",
+        "PRODID",
+        "URL",
+        "NAME",
+        "X-WR-CALNAME",
+        "X-WR-TIMEZONE",
+        "END",
+    ]
+    assert calendar.to_ical(sorted=False).splitlines() == original.splitlines()
+    assert calendar.to_ical().splitlines().index(
+        b"URL:https://example.com"
+    ) < calendar.to_ical().splitlines().index(b"X-WR-CALNAME:Calendar")
+
+
 @pytest.fixture
 def repr_example(c):
     class ReprExample:
