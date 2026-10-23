@@ -1,13 +1,26 @@
 """DATE property type from :rfc:`5545`."""
 
-from datetime import date, datetime
-from typing import Any, ClassVar
+from __future__ import annotations
 
-from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from datetime import date, datetime
+from typing import TYPE_CHECKING, Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
+
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.match import XCalRegexMatcher
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 from .base import TimeBase
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.adapter import ElementAdapter
+    from icalendar.parser.xcal.base import XCalParser
+
+XCAL_DATE_REGEX = XCalRegexMatcher(
+    r"(\d\d\d\d)-(\d\d)-(\d\d)", "Expected date format YYYY-MM-DD"
+)
 
 
 class vDate(TimeBase):
@@ -70,12 +83,12 @@ class vDate(TimeBase):
         self.dt = dt
         self.params = Parameters(params or {})
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         s = f"{self.dt.year:04}{self.dt.month:02}{self.dt.day:02}"
         return s.encode("utf-8")
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical) -> date:
         # date-value = 4DIGIT 2DIGIT 2DIGIT, no separators,
         # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
         if len(ical) != 8 or not ical.isascii() or not ical.isdigit():
@@ -111,7 +124,7 @@ class vDate(TimeBase):
         """Parse a jCal string to a :class:`datetime.date`.
 
         Raises:
-            ~error.JCalParsingError: If it can't parse a date.
+            ~icalendar.error.JCalParsingError: If it can't parse a date.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
@@ -127,7 +140,7 @@ class vDate(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -135,6 +148,51 @@ class vDate(TimeBase):
         return cls(
             value,
             params=Parameters.from_jcal_property(jcal_property),
+        )
+
+    def to_xcal(self, element: Element) -> None:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        element = SubElement(element, "date")
+        element.text = self.dt.strftime("%Y-%m-%d")
+
+    @classmethod
+    def from_xcal_element(cls, element: ElementAdapter) -> date:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Returns:
+            The date object.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        year, month, day = XCAL_DATE_REGEX.groups(element)
+        try:
+            return date(int(year), int(month), int(day))
+        except ValueError as e:
+            raise XCalParsingError(
+                "Date is out of range", element.get_xsd_token(), element
+            ) from e
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        d = cls.from_xcal_element(element)
+        return cls(
+            d,
+            params=params,
         )
 
 

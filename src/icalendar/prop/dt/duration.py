@@ -3,16 +3,21 @@
 import re
 from datetime import timedelta
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import InvalidCalendar, JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 from .base import TimeBase
 
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?\Z"
 )
+
+XCAL_DURATION_ERROR = "Expected duration format https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6"
 
 
 class vDuration(TimeBase):
@@ -97,7 +102,7 @@ class vDuration(TimeBase):
         self.td = td
         self.params = Parameters(params)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         sign = ""
         td = self.td
         if td.days < 0:
@@ -126,7 +131,7 @@ class vDuration(TimeBase):
         )
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical) -> timedelta:
         match = DURATION_REGEX.match(ical)
         if not match:
             raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
@@ -177,7 +182,7 @@ class vDuration(TimeBase):
         """Parse a jCal string to a :class:`datetime.timedelta`.
 
         Raises:
-            ~error.JCalParsingError: If it can't parse a duration."""
+            ~icalendar.error.JCalParsingError: If it can't parse a duration."""
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
             return cls.from_ical(jcal)
@@ -192,7 +197,7 @@ class vDuration(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -201,6 +206,37 @@ class vDuration(TimeBase):
             duration,
             Parameters.from_jcal_property(jcal_property),
         )
+
+    def to_xcal(self, element: Element) -> None:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        element = SubElement(element, "duration")
+        element.text = self.to_ical().decode()
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        try:
+            td = cls.from_ical(element.get_xsd_token())
+        except InvalidCalendar as e:
+            if isinstance(e.__cause__, OverflowError):
+                # The syntax is valid but we are out of range
+                raise XCalParsingError(
+                    "Duration is out of range", element.get_xsd_token(), element
+                ) from e
+            raise XCalParsingError(
+                XCAL_DURATION_ERROR, element.get_xsd_token(), element
+            ) from e
+        return cls(td, params=params)
 
 
 __all__ = ["vDuration"]

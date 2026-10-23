@@ -6,13 +6,18 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from icalendar import Component, vDatetime, vDDDLists, vDDDTypes, vTime
+from icalendar import vDate, vDatetime, vDDDLists, vDDDTypes, vTime
 from icalendar.parser_tools import to_unicode
 from icalendar.prop import VPROPERTY
 from icalendar.timezone.tzid import is_utc
 
 if TYPE_CHECKING:
     from icalendar.cal.event import Event
+
+
+def test_vdate_rejects_invalid_calendar_date():
+    with pytest.raises(ValueError, match="Wrong date format 20250230"):
+        vDate.from_ical("20250230")
 
 
 @pytest.fixture(
@@ -27,19 +32,18 @@ def utc_prop(request):
 
 @pytest.mark.parametrize("convert", [None, vDDDLists, vDDDTypes])
 def test_setting_a_utc_datetime_value_does_not_include_a_TZID(
-    utc_prop: VPROPERTY, convert
+    utc_prop: VPROPERTY, convert, comp
 ):
     """Check that the VALUE parameter is correctly determined."""
     if convert:
         utc_prop = convert(utc_prop.dt)
     assert not utc_prop.params.tzid, "UTC datetimes must not carry a TZID parameter"
-    component = Component()
-    component.add("X-PROP", utc_prop)
-    component.add("DTSTAMP", utc_prop)
-    component.add("DTSTART", utc_prop)
-    component.add("DUE", utc_prop)
+    comp.add("X-PROP", utc_prop)
+    comp.add("DTSTAMP", utc_prop)
+    comp.add("DTSTART", utc_prop)
+    comp.add("DUE", utc_prop)
 
-    ical = component.to_ical().decode()
+    ical = comp.to_ical().decode()
     print(ical)
     assert "TZID" not in ical
 

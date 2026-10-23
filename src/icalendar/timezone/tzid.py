@@ -90,7 +90,7 @@ def tzid_from_tzinfo(tzinfo: tzinfo | None) -> str | None:
     return tzids[0]
 
 
-def tzid_from_dt(dt: datetime) -> str | None:
+def tzid_from_dt(dt: datetime | time) -> str | None:
     """Retrieve the timezone id from the datetime object."""
     tzid = tzid_from_tzinfo(dt.tzinfo)
     if tzid is None:
