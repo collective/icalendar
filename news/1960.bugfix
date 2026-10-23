@@ -1,0 +1,1 @@
+Fixed unpickling of enum members whose name differs from their value, such as ``PARTSTAT.IN_PROCESS``, which raised :class:`ValueError`. AI-assisted: Claude Opus 5.5 via Claude Code was used as a tutor to explain the bug and review my fix and tests. I reviewed and verified the final change. @FeJo5952
