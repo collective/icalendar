@@ -42,7 +42,7 @@ Glossary
         Examples of a round-trip are:
 
         - A calendar file is read into icalendar and converted back to the original calendar file format.
-        - A calendar is created with :meth:`Calendar.new <icalendar.cal.calendar.Calendar.new>`, converted to :term:`xCal` using :meth:`Calendar.to_xcal <icalendar.cal.calendar.Calendar.to_xcal>` and then read back into a :class:`~icalendar.cal.calendar.Calendar` object using :meth:`Calendar.from_xcal <icalendar.cal.calendar.Calendar.from_xcal>`.
+        - A calendar is created with :meth:`Calendar.new <icalendar.cal.calendar.Calendar.new>`, converted to :term:`xCal` using :meth:`~icalendar.cal.component.Component.to_xcal`, and then read back into a :class:`~icalendar.cal.calendar.Calendar` object using :meth:`~icalendar.cal.component.Component.from_xcal`.
 
     Vale
         `Vale <https://vale.sh/>`_ is an open-source, command-line tool that helps maintain a consistent and on-brand voice in documentation.
