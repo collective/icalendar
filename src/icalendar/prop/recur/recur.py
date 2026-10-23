@@ -33,6 +33,12 @@ def _contains_part_separator(value: str) -> bool:
     RECUR has no escaping, so a text value, such as that of ``RSCALE`` or an
     unknown part, cannot contain the part separator ``;`` or the list
     separator ``,``.
+
+    Parameters:
+        value: A value of one key/value pair in :class:`vRecur`.
+
+    Returns:
+        Whether a separator is present and the value must be rejected.
     """
     return ";" in value or "," in value
 
