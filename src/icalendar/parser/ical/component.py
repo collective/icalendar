@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
+from icalendar.error import ICalParsingError, InvalidToken
 from icalendar.parser.content_line import Contentline, Contentlines
 from icalendar.parser.property import split_on_unescaped_comma
 from icalendar.prop import vBroken
@@ -95,12 +96,29 @@ class ComponentIcalParser:
             raise exception
         component.errors.append((None, str(exception)))
 
+    def get_component_class(self, name: str) -> type[Component]:
+        """Get the component class for a name from the ``BEGIN`` line.
+
+        Parameters:
+            name: Required. The component name from the ``BEGIN`` line.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the name is not a valid token.
+        """
+        try:
+            return self._component_factory.get_component_class(name)
+        except InvalidToken as error:
+            raise ICalParsingError(
+                "The component name must be a valid iCalendar token",
+                value=name,
+            ) from error
+
     def handle_begin_component(self, vals: str) -> None:
         """Handle the beginning of a component."""
         # try and create one of the components defined in the spec,
         # otherwise get a general Components for robustness.
         c_name = vals.upper()
-        c_class = self._component_factory.get_component_class(c_name)
+        c_class = self.get_component_class(vals)
         # If component factory cannot resolve ``c_name``, the generic
         # ``Component`` class is used which does not have the name set.
         # That's opposed to the usage of ``cls``, which represents a

@@ -58,7 +58,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
             content_lines.append(line)
             if (
                 line[:4].upper() == "END:"
-                and line[4:].strip().upper() == component_name
+                and line[4:].strip().upper() == component_name.strip()
             ):
                 break
         if self.component is None:

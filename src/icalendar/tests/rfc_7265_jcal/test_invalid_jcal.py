@@ -100,7 +100,7 @@ def test_invalid_component_type(list_expected):
         JCalParsingError,
         match=r"\[2\]\[0\] in Calendar: A component must be a list with 3 items\.",
     ):
-        Component.from_jcal(["VCALENDAR", [], [list_expected]])
+        Component.from_jcal(["vcalendar", [], [list_expected]])
 
 
 def test_invalid_component_name(str_expected):
@@ -504,8 +504,34 @@ def test_invalid_recur_part_name_token(key):
         vRecur.from_jcal(["rrule", {}, "recur", {key: "DAILY"}])
 
 
+@pytest.mark.parametrize("name", INVALID_NAME_TOKENS)
+def test_invalid_component_name_token(name):
+    """A jCal component name that is not a valid token is rejected.
+
+    Otherwise the name is written into the ``BEGIN`` and ``END``
+    content lines and used as the XML element name in xCal, so a ``:``, ``;``,
+    or ``<`` injects structure on serialization.
+    """
+    with pytest.raises(
+        JCalParsingError,
+        match=r"\[2\]\[0\]\[0\] in Calendar: "
+        r"The component name must be a valid iCalendar token",
+    ):
+        Component.from_jcal(["vcalendar", [], [[name, [], []]]])
+
+
 # valid tokens that are not lowercase (RFC 7265 sections 3.4, 3.5 and 3.6.10)
 UPPER_CASE_NAMES = ["SUMMARY", "Summary", "X-Foo", "x-Foo"]
+
+
+@pytest.mark.parametrize("name", UPPER_CASE_NAMES)
+def test_component_name_must_be_lowercase(name):
+    """A jCal component name must be lowercase (RFC 7265 section 3.3)."""
+    with pytest.raises(
+        JCalParsingError,
+        match=r"The component name must be lowercase\.",
+    ):
+        Component.from_jcal([name, [], []])
 
 
 @pytest.mark.parametrize("name", UPPER_CASE_NAMES)
