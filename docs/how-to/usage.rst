@@ -197,6 +197,28 @@ You can also choose to use the :meth:`icalendar.cal.component.Component.decoded`
     datetime.datetime(2005, 4, 4, 8, 0)
 
 
+.. _read-base64-values:
+
+Read BASE64 values
+''''''''''''''''''
+
+Use :meth:`~icalendar.cal.component.Component.from_ical` to read values with ``ENCODING=BASE64``.
+
+.. code-block:: pycon
+
+    >>> event = Event.from_ical(
+    ...     "BEGIN:VEVENT\r\n"
+    ...     "SUMMARY;ENCODING=BASE64;LANGUAGE=en:SGVsbG8=\r\n"
+    ...     "END:VEVENT\r\n"
+    ... )
+    >>> print(event["SUMMARY"])
+    Hello
+    >>> event["SUMMARY"].params["LANGUAGE"]
+    'en'
+
+See :doc:`../explanation/base64` for the format rules and the difference between text and binary values.
+
+
 Property parameters
 -------------------
 

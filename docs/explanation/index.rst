@@ -8,4 +8,5 @@ This part of the documentation explains concepts of icalendar, the Python packag
     :maxdepth: 2
 
     api-design
+    base64
     safe-xml-parsing

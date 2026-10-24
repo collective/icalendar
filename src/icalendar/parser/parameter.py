@@ -462,6 +462,27 @@ class Parameters(CaselessDict[str | list[str]]):
     def tzid(self) -> str | None:
         """The TZID parameter from :rfc:`5545`."""
 
+    @property
+    def encoding(self) -> str:
+        """The uppercase ENCODING parameter, or ``8BIT`` if it is absent.
+
+        Use the last value if more than one value is present.
+        See :rfc:`5545#section-3.2.7`.
+        """
+        values = self.get_multiple("ENCODING")
+        return values[-1].upper() if values else "8BIT"
+
+    @encoding.setter
+    def encoding(self, value: str | None) -> None:
+        if value is None:
+            del self.encoding
+        else:
+            self["ENCODING"] = value.upper()
+
+    @encoding.deleter
+    def encoding(self) -> None:
+        self.pop("ENCODING", None)
+
     def is_utc(self) -> bool:
         """Whether the TZID parameter is UTC."""
         return self.tzid == "UTC"

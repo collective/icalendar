@@ -4,7 +4,13 @@ import base64
 
 import pytest
 
-from icalendar import Calendar, vBinary
+from icalendar import (
+    Base64DecodingError,
+    Calendar,
+    ICalParsingError,
+    InvalidCalendar,
+    vBinary,
+)
 from icalendar.parser import Parameters
 
 
@@ -41,9 +47,9 @@ def test_repr():
 
 
 def test_from_ical():
-    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
+    with pytest.raises(ICalParsingError, match=r"^Not valid base 64 encoding\.$"):
         vBinary.from_ical("value")
-    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
+    with pytest.raises(ICalParsingError, match=r"^Not valid base 64 encoding\.$"):
         vBinary.from_ical("áèਮ")
 
 
@@ -56,8 +62,11 @@ def test_from_ical():
     ],
 )
 def test_from_ical_rejects_non_base64_characters(value):
-    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
+    with pytest.raises(
+        ICalParsingError, match=r"^Not valid base 64 encoding\.$"
+    ) as error:
         vBinary.from_ical(value)
+    assert not isinstance(error.value, Base64DecodingError)
 
 
 def test_ical_value():
@@ -134,11 +143,14 @@ def test_base64data_roundtrip():
     ],
 )
 def test_base64data_setter_rejects_invalid_base64(value):
-    """The setter raises ValueError, matching from_ical's error, for bad input."""
+    """The setter raises a data error and keeps the previous bytes."""
     obj = vBinary(b"unchanged")
-    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
+    with pytest.raises(
+        Base64DecodingError, match=r"^Not valid base 64 encoding\.$"
+    ) as error:
         obj.base64data = value
-    # a rejected assignment must not mutate the existing value
+    assert isinstance(error.value, InvalidCalendar)
+    assert not isinstance(error.value, ICalParsingError)
     assert obj.to_ical() == vBinary(b"unchanged").to_ical()
 
 

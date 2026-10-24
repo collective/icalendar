@@ -48,6 +48,10 @@ class ICalParsingError(InvalidCalendar):
         super().__init__(full_message)
 
 
+class Base64DecodingError(InvalidCalendar):
+    """A BASE64 value could not be decoded."""
+
+
 class BrokenCalendarProperty(InvalidCalendar):
     """A property could not be parsed and its value is broken.
 
@@ -391,6 +395,7 @@ class XCalParsingError(InvalidCalendar):
 
 
 __all__ = [
+    "Base64DecodingError",
     "BrokenCalendarProperty",
     "ComponentEndMissing",
     "ComponentStartMissing",

@@ -33,6 +33,7 @@ from icalendar.enums import (
     VALUE,
 )
 from icalendar.error import (
+    Base64DecodingError,
     BrokenCalendarProperty,
     ComponentEndMissing,
     ComponentStartMissing,
@@ -120,6 +121,7 @@ __all__ = [
     "Alarms",
     "Availability",
     "Available",
+    "Base64DecodingError",
     "BrokenCalendarProperty",
     "Calendar",
     "Component",
