@@ -188,3 +188,19 @@ def test_attach_example_survives_reserialization(calendars):
     (original,) = calendar.events
     (roundtripped,) = reparsed.events
     assert roundtripped.decoded("ATTACH") == original.decoded("ATTACH")
+
+
+def test_vbinary_data_uri_default_media_type():
+    """vBinary.uri produces a RFC 2397 data: URI with default application/octet-stream."""
+    b = vBinary(b"Hello World")
+    assert b.uri == "data:application/octet-stream;base64,SGVsbG8gV29ybGQ="
+
+
+def test_vbinary_data_uri_with_fmttype():
+    """vBinary.uri uses FMTTYPE parameter as media type when specified."""
+    b = vBinary(b"<html><body>test</body></html>", params={"FMTTYPE": "text/html"})
+    assert b.uri == "data:text/html;base64,PGh0bWw+PGJvZHk+dGVzdDwvYm9keT48L2h0bWw+"
+    b.FMTTYPE = "application/json"
+    assert (
+        b.uri == "data:application/json;base64,PGh0bWw+PGJvZHk+dGVzdDwvYm9keT48L2h0bWw+"
+    )
