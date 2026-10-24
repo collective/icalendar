@@ -103,6 +103,23 @@ class CLIToolTest(unittest.TestCase):
             output += cli.view(event) + "\n\n"
         assert output == PROPER_OUTPUT
 
+    def test_control_characters_are_escaped(self):
+        calendar = Calendar.from_ical(
+            "BEGIN:VEVENT\r\n"
+            "ORGANIZER:mailto:boss\x1b]0;title\x07@example.com\r\n"
+            "ATTENDEE:mailto:a\x1b[2K@example.com\r\n"
+            "SUMMARY:Lunch\u009b2K\r\n"
+            "DTSTART:20220511\r\n"
+            "END:VEVENT\r\n"
+        )
+        output = cli.view(calendar)
+        assert "\x1b" not in output
+        assert "\x07" not in output
+        assert "\x9b" not in output
+        assert "boss\\x1b]0;title\\x07@example.com" in output
+        assert "a\\x1b[2K@example.com" in output
+        assert "Lunch\\x9b2K" in output
+
 
 if __name__ == "__main__":
     unittest.main()
