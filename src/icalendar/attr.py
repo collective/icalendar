@@ -2657,6 +2657,18 @@ Example:
         >>> event = Event.new(request_status="2.0;Success")
         >>> event.REQUEST_STATUS == ["2.0;Success"]
         True
+
+    :class:`~icalendar.prop.request_status.vRequestStatus` defines
+    properties for ease of use:
+
+    .. code-block:: pycon
+
+        >>> request_status = event.REQUEST_STATUS[0]
+        >>> request_status.code
+        (2, 0)
+        >>> request_status.description
+        'Success'
+
 """,
 )
 
