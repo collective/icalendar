@@ -44,6 +44,7 @@ from icalendar.attr import (
     set_duration_with_locking,
     set_end_with_locking,
     set_start_with_locking,
+    single_utc_property,
     status_property,
     summary_property,
     uid_property,
@@ -172,6 +173,42 @@ class Todo(Component):
         property_del_duration,
         property_doc_duration_template.format(component="VTODO"),
     )
+    COMPLETED = single_utc_property(
+        "COMPLETED",
+        """Date-time when the todo was completed in UTC.
+
+    This property is defined in :rfc:`5545#section-3.8.2.1`. It can be
+    specified in a completed "VTODO" calendar component.
+
+    The value is always in UTC.
+
+    Example:
+        .. code-block:: pycon
+
+            >>> from datetime import datetime, timezone
+            >>> from icalendar import Todo
+            >>> todo = Todo()
+            >>> todo.COMPLETED = datetime(2007, 5, 1, 12, 0, 0, tzinfo=timezone.utc)
+            >>> todo.COMPLETED
+            datetime.datetime(2007, 5, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
+        """,
+    )
+
+    @property
+    def completed(self) -> datetime | None:
+        """Date-time when the todo was completed, as a :class:`~datetime.datetime` in UTC.
+
+        This is the lowercase property counterpart to, and accessor for, :attr:`COMPLETED`.
+        """
+        return self.COMPLETED
+
+    @completed.setter
+    def completed(self, value: datetime | None) -> None:
+        self.COMPLETED = value
+
+    @completed.deleter
+    def completed(self) -> None:
+        del self.COMPLETED
 
     def _get_start_end_duration(self):
         """Verify the calendar validity and return the right attributes."""
