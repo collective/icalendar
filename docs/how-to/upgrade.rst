@@ -22,6 +22,60 @@ Breaking changes
 
 This section describes the breaking changes in icalendar 8.0.0, and how to adapt your code to these changes.
 
+.. _upgrade-8.0.0-parsing-errors:
+
+Parsing errors are recorded by default
+''''''''''''''''''''''''''''''''''''''
+
+All components now ignore parsing exceptions by default, resolving :issue:`399`.
+Malformed content lines and property values are skipped or represented as broken properties, and the exception is recorded in the component's ``errors`` attribute.
+See :doc:`parse-errors` for how to inspect errors and broken properties, and :attr:`Component.ignore_exceptions <icalendar.cal.component.Component.ignore_exceptions>` for the parsing setting.
+
+**Restore the old strict behavior**
+
+If your code relies on :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` raising ``ValueError`` for malformed content, set ``Component.ignore_exceptions = False`` before parsing.
+The following example parses an existing calendar fixture containing a malformed bare ``X`` line.
+
+.. code-block:: pycon
+
+    >>> from icalendar import Component, Calendar
+    >>> previous_ignore_exceptions = Component.ignore_exceptions
+    >>> Component.ignore_exceptions = False
+    >>> Calendar.example("issue_104_broken_calendar")
+    Traceback (most recent call last):
+        ...
+    ValueError: Content line could not be parsed into parts: 'X': Invalid content line
+    >>> # Restore the process-wide setting after the example.
+    >>> Component.ignore_exceptions = previous_ignore_exceptions
+
+**Enable tolerant behavior on older versions**
+
+Set ``Component.ignore_exceptions = True`` before parsing to record errors instead of raising them.
+Inspect ``errors`` on the component that contains the malformed content.
+
+.. code-block:: pycon
+
+    >>> from icalendar import Component
+    >>> from icalendar import Calendar
+    >>> previous_ignore_exceptions = Component.ignore_exceptions
+    >>> Component.ignore_exceptions = True
+    >>> calendar = Calendar.example("issue_104_broken_calendar")
+    >>> calendar.errors
+    [(None, "Content line could not be parsed into parts: 'X': Invalid content line")]
+    >>> b"\r\nX\r\n" in calendar.to_ical()
+    False
+    >>> # Restore the process-wide setting after the example.
+    >>> Component.ignore_exceptions = previous_ignore_exceptions
+
+**Scope and exceptions**
+
+This is a process-wide class setting.
+Creating a subclass of ``Calendar`` doesn't change the component classes created by the component factory.
+As in older versions, ``Event.ignore_exceptions = True`` remains an explicit override, so events stay tolerant when only ``Component.ignore_exceptions`` is set to ``False``.
+
+Strict components raise for malformed content lines and most malformed property values.
+The existing parser exception for malformed ``X-*`` property values remains tolerant even when ``ignore_exceptions`` is ``False``; those errors are recorded and the properties are represented as broken values.
+
 ``Component.from_ical`` no longer reads files from a ``str`` path
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
