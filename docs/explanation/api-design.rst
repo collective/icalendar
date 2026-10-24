@@ -390,7 +390,7 @@ Examples for errors:
 Not all of the calendar is interesting to the developer.
 Sensible default values and error-tolerant parsing enable compatibility to a wide range of faulty calendar files.
 A value that is not of interest should not prevent the calendar from being parsed.
-If it were, then all interesting values would also get lost.
+If the value is not parsed but raises an error, then all interesting values would get lost along with it.
 
 In summary, icalendar's approach to parsing is tolerant of errors, while raising errors or providing defaults when the values are used for calculations as described in :ref:`lower-case-properties`.
 
