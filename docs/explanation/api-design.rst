@@ -360,7 +360,7 @@ When implementing parsing support in icalendar, follow these guidelines:
 
 #.  Serialization should stay close to the standard.
 #.  Raise errors when values are wrong.
-#.  If an actual example that is an issue with parsing is provided, then adjust how strict parsing should be accordingly.
+#.  If an issue with parsing of a practical example is provided, then adjust the strictness of parsing accordingly.
 
 
 icalendar also offers conversion between the different calendar formats of :rfc:`iCal <5545>`, :rfc:`xCal <6321>`, and :rfc:`jCal <7265>`.
