@@ -6,9 +6,11 @@ import itertools
 from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, TypeAlias
+from uuid import UUID
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
+from icalendar.parser.string import _RFC_5545_IANA_TOKEN_REGEX
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import (
     vBinary,
@@ -487,9 +489,25 @@ def single_utc_property(name: str, docs: str) -> property:
 
 
 def single_string_property(
-    name: str, docs: str, other_name: str | list[str] | None = None, default: str = ""
+    name: str,
+    docs: str,
+    other_name: str | list[str] | None = None,
+    default: str = "",
+    validate: Callable[[str], None] | None = None,
 ) -> property:
-    """Create a property to access a single string value."""
+    """Create a property to access a single string value.
+
+    Parameters:
+        name (Required): The iCalendar property name (e.g. ``"UID"``).
+        docs (Required): Documentation string for the generated property.
+        other_name (Optional): Alias name(s) to fall back on when the primary
+            *name* is not present in the component.
+        default (Optional): Value returned when the property is not set.
+        validate (Optional): Callable that receives the string form of the value
+            and raises an exception if it does not conform to the expected
+            format. It is called on set, before any existing value is removed,
+            and must not modify the value.
+    """
     other_names = (
         []
         if other_name is None
@@ -517,6 +535,12 @@ def single_string_property(
 
         Setting the value to None will delete it.
         """
+        if value is not None:
+            if not isinstance(value, (str, UUID)):
+                raise TypeError(f"{name} must be a string or None, got {value!r}")
+            if validate is not None:
+                validate(str(value))
+
         fdel(self)
         if value is not None:
             self.add(name, value)
@@ -831,6 +855,34 @@ Examples:
 """,
 )
 
+
+#: Maximum UID length in octets, per :rfc:`7986#section-5.3`.
+_UID_MAX_OCTETS = 255
+
+
+def validate_uid(value: str) -> None:
+    """Validate that ``value`` is a well-formed UID.
+
+    When set, the value must be an :rfc:`5545` ``iana-token`` (ASCII letters,
+    digits and hyphens) shorter than 255 octets, as required by
+    :rfc:`7986#section-5.3`.
+
+    Parameters:
+        value: The string form of the UID to validate.
+
+    Raises:
+        InvalidCalendar: If ``value`` is not an RFC 5545 iana-token or is 255
+            octets or longer.
+    """
+    octets = len(value.encode("utf-8"))
+    if octets >= _UID_MAX_OCTETS:
+        raise InvalidCalendar(
+            f"UID must be shorter than {_UID_MAX_OCTETS} octets, got {octets}"
+        )
+    if _RFC_5545_IANA_TOKEN_REGEX.match(value) is None:
+        raise InvalidCalendar(f"UID must be an RFC 5545 iana-token, got {value!r}")
+
+
 uid_property = single_string_property(
     "UID",
     """UID specifies the persistent, globally unique identifier for a component.
@@ -894,6 +946,12 @@ Security:
 Compatibility:
     For Alarms, ``X-ALARMUID`` is also considered.
 
+Format:
+    When set, the value must be an :rfc:`5545` ``iana-token`` (ASCII letters,
+    digits and hyphens) shorter than 255 octets, as required by
+    :rfc:`7986#section-5.3`. Values that do not conform raise
+    :exc:`~icalendar.error.InvalidCalendar`.
+
 Examples:
     The following is an example of such a property value:
     ``5FC53010-1267-4F8E-BC28-1D7AE55A7C99``.
@@ -911,7 +969,32 @@ Examples:
         UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
         END:VCALENDAR
 
+    Set a new UUID4 as the UID (recommended):
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> from uuid import uuid4
+        >>> event = Event()
+        >>> event.uid = uuid4()
+        >>> event.uid  # doctest: +ELLIPSIS
+        vText(b'...')
+
+    Setting a valid token preserves its casing, while an invalid value raises
+    an error:
+
+    .. code-block:: pycon
+
+        >>> event.uid = "AbC-123"  # a valid token, casing is preserved
+        >>> print(event.uid)
+        AbC-123
+        >>> event.uid = "a b"
+        Traceback (most recent call last):
+          ...
+        icalendar.error.InvalidCalendar: UID must be an RFC 5545 iana-token, got 'a b'
+
 """,
+    validate=validate_uid,
 )
 
 summary_property = multi_language_text_property(
