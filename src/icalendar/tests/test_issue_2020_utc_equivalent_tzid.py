@@ -10,6 +10,11 @@
 Since 6.1.3, a time parsed with ``TZID=Etc/UTC`` (or another zone
 equivalent to UTC) is written back with a ``Z`` but keeps its ``TZID``.
 
+Either form is correct: a ``Z`` without the ``TZID``, or the ``TZID``
+with the local time and a VTIMEZONE.  The tests accept both, as keeping
+the ``TZID`` of a place like ``Atlantic/Reykjavik`` keeps the information
+that the time follows that place's rules, should they change.
+
 See https://github.com/collective/icalendar/issues/2020
 """
 
@@ -65,11 +70,14 @@ def test_the_time_survives_the_round_trip(tzp, tzid):
 
 @UTC_EQUIVALENT
 def test_jcal_has_no_tzid_next_to_z(tzp, tzid):
-    """The jCal form leaves out the TZID as well."""
-    calendar = Calendar.from_ical(ICS.format(tzid=tzid))
-    _, params, _, value = calendar.events[0]["DTSTART"].to_jcal("dtstart")
-    assert "tzid" not in params
-    assert value.endswith("Z")
+    """The jCal form does not combine them either."""
+    event = Calendar.from_ical(ICS.format(tzid=tzid)).events[0]
+    for name, time in [("DTSTART", "09"), ("DTEND", "10")]:
+        _, params, _, value = event[name].to_jcal(name.lower())
+        if "tzid" in params:
+            assert value == f"2027-11-05T{time}:00:00"
+        else:
+            assert value == f"2027-11-05T{time}:00:00Z"
 
 
 def test_a_tzid_alone_does_not_decide_utc():
@@ -78,20 +86,25 @@ def test_a_tzid_alone_does_not_decide_utc():
 
 
 @UTC_EQUIVALENT
-def test_no_vtimezone_is_added_for_it(tzp, tzid):
-    """Nothing in the output refers to the time zone any more."""
+def test_a_vtimezone_is_added_only_for_a_tzid_in_use(tzp, tzid):
+    """A VTIMEZONE is added if, and only if, the TZID is kept."""
     calendar = Calendar.from_ical(ICS.format(tzid=tzid))
     calendar.add_missing_timezones()
-    assert not calendar.timezones
+    used = {";TZID=" in line for line in content_lines(tzid)}
+    assert used == {bool(calendar.timezones)}
+    assert not calendar.get_missing_tzids()
 
 
 @UTC_EQUIVALENT
 def test_xcal_has_no_tzid_next_to_z(tzp, tzid):
-    """The xCal form leaves out the TZID as well."""
-    calendar = Calendar.from_ical(ICS.format(tzid=tzid))
-    xcal = calendar.to_xcal().decode()
-    assert "<tzid>" not in xcal
-    assert "<date-time>2027-11-05T09:00:00Z</date-time>" in xcal
+    """The xCal form does not combine them either."""
+    xcal = Calendar.from_ical(ICS.format(tzid=tzid)).to_xcal().decode()
+    for tag, time in [("dtstart", "09"), ("dtend", "10")]:
+        element = xcal[xcal.index(f"<{tag}>") : xcal.index(f"</{tag}>")]
+        if "<tzid>" in element:
+            assert f"<date-time>2027-11-05T{time}:00:00</date-time>" in element
+        else:
+            assert f"<date-time>2027-11-05T{time}:00:00Z</date-time>" in element
 
 
 ICS_1900 = ICS.format(tzid="Africa/Abidjan").replace("2027110", "1900010")
