@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from icalendar import Calendar, Parameters
+from icalendar import Calendar, Event, Parameters, Timezone, is_utc
 
 ICS = """BEGIN:VCALENDAR
 VERSION:2.0
@@ -153,3 +153,54 @@ def test_a_list_across_the_offset_change_keeps_its_tzid(tzp, values):
     exdate = calendar.events[0]["EXDATE"]
     again = Calendar.from_ical(calendar.to_ical()).events[0]["EXDATE"]
     assert [d.dt for d in again.dts] == [d.dt for d in exdate.dts]
+
+
+UTC_NAME = pytest.mark.parametrize(
+    "tzid", ["Etc/UTC", "GMT", "Etc/Greenwich", "Zulu", "Etc/GMT0"]
+)
+UTC_PLACE = pytest.mark.parametrize(
+    "tzid", ["Africa/Abidjan", "Atlantic/Reykjavik", "Iceland"]
+)
+
+
+@UTC_NAME
+def test_a_name_of_utc_becomes_z(tzp, tzid):
+    """Another name for UTC carries no information, so it is written as UTC."""
+    assert content_lines(tzid) == ["DTSTART:20271105T090000Z", "DTEND:20271105T100000Z"]
+
+
+@UTC_PLACE
+def test_a_place_keeps_its_tzid(tzp, tzid):
+    """A place that uses UTC today keeps its TZID, as its rules may change."""
+    assert content_lines(tzid) == [
+        f"DTSTART;TZID={tzid}:20271105T090000",
+        f"DTEND;TZID={tzid}:20271105T100000",
+    ]
+    calendar = Calendar.from_ical(ICS.format(tzid=tzid))
+    calendar.add_missing_timezones()
+    assert [timezone.tz_name for timezone in calendar.timezones] == [tzid]
+
+
+@UTC_PLACE
+def test_a_place_created_in_python_keeps_its_tzid(tzp, tzid):
+    event = Event()
+    event.add("dtstart", tzp.localize(datetime(2027, 11, 5, 9), tzid))
+    assert f"DTSTART;TZID={tzid}:20271105T090000" in event.to_ical().decode()
+
+
+@UTC_PLACE
+def test_a_place_is_not_utc(tzp, tzid):
+    assert not is_utc(tzp.timezone(tzid))
+    assert not is_utc(tzp.localize(datetime(2027, 11, 5, 9), tzid))
+
+
+@UTC_NAME
+def test_a_name_of_utc_is_utc(tzp, tzid):
+    assert is_utc(tzp.timezone(tzid))
+    assert is_utc(tzp.localize(datetime(2027, 11, 5, 9), tzid))
+
+
+@UTC_PLACE
+def test_the_vtimezone_of_a_place_has_its_tzid(tzp, tzid):
+    """The VTIMEZONE is the one the events refer to."""
+    assert Timezone.from_tzinfo(tzp.timezone(tzid)).tz_name == tzid

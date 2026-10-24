@@ -76,25 +76,37 @@ def tzids_from_tzinfo(tzinfo: tzinfo | None) -> tuple[str]:
     return ()
 
 
+_UTC_NAMES = frozenset(
+    name
+    for bare in ("UTC", "UCT", "Universal", "Zulu", "GMT", "GMT0", "GMT+0", "GMT-0")
+    for name in (bare, f"Etc/{bare}")
+) | {"Greenwich", "Etc/Greenwich"}
+"""Names of UTC itself, as opposed to places that use UTC."""
+
+
 def tzid_from_tzinfo(tzinfo: tzinfo | None) -> str | None:
     """Retrieve the timezone id from the tzinfo object.
 
     Some timezones are equivalent.
     Thus, we might return one ID that is equivalent to others.
+
+    Another name for UTC, such as ``Etc/UTC``, gives ``"UTC"``.
+    A place that uses UTC, such as ``Africa/Abidjan``, keeps its own id,
+    as its rules may change.
     """
     tzids = tzids_from_tzinfo(tzinfo)
-    if "UTC" in tzids:
-        return "UTC"
     if not tzids:
         return None
+    if "UTC" in tzids and tzids[0] in _UTC_NAMES:
+        return "UTC"
     return tzids[0]
 
 
 def tzid_from_dt(dt: datetime | time) -> str | None:
     """Retrieve the timezone id from the datetime object.
 
-    A timezone equivalent to UTC, such as ``Africa/Abidjan``, is UTC only
-    while its offset is zero.  Before 1912, it was 16 minutes behind UTC.
+    This is :func:`tzid_from_tzinfo`, except that a name for UTC keeps
+    its own id while its offset is not zero.
     """
     tzid = tzid_from_tzinfo(dt.tzinfo)
     if tzid == "UTC" and dt.utcoffset():
