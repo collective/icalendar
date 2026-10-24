@@ -36,6 +36,7 @@ Submodules
    icalendar.prop.uid
    icalendar.prop.unknown
    icalendar.prop.uri
+   icalendar.prop.xml
    icalendar.prop.xml_reference
 
 Module contents

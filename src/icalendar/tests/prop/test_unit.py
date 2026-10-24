@@ -438,6 +438,7 @@ RFC_DEFAULT_VALUE_TYPES = {
     "CONTACT": "text",
     "RESOURCES": "text",
     "REQUEST-STATUS": "text",
+    "XML": "text",
     # URI
     "ATTACH": "uri",
     "URL": "uri",

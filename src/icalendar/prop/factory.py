@@ -31,6 +31,7 @@ from icalendar.prop.text import vText
 from icalendar.prop.uid import vUid
 from icalendar.prop.unknown import vUnknown
 from icalendar.prop.uri import vUri
+from icalendar.prop.xml import vXml
 from icalendar.prop.xml_reference import vXmlReference
 
 from .integer import vInt
@@ -85,6 +86,7 @@ class TypesFactory(CaselessDict):
             vOrg,
             vUid,
             vXmlReference,
+            vXml,
             vUnknown,
             vBroken,
         )
@@ -112,6 +114,7 @@ class TypesFactory(CaselessDict):
         self["unknown"] = vUnknown  # RFC 7265
         self["uid"] = vUid  # RFC 9253
         self["xml-reference"] = vXmlReference  # RFC 9253
+        self["xml-text"] = vXml  # RFC 6321
         self["x-broken"] = vBroken
 
     #################################################
@@ -192,6 +195,8 @@ class TypesFactory(CaselessDict):
             "dtstamp": "date-time",
             "last-modified": "date-time",
             "sequence": "integer",
+            # XML property (RFC 6321)
+            "xml": "xml-text",
             # Miscellaneous Component Properties
             "request-status": "text",
             ####################################

@@ -17,6 +17,7 @@ from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    XML_property,
     comments_property,
     concepts_property,
     links_property,
@@ -38,6 +39,7 @@ from icalendar.parser import (
 from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown
+from icalendar.prop.xml import _preserve_indentation_of_xcal_extension_properties
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -849,6 +851,7 @@ class Component(CaselessDict):
     related_to = related_to_property
     concepts = concepts_property
     refids = refids_property
+    XML = XML_property
 
     CREATED = single_utc_property(
         "CREATED",
@@ -1178,6 +1181,12 @@ class Component(CaselessDict):
             - ``None`` if an argument is passed.
             - :class:`bytes` if called with no arguments.
 
+        Raises:
+            TypeError: If ``destination`` is neither an XML Element nor a file-like
+                object, or if ``indent`` is neither an integer nor a string.
+            ~icalendar.error.InvalidCalendar: If an XML property cannot be written
+                to xCal, see :meth:`vXml.to_xcal() <icalendar.prop.xml.vXml.to_xcal>`.
+
         Example:
             This example shows how to convert a new calendar to XML:
 
@@ -1230,7 +1239,8 @@ class Component(CaselessDict):
         file.write(b'<?xml version="1.0" encoding="UTF-8"?>')
         if indent is not None:
             file.write(b"\n")
-            indent_xml(stream, space=indent)
+            with _preserve_indentation_of_xcal_extension_properties(stream):
+                indent_xml(stream, space=indent)
         ElementTree(stream).write(file, "utf-8", xml_declaration=False, method="xml")
         if indent is not None:
             file.write(b"\n")

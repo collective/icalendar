@@ -74,6 +74,7 @@ from .text import vText
 from .uid import vUid
 from .unknown import vUnknown
 from .uri import vUri
+from .xml import vXml
 from .xml_reference import vXmlReference
 
 VPROPERTY: TypeAlias = (
@@ -106,6 +107,7 @@ VPROPERTY: TypeAlias = (
     | vGeo
     | vUnknown
     | vXmlReference
+    | vXml
     | vUid
 )
 
@@ -145,5 +147,6 @@ __all__ = [
     "vUnknown",
     "vUri",
     "vWeekday",
+    "vXml",
     "vXmlReference",
 ]
