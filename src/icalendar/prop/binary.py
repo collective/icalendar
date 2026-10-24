@@ -93,7 +93,20 @@ class vBinary:
         """Examples of vBinary."""
         return [cls("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4")]
 
-    from icalendar.param import VALUE
+    from icalendar.param import FMTTYPE, VALUE
+
+    @property
+    def uri(self) -> str:
+        """Convert the binary data into a ``data:`` URI according to :rfc:`2397`.
+
+        The media type is determined by the :attr:`FMTTYPE` parameter if set,
+        otherwise falling back to ``application/octet-stream``.
+
+        Returns:
+            The ``data:`` URI string containing the Base64-encoded payload.
+        """
+        media_type = self.params.get("FMTTYPE", "application/octet-stream")
+        return f"data:{media_type};base64,{self.base64data}"
 
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
