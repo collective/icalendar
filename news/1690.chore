@@ -1,0 +1,1 @@
+Moved the release verification script to :file:`scripts/test_create_release.sh` and updated its references. I used AI to assist with this change. @AthosTomich

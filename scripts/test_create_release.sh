@@ -5,7 +5,7 @@
 
 set -euo pipefail
 cd "`dirname \"$0\"`"
-cd "../../.."
+cd ".."
 
 # setup clean environment
 
