@@ -76,6 +76,7 @@ def test_encoding_parameter_default_and_delete(p):
     assert p.encoding == "BASE64"
     assert p["ENCODING"] == "BASE64"
     del p.encoding
+    del p.encoding
     assert p.encoding == "8BIT"
     assert "ENCODING" not in p
     p.encoding = "base64"

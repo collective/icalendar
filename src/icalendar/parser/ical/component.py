@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from icalendar.error import Base64DecodingError
+from icalendar.error import ICalParsingError
 from icalendar.parser.content_line import Contentline, Contentlines
 from icalendar.parser.property import split_on_unescaped_comma, unescape_backslash
 from icalendar.prop import vBinary, vBroken
@@ -197,9 +197,7 @@ class ComponentIcalParser:
                 raw_value = vBinary.from_ical(vals).decode("utf-8")
             except (ValueError, TypeError) as e:
                 if isinstance(e, UnicodeDecodeError):
-                    e = Base64DecodingError(
-                        "BASE64 data is not valid UTF-8", value=vals
-                    )
+                    e = ICalParsingError("BASE64 data is not valid UTF-8", value=vals)
                 self.handle_property_parse_error(e, name, params, vals, line)
                 return
             # Decode before splitting lists or unescaping TEXT values.

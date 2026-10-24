@@ -2,7 +2,7 @@
 
 import pytest
 
-from icalendar import Base64DecodingError, Event, ICalParsingError
+from icalendar import Event, ICalParsingError
 from icalendar.prop import vBinary, vBroken
 
 
@@ -104,13 +104,12 @@ def test_base64_errors(calendars, monkeypatch, case, property_name, value, messa
     assert isinstance(broken, vBroken)
     assert broken == value
     assert broken.params["ENCODING"] == "BASE64"
-    assert isinstance(broken.parse_error, Base64DecodingError)
     assert isinstance(broken.parse_error, ICalParsingError)
     assert str(broken.parse_error) == message
     assert event.errors == [(property_name, message)]
     assert event["LOCATION"] == "Elsewhere"
 
     monkeypatch.setattr(Event, "ignore_exceptions", False)
-    with pytest.raises(Base64DecodingError) as error:
+    with pytest.raises(ICalParsingError) as error:
         Event.from_ical(event.to_ical())
     assert str(error.value) == message

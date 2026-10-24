@@ -48,7 +48,7 @@ class ICalParsingError(InvalidCalendar):
         super().__init__(full_message)
 
 
-class Base64DecodingError(ICalParsingError):
+class Base64DecodingError(InvalidCalendar):
     """A BASE64 value could not be decoded."""
 
 
