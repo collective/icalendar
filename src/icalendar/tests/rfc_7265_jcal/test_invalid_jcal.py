@@ -508,7 +508,7 @@ def test_invalid_recur_part_name_token(key):
 def test_invalid_component_name_token(name):
     """A jCal component name that is not a valid token is rejected.
 
-    Otherwise the name is written verbatim into the ``BEGIN`` and ``END``
+    Otherwise the name is written into the ``BEGIN`` and ``END``
     content lines and used as the XML element name in xCal, so a ``:``, ``;``,
     or ``<`` injects structure on serialization.
     """

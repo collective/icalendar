@@ -21,7 +21,7 @@ class InvalidCalendar(ValueError):
 class InvalidToken(InvalidCalendar):
     """A name is not a valid iCalendar token.
 
-    ..  versionadded:: 8.0.0
+    ..  versionadded:: 0.0.0
     """
 
 

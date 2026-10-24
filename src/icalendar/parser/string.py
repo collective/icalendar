@@ -242,7 +242,7 @@ def validate_token(name: str) -> None:
     Raises:
         ~icalendar.error.InvalidToken: If the name is not a valid token.
 
-    ..  versionchanged:: 8.0.0
+    ..  versionchanged:: 0.0.0
         Raise :exc:`~icalendar.error.InvalidToken`, a subclass of
         :exc:`ValueError`, and reject non-ASCII characters.
     """

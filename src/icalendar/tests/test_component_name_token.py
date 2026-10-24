@@ -2,7 +2,7 @@
 
 A component name is an ``iana-token`` or ``x-name`` (RFC 5545 section 3.6).
 The parser used to accept any ``BEGIN`` value and :meth:`Component.to_xcal`
-then used it verbatim as the XML element name, so a name containing ``<`` or
+then used it as the XML element name, so a name containing ``<`` or
 ``>`` injected elements into the xCal output.
 """
 
