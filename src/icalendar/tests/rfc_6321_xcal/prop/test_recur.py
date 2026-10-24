@@ -31,6 +31,7 @@ from pprint import pprint
 
 import pytest
 
+from icalendar import Event
 from icalendar.error import XCalParsingError
 from icalendar.prop.recur import vRecur
 from icalendar.prop.recur.month import vMonth
@@ -316,6 +317,42 @@ def test_until_with_tags(xml, expected):
     xml = list2xml(["recur", ["until", xml]])
     result = vRecur.from_xcal(xml)
     assert result["UNTIL"] == [expected]
+
+
+@pytest.mark.parametrize("structured", [False, True])
+@pytest.mark.parametrize(
+    ("value_type", "text", "ical"),
+    [
+        ("date", "2026-01-01", "20260101"),
+        ("date-time", "2026-01-01T12:34:56", "20260101T123456"),
+        ("date-time", "2026-01-01T12:34:56Z", "20260101T123456Z"),
+    ],
+)
+def test_parsed_until_serializes_to_ical_and_jcal(structured, value_type, text, ical):
+    """Accepted xCal UNTIL values can be converted to the other formats."""
+    until_xml = [value_type, text] if structured else text
+    xml = list2xml(["recur", ["freq", "DAILY"], ["until", until_xml]])
+    parsed = vRecur.from_xcal(xml)
+    expected = vRecur.from_ical(f"FREQ=DAILY;UNTIL={ical}")
+    assert parsed.to_ical() == expected.to_ical()
+    assert parsed.to_jcal("rrule") == expected.to_jcal("rrule")
+
+
+@pytest.mark.parametrize(
+    "until",
+    [
+        date(2026, 1, 1),
+        datetime(2026, 1, 1, 12, 34, 56),
+        datetime(2026, 1, 1, 12, 34, 56, tzinfo=timezone.utc),
+    ],
+)
+def test_until_round_trips_through_component_xcal(until):
+    """Converting a complete event to xCal does not break later serialization."""
+    event = Event()
+    event.add("RRULE", {"FREQ": "DAILY", "UNTIL": until})
+    parsed = Event.from_xcal(event.to_xcal())[0]
+    assert parsed.to_ical() == event.to_ical()
+    assert parsed.to_jcal() == event.to_jcal()
 
 
 @mark_single_value
