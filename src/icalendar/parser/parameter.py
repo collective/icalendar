@@ -322,7 +322,6 @@ class Parameters(CaselessDict[str | list[str]]):
 
         Parameters:
             sorted (bool): Sort the parameters before encoding.
-            exclude_utc (bool): Exclude TZID if it is set to ``"UTC"``
         """
         result = []
         items = list(self.items())
