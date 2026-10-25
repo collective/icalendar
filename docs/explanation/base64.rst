@@ -33,7 +33,7 @@ The parser removes ``ENCODING`` from these values and keeps the other parameters
 This distinction also matters when you convert iCalendar data to jCal or xCal.
 Both jCal and xCal require decoded non-binary values without the ``ENCODING`` parameter.
 See :rfc:`7265#section-3.1` and :rfc:`6321#section-3.1`.
-For binary values, :class:`~icalendar.prop.vBinary` keeps the bytes without UTF-8 decoding.
+For binary values, :class:`~icalendar.prop.binary.vBinary` keeps the bytes without UTF-8 decoding.
 It uses BASE64 when it writes these values to iCalendar, jCal, or xCal.
 
 See :ref:`read-base64-values` for a parsing example.
