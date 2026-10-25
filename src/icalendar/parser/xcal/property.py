@@ -43,7 +43,7 @@ class XCalPropertiesParser(XCalParser):
             </properties>
 
         An element in a namespace other than the iCalendar namespace
-        becomes an XML property, see :rfc:`6321#section-4.1`.
+        becomes an XML property per :rfc:`6321#section-4.1`.
         For example, these properties contain a KML element:
 
         .. code-block:: xml
@@ -53,7 +53,7 @@ class XCalPropertiesParser(XCalParser):
             </properties>
 
         In iCalendar, the KML element is the value of an XML property.
-        ElementTree chooses the namespace prefix:
+        :mod:`~xml.etree.ElementTree` chooses the namespace prefix:
 
         .. code-block:: ics
 

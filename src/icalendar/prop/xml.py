@@ -54,14 +54,14 @@ class vXml(vText):
     In xCal, the XML property does not exist.
     Instead the XML elements are directly copied into the ``<properties>`` element,
     see :rfc:`6321#section-4.1`.
-    ElementTree chooses the namespace prefixes there.
+    :mod:`~xml.etree.ElementTree` chooses the namespace prefixes there.
 
     Two values are equal if their elements have the same tags, attributes
     and text, whatever the namespace prefixes and the order of the attributes.
     Values with a document type, and other strings, are compared as text.
 
     Parameters:
-        value: The XML as text or bytes, an :class:`~xml.etree.ElementTree.Element`,
+        value: Required. The XML as a string, bytes, an :class:`~xml.etree.ElementTree.Element`,
             or an :class:`~icalendar.parser.xcal.adapter.ElementAdapter`.
             Bytes are decoded with the encoding of their XML declaration.
             An element adapter keeps its path in the xCal document.
@@ -160,7 +160,12 @@ class vXml(vText):
 
     @property
     def ical_value(self) -> Element:
-        """The XML element of this value, see :attr:`element`."""
+        """The XML element of this value.
+
+        See also:
+            :attr:`element`.
+
+        """
         return self.element
 
     @classmethod
@@ -168,7 +173,7 @@ class vXml(vText):
         """Parse xCal from :rfc:`6321`.
 
         An element in a namespace other than the iCalendar namespace
-        is the XML element of an XML property, see :rfc:`6321#section-4.1`.
+        is the XML element of an XML property per :rfc:`6321#section-4.1`.
         An ``xml`` property element is parsed like other TEXT properties.
 
         Parameters:
@@ -199,9 +204,9 @@ class vXml(vText):
         """Copy the attribute :attr:`element` into the parameter ``element``.
 
         All other property classes in :mod:`icalendar.prop` add children to the ``element`` parameter.
-        :class:`vXml` is special because it holds a single XML 1.0 element, see :rfc:`6321#section-4.1`.
-        Such an element resides directly inside the ``<properties>``.
-        Because of this, the tag, attributes, text and children of ``element``
+        :class:`vXml` is special because it holds a single XML 1.0 element per :rfc:`6321#section-4.1`.
+        Such an element resides directly inside the ``<properties>`` tag.
+        Because of this, the tag, attributes, text, and children of ``element``
         are replaced with the XML 1.0 element contained in this object.
 
         Parameters:
@@ -210,8 +215,8 @@ class vXml(vText):
         Raises:
             ~icalendar.error.InvalidCalendar: If the element is not the ``xml``
                 property element, the XML property has parameters other than
-                ``VALUE``, its value is not XML, or its element has no namespace
-                or the iCalendar namespace.
+                ``VALUE``, its value is not XML, or its element either has no namespace
+                or has the iCalendar namespace.
 
         Example:
             The ``xml`` property element becomes the XML element.
@@ -279,7 +284,7 @@ class vXml(vText):
         """The elements of the XML in document order, without recursion.
 
         Each element has its tag with the namespace, its sorted attributes,
-        its text, its tail and its number of children.
+        its text, its tail, and its number of children.
 
         Raises:
             xml.etree.ElementTree.ParseError: If the value is not XML.

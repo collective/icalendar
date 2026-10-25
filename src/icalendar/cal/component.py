@@ -1185,7 +1185,7 @@ class Component(CaselessDict):
             TypeError: If ``destination`` is neither an XML Element nor a file-like
                 object, or if ``indent`` is neither an integer nor a string.
             ~icalendar.error.InvalidCalendar: If an XML property cannot be written
-                to xCal, see :meth:`vXml.to_xcal() <icalendar.prop.xml.vXml.to_xcal>`.
+                to xCal. See :meth:`vXml.to_xcal() <icalendar.prop.xml.vXml.to_xcal>`.
 
         Example:
             This example shows how to convert a new calendar to XML:
