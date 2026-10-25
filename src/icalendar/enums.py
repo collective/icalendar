@@ -22,6 +22,19 @@ class StrEnum(str, Enum):
         return self.value
 
 
+
+    @classmethod
+    def get(cls, value, default=None):
+        """Return the enum member matching ``value`` or ``default``.
+        
+        Behaves like dict.get. Returns None (or the supplied default) 
+        when value is not a valid member, instead of raising ValueError.
+        """
+        try:
+            return cls(value)
+        except ValueError:
+            return default
+
 class PARTSTAT(StrEnum):
     """Enum for PARTSTAT from :rfc:`5545`.
 
