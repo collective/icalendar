@@ -126,3 +126,11 @@ def test_a_date_with_a_tzid_uses_the_offset_of_that_date(tzp, value, expected_of
     # what the same value written as a date-time is read as
     assert offset == vDDDTypes.from_ical(f"{value}T000000", timezone=tzid).utcoffset()
     assert offset == expected_offset
+
+
+def test_when_passing_none_as_a_timezone_name_return_none(tzp):
+    """We need to check for a None value to be returned anyway.
+
+    This reduces if/else checks.
+    """
+    assert tzp.timezone(None) is None
