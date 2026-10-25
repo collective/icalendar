@@ -216,7 +216,9 @@ Use :meth:`~icalendar.cal.component.Component.from_ical` to read values with ``E
     >>> event["SUMMARY"].params["LANGUAGE"]
     'en'
 
-See :doc:`../explanation/base64` for the format rules and the difference between text and binary values.
+..  seealso::
+
+    :doc:`../explanation/base64` explains ``ENCODING=BASE64`` and the difference between text and binary values.
 
 
 Property parameters

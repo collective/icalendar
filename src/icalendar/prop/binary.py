@@ -28,7 +28,9 @@ def _decode_base64(value: str | bytes) -> bytes:
 class vBinary:
     """Binary property values are Base64 encoded.
 
-    See :doc:`/explanation/base64` for BASE64 encoding and value types.
+    See also:
+
+        :doc:`/explanation/base64` explains Base64 encoding and value types.
 
     ..  versionremoved:: 8.0.0
         Removed ``obj`` attribute, use :attr:`bytes` to access the binary content.
