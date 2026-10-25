@@ -123,10 +123,13 @@ class Component(CaselessDict):
     If ``True``, malformed content is skipped or represented as broken
     properties, and parsing exceptions are recorded in the component's
     ``errors`` attribute instead of being raised.
-    See :doc:`/how-to/parse-errors`.
 
-    .. versionchanged:: 8.0.0
-        Defaults to ``True`` for all components. See the
+    See also:
+        :doc:`/how-to/parse-errors`.
+
+    .. versionchanged:: 0.0.0
+        Defaults to ``True`` for all components. Tolerated parsing errors are
+        recorded in ``errors``. See the
         :ref:`upgrade guide <upgrade-8.0.0-parsing-errors>` for strict parsing.
     """
 

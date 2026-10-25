@@ -31,7 +31,8 @@ All components now ignore parsing exceptions by default, resolving :issue:`399`.
 Malformed content lines and property values are skipped or represented as broken properties, and the exception is recorded in the component's ``errors`` attribute.
 See :doc:`parse-errors` for how to inspect errors and broken properties, and :attr:`Component.ignore_exceptions <icalendar.cal.component.Component.ignore_exceptions>` for the parsing setting.
 
-**Restore the old strict behavior**
+Restore the old strict behavior
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If your code relies on :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` raising ``ValueError`` for malformed content, set ``Component.ignore_exceptions = False`` before parsing.
 The following example parses an existing calendar fixture containing a malformed bare ``X`` line.
@@ -48,7 +49,8 @@ The following example parses an existing calendar fixture containing a malformed
     >>> # Restore the process-wide setting after the example.
     >>> Component.ignore_exceptions = previous_ignore_exceptions
 
-**Enable tolerant behavior on older versions**
+Enable tolerant behavior on older versions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Set ``Component.ignore_exceptions = True`` before parsing to record errors instead of raising them.
 Inspect ``errors`` on the component that contains the malformed content.
@@ -67,7 +69,8 @@ Inspect ``errors`` on the component that contains the malformed content.
     >>> # Restore the process-wide setting after the example.
     >>> Component.ignore_exceptions = previous_ignore_exceptions
 
-**Scope and exceptions**
+Scope and exceptions
+^^^^^^^^^^^^^^^^^^^^
 
 This is a process-wide class setting.
 Creating a subclass of ``Calendar`` doesn't change the component classes created by the component factory.
