@@ -251,7 +251,7 @@ PROP_AND_TYPE = [
     ("RELATED-TO", prop.vText),
     ("RELTYPE", prop.vText),
     ("REPEAT", prop.vInt),
-    ("REQUEST-STATUS", prop.vText),
+    ("REQUEST-STATUS", prop.vRequestStatus),
     ("RESOURCES", prop.vText),
     ("ROLE", prop.vText),
     ("RRULE", prop.vRecur),
