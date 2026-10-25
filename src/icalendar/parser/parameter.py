@@ -53,10 +53,10 @@ def param_value(
         The formatted parameter value, escaped and quoted as needed.
     """
     if isinstance(value, SEQUENCE_TYPES):
-        return q_join(map(rfc_6868_escape, value), always_quote=always_quote)
+        return q_join(map(_rfc_6868_escape, value), always_quote=always_quote)
     if isinstance(value, str):
-        return dquote(rfc_6868_escape(value), always_quote=always_quote)
-    return dquote(rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
+        return dquote(_rfc_6868_escape(value), always_quote=always_quote)
+    return dquote(_rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
 
 
 # Could be improved
@@ -92,13 +92,14 @@ QUOTABLE = re.compile("[,;:’]")  # noqa: RUF001
 
 
 def dquote(val: str, always_quote: bool = False) -> str:
-    """Enclose parameter values in double quotes when needed.
+    r"""Enclose parameter values in double quotes when needed.
 
     Parameter values containing special characters ``,``, ``;``,
     ``:`` or ``'`` must be enclosed
     in double quotes according to :rfc:`5545`. Double-quote characters in the
     value are replaced with single quotes since they're forbidden in parameter
-    values.
+    values. Values ending with a backslash ``\`` are quoted, too, because
+    the parser would otherwise read it as escaping the following delimiter.
 
     Parameters:
         val: The parameter value to quote.
@@ -111,7 +112,7 @@ def dquote(val: str, always_quote: bool = False) -> str:
     # a double-quote character is forbidden to appear in a parameter value
     # so replace it with a single-quote character
     val = val.replace('"', "'")
-    if QUOTABLE.search(val) or always_quote:
+    if QUOTABLE.search(val) or val.endswith("\\") or always_quote:
         return f'"{val}"'
     return val
 
@@ -362,13 +363,13 @@ class Parameters(CaselessDict[str | list[str]]):
                     if v.startswith('"') and v.endswith('"'):
                         v2 = v.strip('"')
                         validate_param_value(v2, quoted=True)
-                        string_values.append(rfc_6868_unescape(v2))
+                        string_values.append(_rfc_6868_unescape(v2))
                     else:
                         validate_param_value(v, quoted=False)
                         if strict:
-                            string_values.append(rfc_6868_unescape(v.upper()))
+                            string_values.append(_rfc_6868_unescape(v.upper()))
                         else:
-                            string_values.append(rfc_6868_unescape(v))
+                            string_values.append(_rfc_6868_unescape(v))
 
                 if not string_values:
                     string_values = [val]
@@ -629,7 +630,7 @@ class Parameters(CaselessDict[str | list[str]]):
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
 
 
-def rfc_6868_unescape(param_value: str) -> str:
+def _rfc_6868_unescape(param_value: str) -> str:
     """Take care of :rfc:`6868` unescaping.
 
     - ^^ -> ^
@@ -650,7 +651,7 @@ def rfc_6868_unescape(param_value: str) -> str:
 RFC_6868_ESCAPE_REGEX = re.compile(r'\^|\r\n|\r|\n|"')
 
 
-def rfc_6868_escape(param_value: str) -> str:
+def _rfc_6868_escape(param_value: str) -> str:
     """Take care of :rfc:`6868` escaping.
 
     - ^ -> ^^
@@ -669,13 +670,15 @@ def rfc_6868_escape(param_value: str) -> str:
     )
 
 
+rfc_6868_escape = deprecate_for_version_9(_rfc_6868_escape)
+rfc_6868_unescape = deprecate_for_version_9(_rfc_6868_unescape)
+
+
 __all__ = [
     "Parameters",
     "dquote",
     "param_value",
     "q_join",
     "q_split",
-    "rfc_6868_escape",
-    "rfc_6868_unescape",
     "validate_param_value",
 ]

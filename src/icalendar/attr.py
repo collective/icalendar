@@ -1767,7 +1767,8 @@ def get_start_end_duration_with_validation(
         tuple: (start, end, duration) values from the component.
 
     Raises:
-        ~error.InvalidCalendar: If the component violates RFC 5545 constraints.
+        ~icalendar.error.InvalidCalendar: If the component violates
+            RFC 5545 constraints.
 
     """
     start = getattr(component, start_property, None)
@@ -1815,7 +1816,7 @@ def get_start_property(component: Event | Todo) -> date | datetime:
         The ``DTSTART`` value.
 
     Raises:
-        ~error.IncompleteComponent: If no ``DTSTART`` is present.
+        ~icalendar.error.IncompleteComponent: If no ``DTSTART`` is present.
 
     """
     # Trigger validation by calling _get_start_end_duration
@@ -1841,7 +1842,7 @@ def get_end_property(
         The computed end value.
 
     Raises:
-        ~error.IncompleteComponent: If the provided information is incomplete
+        ~icalendar.error.IncompleteComponent: If the provided information is incomplete
             to compute the end property.
 
     """
@@ -2656,6 +2657,18 @@ Example:
         >>> event = Event.new(request_status="2.0;Success")
         >>> event.REQUEST_STATUS == ["2.0;Success"]
         True
+
+    :class:`~icalendar.prop.request_status.vRequestStatus` defines
+    properties for ease of use:
+
+    .. code-block:: pycon
+
+        >>> request_status = event.REQUEST_STATUS[0]
+        >>> request_status.code
+        (2, 0)
+        >>> request_status.description
+        'Success'
+
 """,
 )
 
