@@ -15,7 +15,7 @@ value and with several values.
 Issue: #2027
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from xml.etree.ElementTree import Element, tostring
 
 from icalendar.cal.component import Component
@@ -24,24 +24,24 @@ from icalendar.prop import vText
 NS = "{urn:ietf:params:xml:ns:icalendar-2.0}"
 
 EXDATE_MULTIPLE = [
-    datetime(2026, 11, 2, 9, 0, tzinfo=UTC),
-    datetime(2026, 11, 9, 9, 0, tzinfo=UTC),
+    datetime(2026, 11, 2, 9, 0, tzinfo=timezone.utc),
+    datetime(2026, 11, 9, 9, 0, tzinfo=timezone.utc),
 ]
-RDATE = datetime(2026, 12, 1, 9, 0, tzinfo=UTC)
+RDATE = datetime(2026, 12, 1, 9, 0, tzinfo=timezone.utc)
 FREEBUSY_MULTIPLE = [
     (
-        datetime(2026, 10, 26, 9, 0, tzinfo=UTC),
-        datetime(2026, 10, 26, 10, 0, tzinfo=UTC),
+        datetime(2026, 10, 26, 9, 0, tzinfo=timezone.utc),
+        datetime(2026, 10, 26, 10, 0, tzinfo=timezone.utc),
     ),
     (
-        datetime(2026, 10, 26, 13, 0, tzinfo=UTC),
-        datetime(2026, 10, 26, 14, 0, tzinfo=UTC),
+        datetime(2026, 10, 26, 13, 0, tzinfo=timezone.utc),
+        datetime(2026, 10, 26, 14, 0, tzinfo=timezone.utc),
     ),
 ]
 FREEBUSY_SINGLE = [
     (
-        datetime(2026, 10, 27, 9, 0, tzinfo=UTC),
-        datetime(2026, 10, 27, 10, 0, tzinfo=UTC),
+        datetime(2026, 10, 27, 9, 0, tzinfo=timezone.utc),
+        datetime(2026, 10, 27, 10, 0, tzinfo=timezone.utc),
     ),
 ]
 
