@@ -120,12 +120,12 @@ class TZP:
         """
         _unclean_id = timezone_component["TZID"]
         _id = self.clean_timezone_id(_unclean_id)
-        definition = timezone_component.to_ical()
-        if (
-            not self.__provider.knows_timezone_id(_id)
-            and not self.__provider.knows_timezone_id(_unclean_id)
-            and self.__tz_definitions.get(_id) != definition
+        if self.__provider.knows_timezone_id(_id) or self.__provider.knows_timezone_id(
+            _unclean_id
         ):
+            return
+        definition = timezone_component.to_ical()
+        if self.__tz_definitions.get(_id) != definition:
             self.__tz_cache[_id] = timezone_component.to_tz(self, lookup_tzid=False)
             self.__tz_definitions[_id] = definition
 
