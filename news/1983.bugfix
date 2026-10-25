@@ -1,0 +1,1 @@
+Replaced cryptic jCal and xCal errors for raw property values assigned with ``component[name] = value`` with a clear error naming the property and recommending ``add()``. AI assisted with implementation and regression tests. @jihtsan
