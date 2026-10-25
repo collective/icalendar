@@ -42,7 +42,7 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
+    from collections.abc import Callable, Iterable, Sequence
 
     from icalendar.compatibility import Self
 
@@ -144,7 +144,7 @@ class Component(CaselessDict):
         """Return a component with this name.
 
         Parameters:
-            name: The name of the component, such as ``VCALENDAR``.
+            name: Required. The name of the component, such as ``VCALENDAR``.
 
         Returns:
             The component class registered for ``name``.
@@ -266,14 +266,14 @@ class Component(CaselessDict):
         """Encode values to icalendar property values.
 
         Parameters:
-            name: Name of the property.
-            value: Value of the property. Either a basic Python type or
+            name: Required. Name of the property.
+            value: Required. Value of the property. Either a basic Python type or
                 any of icalendar's own property types.
-            parameters: Property parameter dictionary for the value. Only
-                available if ``encode`` is set to ``True``.
             encode: ``True`` if the value should be encoded to one of
                 icalendar's own property types with a fallback to
                 :attr:`~icalendar.prop.text.vText`, else ``False``.
+            parameters: Property parameter dictionary for the value. Only
+                available if ``encode`` is set to ``True``.
 
         Returns:
             icalendar property value
@@ -412,8 +412,8 @@ class Component(CaselessDict):
         This function returns values compatible with native Python types.
 
         Parameters:
-            name: The name of the property.
-            default: The value to return if the property is not present.
+            default: Required. The value to return if the property is not present.
+            name: Required. The name of the property.
 
         Returns:
             The decoded value of the property, or ``default`` if the
@@ -439,10 +439,22 @@ class Component(CaselessDict):
             return [self._decode(name, val) for val in vals]
         return vals
 
-    def set_inline(self, name, values, encode=1):
-        """Convert a list of values into a comma-separated string and set the property value to it."""
+    def set_inline(self, name: str, values: Sequence[str], encode=1):
+        """Convert a list of values into a comma-separated string and set the
+        property value to it.
+
+        Parameters:
+            name: Required. Name of the property.
+            values: Required. Values of the properties. The properties are
+                encoded, if ``encode`` is truthy. Then tey are joined to
+                form the fila property value.
+            encode: Has a truthy value if each value in values should be
+                encoded to one of icalendar's own property types with a
+                fallback to :attr:`~icalendar.prop.text.vText`,
+                else ``False``.
+        """
         if encode:
-            values = [self._encode(name, value, encode=1) for value in values]
+            values = [self._encode(name, value, encode=True) for value in values]
         self[name] = self.types_factory["inline"](q_join(values))
 
     #########################
