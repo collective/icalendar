@@ -22,7 +22,12 @@ from icalendar.attr import (
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 from icalendar.cal.timezone import Timezone
-from icalendar.error import IncompleteComponent
+from icalendar.error import (
+    CalendarInformationLost,
+    IncompleteComponent,
+    NoCalendarsFound,
+    UnknownCalendarFormat,
+)
 from icalendar.parser.ical.calendar import CalendarIcalParser
 from icalendar.version import __version__
 
@@ -700,9 +705,10 @@ def parse(
 ) -> Calendar | list[Calendar]:
     r"""Parse iCalendar, jCal, or xCal data into calendars.
 
-    The format is detected from the first non-whitespace character of the data:
-    ``B`` for iCalendar (:rfc:`5545`), ``[`` for jCal (:rfc:`7265`),
-    and ``<`` for xCal (:rfc:`6321`).
+    The format is detected from the first character of the data, ignoring
+    whitespace and a UTF-8 byte order mark: ``B`` or ``b`` for iCalendar
+    (:rfc:`5545`), ``[`` for jCal (:rfc:`7265`), and ``<`` for xCal (:rfc:`6321`).
+    See :ref:`how-to-parse` for more examples.
 
     Parameters:
         source: The data to parse, as :class:`bytes`, a :class:`~pathlib.Path`
@@ -714,8 +720,13 @@ def parse(
         A calendar, or a list of calendars if ``multiple`` is ``True``.
 
     Raises:
-        ValueError: If the format cannot be detected, or if ``multiple`` is
-            ``False`` and the data does not contain exactly one calendar.
+        TypeError: If the data is not :class:`bytes`, for example, because
+            a file was opened in text mode.
+        ~error.UnknownCalendarFormat: If the format cannot be detected.
+        ~error.NoCalendarsFound: If ``multiple`` is ``False`` and the data
+            contains no calendars.
+        ~error.CalendarInformationLost: If ``multiple`` is ``False`` and the
+            data contains more than one calendar.
 
     Example:
 
@@ -739,31 +750,38 @@ def parse(
             >>> len(calendars)
             2
     """
-    if isinstance(source, bytes):
+    if isinstance(source, (bytes, str)):
         data = source
     elif isinstance(source, Path):
         data = source.read_bytes()
     else:
         data = source.read()
-    data = data.lstrip()
+    if not isinstance(data, bytes):
+        raise TypeError(
+            f"Expected bytes, but got {type(data).__name__}. "
+            'Open files in binary mode with "rb".'
+        )
+    data = data.removeprefix(b"\xef\xbb\xbf").lstrip()
     first = data[:1]
-    if first == b"B":
+    if first.upper() == b"B":
         calendars = Calendar.from_ical(data, multiple=True)
     elif first == b"[":
         calendars = [cast("Calendar", Calendar.from_jcal(data.decode("utf-8")))]
     elif first == b"<":
         calendars = Calendar.from_xcal(data)
     else:
-        raise ValueError(
+        raise UnknownCalendarFormat(
             f"Could not detect the calendar format: expected iCal, jCal or xCal data, "
             f"but the data starts with {first!r}."
         )
     if multiple:
         return calendars
     if len(calendars) > 1:
-        raise ValueError("There are multiple calendars, please use multiple=True")
+        raise CalendarInformationLost(
+            "There are multiple calendars, please use multiple=True."
+        )
     if len(calendars) == 0:
-        raise ValueError("No calendars found.")
+        raise NoCalendarsFound("No calendars found.")
     return calendars[0]
 
 
