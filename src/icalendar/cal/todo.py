@@ -90,13 +90,13 @@ class Todo(Component):
             >>> from icalendar import Todo, STATUS
             >>> todo = Todo.example()
             >>> todo["PERCENT-COMPLETE"] = 100
-            >>> todo["COMPLETED"] = datetime(2007, 5, 1, 12, tzinfo=timezone.utc)
+            >>> todo.COMPLETED = datetime(2007, 5, 1, 12, tzinfo=timezone.utc)
             >>> todo.status = STATUS.COMPLETED
             >>> print(todo.to_ical().decode())
             BEGIN:VTODO
             CATEGORIES:FAMILY,FINANCE
             CLASS:CONFIDENTIAL
-            COMPLETED:2007-05-01 12:00:00+00:00
+            COMPLETED:20070501T120000Z
             DTSTAMP:20070313T123432Z
             DUE;VALUE=DATE:20070501
             PERCENT-COMPLETE:100
@@ -175,40 +175,30 @@ class Todo(Component):
     )
     COMPLETED = single_utc_property(
         "COMPLETED",
-        """Date-time when the todo was completed in UTC.
+        """The date and time that a to-do was actually completed, per :rfc:`5545#section-3.8.2.1`.
 
-    This property is defined in :rfc:`5545#section-3.8.2.1`. It can be
-    specified in a completed "VTODO" calendar component.
+    This property defines the date and time that a to-do was actually completed.
+    The property can be specified in a "VTODO" calendar component. The value
+    MUST be specified as a date with UTC time.
 
+    Returns ``None`` when the to-do has not been marked as completed.
     The value is always in UTC.
 
     Example:
         .. code-block:: pycon
 
-            >>> from datetime import datetime, timezone
+            >>> from datetime import timezone, datetime
             >>> from icalendar import Todo
+            >>> UTC = timezone.utc
             >>> todo = Todo()
-            >>> todo.COMPLETED = datetime(2007, 5, 1, 12, 0, 0, tzinfo=timezone.utc)
+            >>> todo.COMPLETED = datetime(2007, 5, 1, 12, 0, tzinfo=UTC)
             >>> todo.COMPLETED
             datetime.datetime(2007, 5, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
-        """,
+
+    See also:
+        :attr:`STATUS`
+    """,
     )
-
-    @property
-    def completed(self) -> datetime | None:
-        """Date-time when the todo was completed, as a :class:`~datetime.datetime` in UTC.
-
-        This is the lowercase property counterpart to, and accessor for, :attr:`COMPLETED`.
-        """
-        return self.COMPLETED
-
-    @completed.setter
-    def completed(self, value: datetime | None) -> None:
-        self.COMPLETED = value
-
-    @completed.deleter
-    def completed(self) -> None:
-        del self.COMPLETED
 
     def _get_start_end_duration(self):
         """Verify the calendar validity and return the right attributes."""
@@ -373,6 +363,7 @@ class Todo(Component):
         classification: CLASS | None = None,
         color: str | None = None,
         comments: list[str] | str | None = None,
+        completed: date | datetime | None = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         conferences: list[Conference] | None = None,
@@ -409,6 +400,7 @@ class Todo(Component):
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
             comments: The :attr:`~icalendar.cal.component.Component.comments` of the todo.
+            completed: The :attr:`COMPLETED` date/time of the todo.
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the todo.
             contacts: The :attr:`contacts` of the todo.
             conferences: The :attr:`conferences` of the todo.
@@ -471,6 +463,7 @@ class Todo(Component):
         todo.attachments = attachments
         todo.contacts = contacts
         todo.status = status
+        todo.COMPLETED = completed
         todo.REQUEST_STATUS = request_status
         todo.RESOURCES = resources
         todo.attendees = attendees
