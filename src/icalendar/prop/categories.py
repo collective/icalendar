@@ -40,7 +40,7 @@ class vCategory:
     def from_ical(ical: list[str] | str) -> list[str]:
         """Parse a CATEGORIES value from iCalendar format.
 
-        This helper is normally called by :meth:`Component.from_ical`, which
+        This helper is normally called by :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, which
         already splits the CATEGORIES property into a list of unescaped
         category strings. New code should therefore pass a list of strings.
 
@@ -50,7 +50,7 @@ class vCategory:
 
         Parameters:
             ical: A list of category strings (preferred, as provided by
-                :meth:`Component.from_ical`), or a single comma-separated
+                :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`), or a single comma-separated
                 string from a legacy caller.
 
         Returns:
@@ -102,7 +102,7 @@ class vCategory:
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         for i, category in enumerate(jcal_property[3:], start=3):

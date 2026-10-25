@@ -17,6 +17,7 @@ from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    XML_property,
     comments_property,
     concepts_property,
     links_property,
@@ -38,6 +39,7 @@ from icalendar.parser import (
 from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown
+from icalendar.prop.xml import _preserve_indentation_of_xcal_extension_properties
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -849,6 +851,7 @@ class Component(CaselessDict):
     related_to = related_to_property
     concepts = concepts_property
     refids = refids_property
+    XML = XML_property
 
     CREATED = single_utc_property(
         "CREATED",
@@ -884,7 +887,7 @@ class Component(CaselessDict):
         """This validates start and end.
 
         Raises:
-            ~error.InvalidCalendar: If the information is not valid
+            ~icalendar.error.InvalidCalendar: If the information is not valid
         """
         if start is None or end is None:
             return
@@ -917,7 +920,7 @@ class Component(CaselessDict):
             subcomponents: The subcomponents of the component.
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            ~icalendar.error.InvalidCalendar: If the content is not valid
                 according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the
@@ -1021,7 +1024,7 @@ class Component(CaselessDict):
             jcal: jCal list or JSON string according to :rfc:`7265`.
 
         Raises:
-            ~error.JCalParsingError: If the jCal provided is invalid.
+            ~icalendar.error.JCalParsingError: If the jCal provided is invalid.
             ~json.JSONDecodeError: If the provided string is not valid JSON.
 
         This reverses :func:`to_json` and :func:`to_jcal`.
@@ -1178,6 +1181,12 @@ class Component(CaselessDict):
             - ``None`` if an argument is passed.
             - :class:`bytes` if called with no arguments.
 
+        Raises:
+            TypeError: If ``destination`` is neither an XML Element nor a file-like
+                object, or if ``indent`` is neither an integer nor a string.
+            ~icalendar.error.InvalidCalendar: If an XML property cannot be written
+                to xCal. See :meth:`vXml.to_xcal() <icalendar.prop.xml.vXml.to_xcal>`.
+
         Example:
             This example shows how to convert a new calendar to XML:
 
@@ -1230,7 +1239,8 @@ class Component(CaselessDict):
         file.write(b'<?xml version="1.0" encoding="UTF-8"?>')
         if indent is not None:
             file.write(b"\n")
-            indent_xml(stream, space=indent)
+            with _preserve_indentation_of_xcal_extension_properties(stream):
+                indent_xml(stream, space=indent)
         ElementTree(stream).write(file, "utf-8", xml_declaration=False, method="xml")
         if indent is not None:
             file.write(b"\n")
@@ -1320,7 +1330,7 @@ class Component(CaselessDict):
 def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:
     """Parse a single jCal component without recursing into subcomponents.
 
-    Module-level helper for :meth:`Component.from_jcal`: it has no ties to a
+    Module-level helper for :meth:`~icalendar.cal.component.Component.from_jcal`: it has no ties to a
     class or instance (the relevant class is passed in as ``starting_cls``), so
     it is a plain function rather than a (static) method.
 
@@ -1335,7 +1345,7 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
         returned for the caller to walk iteratively.
 
     Raises:
-        ~error.JCalParsingError: If this component node is invalid. The path
+        ~icalendar.error.JCalParsingError: If this component node is invalid. The path
             is relative to this node; callers prepend the nesting path.
     """
     if not isinstance(jcal, list) or len(jcal) != 3:
