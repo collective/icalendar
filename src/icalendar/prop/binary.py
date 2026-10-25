@@ -16,7 +16,8 @@ class vBinary:
     """Binary property values are Base64 encoded.
 
     ..  versionremoved:: 8.0.0
-        Removed ``obj`` attribute, use :attr:`bytes` to access the binary content.
+        Removed ``obj`` attribute, use :attr:`~icalendar.prop.binary.vBinary.bytes` to access the binary content.
+
 
         .. seealso:: :ref:`vbinary-obj-removed`.
     """
@@ -69,8 +70,9 @@ class vBinary:
     def base64data(self, value: str) -> None:
         """Set this value from a Base64-encoded string.
 
-        The decoded raw bytes are stored in :attr:`bytes`, so non-UTF-8
+        The decoded raw bytes are stored in :attr:`~icalendar.prop.binary.vBinary.bytes`, so non-UTF-8
         payloads round-trip losslessly.
+
 
         Parameters:
             value: A Base64-encoded string.
