@@ -92,13 +92,14 @@ QUOTABLE = re.compile("[,;:’]")  # noqa: RUF001
 
 
 def dquote(val: str, always_quote: bool = False) -> str:
-    """Enclose parameter values in double quotes when needed.
+    r"""Enclose parameter values in double quotes when needed.
 
     Parameter values containing special characters ``,``, ``;``,
     ``:`` or ``'`` must be enclosed
     in double quotes according to :rfc:`5545`. Double-quote characters in the
     value are replaced with single quotes since they're forbidden in parameter
-    values.
+    values. Values ending with a backslash ``\`` are quoted, too, because
+    the parser would otherwise read it as escaping the following delimiter.
 
     Parameters:
         val: The parameter value to quote.
@@ -111,7 +112,7 @@ def dquote(val: str, always_quote: bool = False) -> str:
     # a double-quote character is forbidden to appear in a parameter value
     # so replace it with a single-quote character
     val = val.replace('"', "'")
-    if QUOTABLE.search(val) or always_quote:
+    if QUOTABLE.search(val) or val.endswith("\\") or always_quote:
         return f'"{val}"'
     return val
 
@@ -340,8 +341,7 @@ class Parameters(CaselessDict[str | list[str]]):
                 and any(c in value for c in check_quoteable_characters)
             )
             quoted_value = param_value(value, always_quote=always_quote)
-            if isinstance(quoted_value, str):
-                quoted_value = quoted_value.encode(DEFAULT_ENCODING)
+            quoted_value = quoted_value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
             result.append(upper_key.encode(DEFAULT_ENCODING) + b"=" + quoted_value)
         return b";".join(result)
