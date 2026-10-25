@@ -161,7 +161,6 @@ nitpick_ignore_regex = [
 suppress_warnings = ["ref.python"]
 
 
-
 # -- notfound.extension configuration ----------------------------------
 # https://sphinx-notfound-page.readthedocs.io/en/latest/configuration.html
 notfound_template = "404.html"
