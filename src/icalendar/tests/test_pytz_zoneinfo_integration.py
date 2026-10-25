@@ -17,7 +17,7 @@ import pytest
 from dateutil.rrule import MONTHLY, rrule
 from dateutil.tz.tz import _tzicalvtz
 
-from icalendar import Calendar
+from icalendar import Calendar, LazyCalendar
 from icalendar.prop import vDDDTypes
 from icalendar.timezone.zoneinfo import ZONEINFO, zoneinfo
 
@@ -120,6 +120,41 @@ def test_calendar_uses_its_own_vtimezone(tzp, forward_reference):
     Calendar.from_ical(calendar("-1100"))
     start = Calendar.from_ical(calendar("+0200")).events[0].start
     assert start.utcoffset() == timedelta(hours=2)
+
+
+@pytest.mark.parametrize(
+    ("calendar_class", "forward_reference"),
+    [
+        (Calendar, False),
+        pytest.param(
+            Calendar,
+            True,
+            marks=pytest.mark.xfail(
+                strict=True,
+                reason="The forward reference re-parse uses one cache for all calendars.",
+            ),
+        ),
+        (LazyCalendar, False),
+        (LazyCalendar, True),
+    ],
+)
+def test_calendars_in_one_file_use_their_own_vtimezone(
+    tzp, calendar_class, forward_reference
+):
+    """Each calendar read with multiple=True uses its own VTIMEZONE."""
+    tzid = f"custom_Own/Multiple_{calendar_class.__name__}_{forward_reference}"
+
+    def calendar(offset):
+        vtimezone = VTIMEZONE_WITH_OFFSET.format(tzid=tzid, offset=offset)
+        vevent = VEVENT_WITH_TZID.format(tzid=tzid)
+        components = [vevent, vtimezone] if forward_reference else [vtimezone, vevent]
+        return CALENDAR_WITH_CUSTOM_TZID.format("\n".join(components))
+
+    calendars = calendar_class.from_ical(
+        calendar("-1100") + calendar("+0200"), multiple=True
+    )
+    offsets = [calendar.events[0].start.utcoffset() for calendar in calendars]
+    assert offsets == [timedelta(hours=-11), timedelta(hours=2)]
 
 
 @pytest.mark.parametrize("new_tzp_name", NEW_TZP_NAME)
