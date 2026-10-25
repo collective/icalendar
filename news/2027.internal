@@ -1,0 +1,1 @@
+Add xCal tests for the multi-value properties ``CATEGORIES``, ``RESOURCES``, ``FREEBUSY``, ``EXDATE`` and ``RDATE`` with a new example file, checking parsing and serialization with single and multiple values.
