@@ -157,6 +157,28 @@ nitpick_ignore_regex = [
         r"py:.*",
         r"icalendar\.prop.*",
     ),  # Ignore old change log entry from before the re-org in 7.0.0a1
+    (
+        r"py:.*",
+        r"icalendar\.parser\.string\."
+        r"(?:foldline|escape_char|unescape_char|escape_string|unescape_string)",
+    ),
+    (
+        r"py:func",
+        r"icalendar\.compatibility\.deprecate_for_version_8",
+    ),
+]
+# sphinx-autodoc-typehints 3.6.1 is the newest version that supports Python
+# 3.11, and it renders the following type hints without a target that can be
+# resolved. They originate from type hints in the source code rather than from
+# documentation references, so they are not checked in nitpicky mode.
+nitpick_ignore = [
+    ("py:class", "datetime"),
+    ("py:class", "timedelta"),
+    ("py:class", "Element"),
+    ("py:class", "ICAL_TYPE"),
+    ("py:obj", "icalendar.caselessdict._VT"),
+    ("py:data", "typing.Union"),
+    ("py:class", "typing.TypeIs"),
 ]
 
 
@@ -212,6 +234,7 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
     "typing": ("https://typing.python.org/en/latest/", None),
+    "typing_extensions": ("https://typing-extensions.readthedocs.io/en/latest/", None),
 }
 
 

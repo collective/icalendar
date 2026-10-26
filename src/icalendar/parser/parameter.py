@@ -521,8 +521,8 @@ class Parameters(CaselessDict[str | list[str]]):
         """Create the parameters for a jCal property.
 
         Parameters:
-            jcal_property (list): The jCal property [name, params, value, ...]
-            default_value (str, optional): The default value of the property.
+            jcal_property: The jCal property [name, params, value, ...]
+            default_value: The default value of the property.
                 If this is given, the default value will not be set.
         """
         if not isinstance(jcal_property, list) or len(jcal_property) < 4:

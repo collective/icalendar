@@ -99,8 +99,8 @@ class vRecur(CaselessDict):
             >>> rrule
             vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})
 
-        You can choose to add an rrule to an :class:`icalendar.cal.Event` or
-        :class:`icalendar.cal.Todo`.
+        You can choose to add an rrule to an :class:`~icalendar.cal.event.Event` or
+        :class:`~icalendar.cal.todo.Todo`.
 
         .. code-block:: pycon
 
