@@ -341,8 +341,7 @@ class Parameters(CaselessDict[str | list[str]]):
                 and any(c in value for c in check_quoteable_characters)
             )
             quoted_value = param_value(value, always_quote=always_quote)
-            if isinstance(quoted_value, str):
-                quoted_value = quoted_value.encode(DEFAULT_ENCODING)
+            quoted_value = quoted_value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
             result.append(upper_key.encode(DEFAULT_ENCODING) + b"=" + quoted_value)
         return b";".join(result)
