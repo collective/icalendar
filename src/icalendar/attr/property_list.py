@@ -91,10 +91,9 @@ class PropertyListView(MutableSequence):
 
         Parameters:
             values: The values to replace in the property list.
-
-                - ``None`` removes all values from the property.
-                - A single string value or any sequence type replaces all values
-                  in the property and is stored as a list.
+                ``None`` removes all values from the property,
+                whereas a single string value or any sequence type
+                replaces all values in the property and is stored as a list.
         """
         if values is None:
             new_values = []
