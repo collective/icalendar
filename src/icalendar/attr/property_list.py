@@ -118,5 +118,33 @@ class PropertyListView(MutableSequence):
         """Return the string representation of the property list view."""
         return f"PropertyListView({list(self)!r})"
 
+    def __add__(self, other: Any) -> list[Any]:
+        """Concatenate this list with a sequence and return a new list."""
+        if isinstance(other, Sequence) and not isinstance(other, (str, bytes)):
+            return list(self) + list(other)
+        return NotImplemented
+
+    def __radd__(self, other: Any) -> list[Any]:
+        """Concatenate a sequence with this list and return a new list."""
+        if isinstance(other, Sequence) and not isinstance(other, (str, bytes)):
+            return list(other) + list(self)
+        return NotImplemented
+
+    def __mul__(self, n: int) -> list[Any]:
+        """Multiply the property list by an integer to return a new repeated list."""
+        if isinstance(n, int):
+            return list(self) * n
+        return NotImplemented
+
+    def __rmul__(self, n: int) -> list[Any]:
+        """Multiply the property list by an integer to return a new repeated list."""
+        if isinstance(n, int):
+            return list(self) * n
+        return NotImplemented
+
+    def copy(self) -> list[Any]:
+        """Return a shallow copy of the property list as a regular list."""
+        return list(self)
+
 
 __all__ = ["PropertyListView"]
