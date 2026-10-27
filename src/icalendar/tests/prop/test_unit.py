@@ -300,6 +300,10 @@ class TestProp(unittest.TestCase):
 
         assert vUTCOffset(timedelta(hours=1, minutes=30)).to_ical() == "+0130"
 
+        # Test ical_value
+        assert vUTCOffset(timedelta(hours=2)).ical_value == timedelta(hours=2)
+        assert vUTCOffset(timedelta(hours=-5)).ical_value == timedelta(hours=-5)
+
         # Support seconds
         assert (
             vUTCOffset(timedelta(hours=1, minutes=30, seconds=7)).to_ical() == "+013007"
