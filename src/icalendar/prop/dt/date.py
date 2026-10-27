@@ -195,5 +195,16 @@ class vDate(TimeBase):
             params=params,
         )
 
+    @property
+    def ical_value(self) -> date:
+        """Returns the date as a date value, in year-month-day format.
+
+        .. seealso::
+
+            :rfc:`5545#section-3.3.4` for the ``DATE`` value type.
+
+        """
+        return self.dt
+
 
 __all__ = ["vDate"]
