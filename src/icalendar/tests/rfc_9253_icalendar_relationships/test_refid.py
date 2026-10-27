@@ -157,6 +157,10 @@ def test_addition_with_sequences(component: Component):
         _ = component.refids + 1
     with pytest.raises(TypeError):
         _ = component.refids + "abc"
+    assert component.refids.__add__(1) is NotImplemented
+    assert component.refids.__add__("abc") is NotImplemented
+    assert component.refids.__radd__(1) is NotImplemented
+    assert component.refids.__radd__("abc") is NotImplemented
 
 
 def test_multiplication_of_view(component: Component):
@@ -166,6 +170,10 @@ def test_multiplication_of_view(component: Component):
     assert 2 * component.refids == ["a", "a"]
     with pytest.raises(TypeError):
         _ = component.refids * "2"
+    with pytest.raises(TypeError):
+        _ = "2" * component.refids
+    assert component.refids.__mul__("2") is NotImplemented
+    assert component.refids.__rmul__("2") is NotImplemented
 
 
 def test_copy_of_view(component: Component):
