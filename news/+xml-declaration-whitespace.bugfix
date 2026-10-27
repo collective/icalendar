@@ -1,0 +1,1 @@
+Fixed the quadratic run time of :meth:`Component.to_xcal <icalendar.cal.component.Component.to_xcal>` and :attr:`vXml.element <icalendar.prop.xml.vXml.element>` for an ``XML`` property whose XML declaration contains a long run of whitespace. I used AI to assist me with this change. @shamsManna

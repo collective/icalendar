@@ -23,8 +23,12 @@ if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
 # The text is already decoded, so an encoding in the XML declaration does not apply.
+# A single ``\s`` before ``encoding`` keeps the match linear: with ``\s+``, the
+# whitespace run before the attribute is retried from every position that the
+# lazy ``[^>]*?`` reaches, so a long run of whitespace in the declaration takes
+# quadratic time. The whitespace that stays in the declaration is valid XML.
 _DECLARED_ENCODING = re.compile(
-    r"""^(\ufeff?<\?xml\s[^>]*?)\s+encoding\s*=\s*("[^"]*"|'[^']*')""",
+    r"""^(\ufeff?<\?xml\s[^>]*?)\sencoding\s*=\s*("[^"]*"|'[^']*')""",
     re.ASCII,
 )
 # Bytes are decoded with the encoding of their XML declaration.
