@@ -67,6 +67,7 @@ class Calendar(Component):
         "PRODID",
         "CALSCALE",
         "METHOD",
+        "URL",
         "DESCRIPTION",
         "X-WR-CALDESC",
         "NAME",
