@@ -166,9 +166,10 @@ class vTime(TimeBase):
         """Convert an ical string into a time.
 
         This parses the time forms defined in :rfc:`5545#section-3.3.12`:
-            - Local time (floating)
-            - UTC time
-            - Local time with time zone reference
+
+        -   Local time (floating)
+        -   UTC time
+        -   Local time with time zone reference
 
         Returns:
             A :class:`datetime.time` object representing the parsed time, with
