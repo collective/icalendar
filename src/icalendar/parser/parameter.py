@@ -593,7 +593,7 @@ class Parameters(CaselessDict[str | list[str]]):
         for key in sorted(self):
             if key == "VALUE":
                 continue
-            value_factory = factory.for_property(key)
+            value_factory = factory.for_parameter(key)
             param_element = Element(key.lower())
             for value in self.get_multiple(key):
                 # value is expected to be str or a subclass of str

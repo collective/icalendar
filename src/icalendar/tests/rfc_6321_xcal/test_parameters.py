@@ -16,7 +16,7 @@ from xml.etree.ElementTree import Element, fromstring, tostring
 
 import pytest
 
-from icalendar import Parameters
+from icalendar import Event, Parameters
 from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal, xml2list
 
 
@@ -258,6 +258,22 @@ def test_parameters_to_xcal(name, value, xcal, message):
     assert text.startswith("<parameters>")
     assert text.endswith("</parameters>")
     assert text[12:-13] == xcal, message
+
+
+def test_parameter_name_matching_property_uses_parameter_type():
+    """A parameter named after a property is not serialized as that property type.
+
+    RFC 6321 Section 5 specifies that unknown parameters are represented
+    using the ``unknown`` value type in xCal.
+    See https://datatracker.ietf.org/doc/html/rfc6321#section-5
+    """
+    event = Event.from_ical(
+        "BEGIN:VEVENT\r\nSUMMARY;PRIORITY=hello:x\r\nEND:VEVENT\r\n"
+    )
+
+    xcal = event.to_xcal()
+
+    assert b"<priority><unknown>hello</unknown></priority>" in xcal
 
 
 @mark_parameters

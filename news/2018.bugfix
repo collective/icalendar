@@ -1,0 +1,1 @@
+Fixed xCal serialization of parameters whose names overlap with property names by looking up parameter types separately from property types. I used AI to assist with this change. @shekhar4704

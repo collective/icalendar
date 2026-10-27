@@ -202,8 +202,11 @@ class TypesFactory(CaselessDict):
             "xml": "xml-text",
             # Miscellaneous Component Properties
             "request-status": "request-status-text",
-            ####################################
-            # parameter types (luckily there is no name overlap)
+        }
+    )
+
+    parameter_types_map = CaselessDict(
+        {
             "altrep": "uri",
             "cn": "text",
             "cutype": "text",
@@ -222,13 +225,23 @@ class TypesFactory(CaselessDict):
             "role": "text",
             "rsvp": "boolean",
             "sent-by": "cal-address",
+            "tzid": "text",
             "value": "text",
-            # rfc 9253 parameters
             "label": "text",
             "linkrel": "text",
             "gap": "duration",
         }
     )
+
+    def for_name(self, name: str) -> type[VPROPERTY]:
+        """Returns the type class for a property or parameter name."""
+        name = name.upper()
+        return self[
+            self.types_map.get(
+                name,
+                self.parameter_types_map.get(name, "unknown"),
+            )
+        ]
 
     def for_property(self, name, value_param: str | None = None) -> type[VPROPERTY]:
         """Returns the type class for a property or parameter.
@@ -268,7 +281,7 @@ class TypesFactory(CaselessDict):
         if value_param and (value_param in self) and value_param != "IMAGE":
             return self[value_param]
 
-        return self[self.types_map.get(name, "unknown")]
+        return self.for_name(name)
 
     #: jCal value types defined by :rfc:`7265` that are used verbatim as the
     #: type field. Internal type keys outside of this set (for example
@@ -293,6 +306,10 @@ class TypesFactory(CaselessDict):
             "unknown",
         }
     )
+
+    def for_parameter(self, name: str) -> type[VPROPERTY]:
+        """Returns the type class for a parameter."""
+        return self[self.parameter_types_map.get(name.upper(), "unknown")]
 
     def default_value_type(self, name: str) -> str:
         """Return the default jCal value type for a property.
@@ -321,14 +338,14 @@ class TypesFactory(CaselessDict):
         """Encodes a named value from a primitive python type to an icalendar
         encoded string.
         """
-        type_class = self.for_property(name)
+        type_class = self.for_name(name)
         return type_class(value).to_ical()
 
     def from_ical(self, name, value):
         """Decodes a named property or parameter value from an icalendar
         encoded string to a primitive python type.
         """
-        type_class = self.for_property(name)
+        type_class = self.for_name(name)
         return type_class.from_ical(value)
 
 
