@@ -7,7 +7,7 @@ from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import InvalidCalendar, JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
@@ -25,6 +25,22 @@ if TYPE_CHECKING:
     from icalendar.compatibility import Self
     from icalendar.parser.xcal.base import XCalParser
     from icalendar.prop import VPROPERTY
+
+
+def _contains_part_separator(value: str) -> bool:
+    """Whether a text value of a recurrence rule part contains a separator.
+
+    RECUR has no escaping, so a text value, such as that of ``RSCALE`` or an
+    unknown part, cannot contain the part separator ``;`` or the list
+    separator ``,``.
+
+    Parameters:
+        value: A value of one key/value pair in :class:`vRecur`.
+
+    Returns:
+        Whether a separator is present and the value must be rejected.
+    """
+    return ";" in value or "," in value
 
 
 class vRecur(CaselessDict):
@@ -284,13 +300,29 @@ class vRecur(CaselessDict):
                     recur[key.lower()] = values = []
                     for i, v in enumerate(value):
                         with JCalParsingError.reraise_with_path_added(i):
-                            values.append(value_type.parse_jcal_value(v))
+                            values.append(cls._parse_jcal_part_value(value_type, v))
                 else:
-                    recur[key] = value_type.parse_jcal_value(value)
+                    recur[key] = cls._parse_jcal_part_value(value_type, value)
         until = recur.get("until")
         if until is not None and not isinstance(until, list):
             recur["until"] = [until]
         return cls(recur, params=params)
+
+    @classmethod
+    def _parse_jcal_part_value(cls, value_type: type, jcal_value: Any) -> VPROPERTY:
+        """Parse the jCal value of one recurrence rule part.
+
+        Raises:
+            ~error.JCalParsingError: If a text value contains a part separator.
+        """
+        value = value_type.parse_jcal_value(jcal_value)
+        if value_type is vText and _contains_part_separator(value):
+            raise JCalParsingError(
+                "The value must not contain a semicolon or comma.",
+                cls,
+                value=jcal_value,
+            )
+        return value
 
     @property
     def count(self) -> int | None:
@@ -469,6 +501,10 @@ class vRecur(CaselessDict):
             if from_xcal is None:
                 from_xcal = v_prop.from_xcal
             value = from_xcal(parser)
+            if v_prop is vText and _contains_part_separator(value):
+                raise XCalParsingError(
+                    "Expected a value without a semicolon or comma", str(value), child
+                )
             # Keep UNTIL as a raw date/time, as from_ical and from_jcal do.
             parsed_value = value.dt if isinstance(value, vDDDTypes) else value
             self.setdefault(key, []).append(parsed_value)
