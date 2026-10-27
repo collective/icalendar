@@ -83,12 +83,12 @@ class vDate(TimeBase):
         self.dt = dt
         self.params = Parameters(params or {})
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         s = f"{self.dt.year:04}{self.dt.month:02}{self.dt.day:02}"
         return s.encode("utf-8")
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical) -> date:
         # date-value = 4DIGIT 2DIGIT 2DIGIT, no separators,
         # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
         if len(ical) != 8 or not ical.isascii() or not ical.isdigit():
@@ -124,7 +124,7 @@ class vDate(TimeBase):
         """Parse a jCal string to a :class:`datetime.date`.
 
         Raises:
-            ~error.JCalParsingError: If it can't parse a date.
+            ~icalendar.error.JCalParsingError: If it can't parse a date.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
@@ -140,7 +140,7 @@ class vDate(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -194,6 +194,17 @@ class vDate(TimeBase):
             d,
             params=params,
         )
+
+    @property
+    def ical_value(self) -> date:
+        """Returns the date as a date value, in year-month-day format.
+
+        .. seealso::
+
+            :rfc:`5545#section-3.3.4` for the ``DATE`` value type.
+
+        """
+        return self.dt
 
 
 __all__ = ["vDate"]

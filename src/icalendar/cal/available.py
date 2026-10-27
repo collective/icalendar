@@ -156,7 +156,7 @@ class Available(Component):
             :class:`Available`
 
         Raises:
-            :exc:`~icalendar.error.InvalidCalendar`: If the content is not valid
+            ~icalendar.error.InvalidCalendar: If the content is not valid
                 according to :rfc:`7953`.
 
         .. warning:: As time progresses, we will be stricter with the validation.

@@ -1767,7 +1767,8 @@ def get_start_end_duration_with_validation(
         tuple: (start, end, duration) values from the component.
 
     Raises:
-        ~error.InvalidCalendar: If the component violates RFC 5545 constraints.
+        ~icalendar.error.InvalidCalendar: If the component violates
+            RFC 5545 constraints.
 
     """
     start = getattr(component, start_property, None)
@@ -1815,7 +1816,7 @@ def get_start_property(component: Event | Todo) -> date | datetime:
         The ``DTSTART`` value.
 
     Raises:
-        ~error.IncompleteComponent: If no ``DTSTART`` is present.
+        ~icalendar.error.IncompleteComponent: If no ``DTSTART`` is present.
 
     """
     # Trigger validation by calling _get_start_end_duration
@@ -1841,7 +1842,7 @@ def get_end_property(
         The computed end value.
 
     Raises:
-        ~error.IncompleteComponent: If the provided information is incomplete
+        ~icalendar.error.IncompleteComponent: If the provided information is incomplete
             to compute the end property.
 
     """
@@ -2656,6 +2657,18 @@ Example:
         >>> event = Event.new(request_status="2.0;Success")
         >>> event.REQUEST_STATUS == ["2.0;Success"]
         True
+
+    :class:`~icalendar.prop.request_status.vRequestStatus` defines
+    properties for ease of use:
+
+    .. code-block:: pycon
+
+        >>> request_status = event.REQUEST_STATUS[0]
+        >>> request_status.code
+        (2, 0)
+        >>> request_status.description
+        'Success'
+
 """,
 )
 
@@ -2702,6 +2715,48 @@ Example:
         >>> event = Event.new(resources=["EASEL", "PROJECTOR", "VCR"])
         >>> event.RESOURCES == ["EASEL", "PROJECTOR", "VCR"]
         True
+""",
+)
+
+XML_property = multi_string_property(
+    "XML",
+    """This property embeds XML elements into a component.
+
+You can assign XML text, an :class:`~xml.etree.ElementTree.Element`,
+an :class:`~icalendar.parser.xcal.adapter.ElementAdapter`,
+a list of these, or ``None`` to this property.
+The values become :class:`~icalendar.prop.xml.vXml` values.
+A :class:`~icalendar.prop.text.vText` value is not converted,
+so it is written as text in xCal.
+XML with the value type BINARY is a :class:`~icalendar.prop.binary.vBinary`.
+Assigning ``None`` or an empty list removes all XML values,
+as does deleting the property.
+
+The XML property is defined in :rfc:`6321#section-4.2`.
+It can be specified multiple times in any component.
+Its value is an XML element in a namespace other than the iCalendar namespace.
+In xCal, the element is part of the properties of the component,
+see :rfc:`6321#section-4.1`.
+
+.. note::
+
+    To change the values, assign a new list or use ``add()``.
+    Changing the returned list does not always change the component.
+
+Example:
+    Add XML to an event and get the XML elements:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.XML = '<a xmlns="http://example.com/ns">text</a>'
+        >>> print(event.to_ical().decode())
+        BEGIN:VEVENT
+        XML:<a xmlns="http://example.com/ns">text</a>
+        END:VEVENT
+        >>> [xml.element.tag for xml in event.XML]
+        ['{http://example.com/ns}a']
 """,
 )
 
@@ -2823,6 +2878,7 @@ __all__ = [
     "RELATED_TO_TYPE_SETTER",
     "REQUEST_STATUS_property",
     "RESOURCES_property",
+    "XML_property",
     "attachments_property",
     "attendees_property",
     "busy_type_property",
