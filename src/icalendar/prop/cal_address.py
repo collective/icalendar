@@ -95,8 +95,8 @@ class vCalAddress(str):
         A plain :class:`str` is converted to :class:`vCalAddress` before
         comparing, so ``"me@example.com" == vCalAddress("MAILTO:me@example.com")``
         is ``True``. This is what lets the common pattern
-        ``my_email in event.attendees`` work (see :issue:`1901`). If the
-        string cannot form a valid address (e.g. it contains a newline),
+        ``my_email in event.attendees`` work (see :pr:`1901`). If the
+        string cannot form a valid address (for example, it contains a newline),
         comparison returns :data:`NotImplemented`, leaving the reflected
         operation to decide.
 
@@ -106,7 +106,7 @@ class vCalAddress(str):
         two :class:`vCalAddress` instances. A plain :class:`str` hashes
         by its literal value, so ``hash(vCalAddress(...))`` may differ
         from ``hash(str(...))`` even when they compare equal. This is
-        accepted; see the discussion in :issue:`1901`.
+        accepted; see the discussion in :pr:`1901`.
 
         See :issue:`1896`.
         """
@@ -116,7 +116,7 @@ class vCalAddress(str):
             try:
                 other = vCalAddress(other)
             except ValueError:
-                # e.g. the string contains CR or LF and cannot be an address
+                # for example, the string contains CR or LF and cannot be an address
                 return NotImplemented
             return self == other
         return NotImplemented
@@ -127,7 +127,7 @@ class vCalAddress(str):
         This is required because :class:`vCalAddress` extends
         :class:`str`: without it, ``!=`` would use :meth:`str.__ne__`
         (plain string comparison) and could disagree with
-        :meth:`__eq__`, e.g. case-insensitively equal addresses would
+        :meth:`__eq__`; for example, case-insensitively equal addresses would
         be both ``==`` and ``!=`` at the same time.
         """
         result = self.__eq__(other)
