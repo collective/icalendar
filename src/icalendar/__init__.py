@@ -80,6 +80,7 @@ from icalendar.prop import (
     vOrg,
     vPeriod,
     vRecur,
+    vRequestStatus,
     vSkip,
     vText,
     vTime,
@@ -88,6 +89,7 @@ from icalendar.prop import (
     vUri,
     vUTCOffset,
     vWeekday,
+    vXml,
     vXmlReference,
 )
 from icalendar.prop.conference import Conference
@@ -174,6 +176,7 @@ __all__ = [
     "vOrg",
     "vPeriod",
     "vRecur",
+    "vRequestStatus",
     "vSkip",
     "vText",
     "vTime",
@@ -182,6 +185,7 @@ __all__ = [
     "vUnknown",
     "vUri",
     "vWeekday",
+    "vXml",
     "vXmlReference",
     "version",
     "version_tuple",
