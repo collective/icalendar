@@ -137,13 +137,19 @@ class vDatetime(TimeBase):
             raise ValueError(f"Wrong datetime format: {ical}")
 
         try:
+            second = int(ical_value[13:15])
+            if second == 60:
+                # RFC 5545 permits time-second = 00-60 to account for positive
+                # leap seconds. This is wrong but we have no way to represent
+                # this, so we clamp it like the xCal path does.
+                second = 59
             timetuple = (
                 int(ical_value[:4]),  # year
                 int(ical_value[4:6]),  # month
                 int(ical_value[6:8]),  # day
                 int(ical_value[9:11]),  # hour
                 int(ical_value[11:13]),  # minute
-                int(ical_value[13:15]),  # second
+                second,
             )
             if tzinfo:
                 return tzp.localize(datetime(*timetuple), tzinfo)
@@ -188,6 +194,11 @@ class vDatetime(TimeBase):
         utc = jcal.endswith("Z")
         if utc:
             jcal = jcal[:-1]
+        # RFC 5545 permits time-second = 00-60 to account for positive
+        # leap seconds. This is wrong but we have no way to represent
+        # this, so we clamp it like the xCal path does.
+        if jcal.endswith(":60"):
+            jcal = jcal[:-2] + "59"
         try:
             dt = datetime.strptime(jcal, "%Y-%m-%dT%H:%M:%S")
         except ValueError as e:

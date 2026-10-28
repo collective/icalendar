@@ -1,0 +1,1 @@
+Fix the parsing of leap seconds (``time-second = 60`` per RFC 5545): ``vTime.from_ical``, ``vDatetime.from_ical``, ``vTime.parse_jcal_value`` and ``vDatetime.parse_jcal_value`` now clamp the value to 59 like the xCal paths instead of raising a parsing error. @rahul05ranjan
