@@ -48,4 +48,4 @@ The parser is configurable through the setting :func:`icalendar.config.parse_xml
 
 .. seealso::
 
-    :mod:`icalendar.tests.rfc_6321_xcal.test_xml_parser`
+    `test_xml_parser.py <https://github.com/collective/icalendar/blob/main/src/icalendar/tests/rfc_6321_xcal/test_xml_parser.py>`_

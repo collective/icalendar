@@ -152,7 +152,7 @@ class Journal(Component):
 
     @property
     def duration(self) -> timedelta:
-        """The journal has no duration: timedelta(0)."""
+        """Journals have no duration, so this returns ``timedelta(0)``."""
         return timedelta(0)
 
     color = color_property
