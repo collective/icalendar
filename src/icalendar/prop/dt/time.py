@@ -166,9 +166,10 @@ class vTime(TimeBase):
         """Convert an ical string into a time.
 
         This parses the time forms defined in :rfc:`5545#section-3.3.12`:
-            - Local time (floating)
-            - UTC time
-            - Local time with time zone reference
+
+        -   Local time (floating)
+        -   UTC time
+        -   Local time with time zone reference
 
         Returns:
             A :class:`datetime.time` object representing the parsed time, with
@@ -205,21 +206,20 @@ class vTime(TimeBase):
             )
 
         try:
-            timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
-
-            if tzinfo:
-                return tzp.localize(time(*timetuple), tzinfo)
-
-            if utc:
-                return tzp.localize_utc(time(*timetuple))
-
-            return time(*timetuple)
-
+            result = time(int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
         except Exception as e:
             raise ICalParsingError(
                 "Expected time",
                 value=original_ical,
             ) from e
+
+        if tzinfo:
+            return tzp.localize(result, tzinfo)
+
+        if utc:
+            return tzp.localize_utc(result)
+
+        return result
 
     @classmethod
     def examples(cls) -> list[Self]:
