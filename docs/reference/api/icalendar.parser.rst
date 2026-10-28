@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    icalendar.parser.ical
+   icalendar.parser.xcal
 
 Submodules
 ----------

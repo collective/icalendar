@@ -1,0 +1,1 @@
+Added type hints to :class:`~icalendar.caselessdict.CaselessDict` and :class:`~icalendar.parser.parameter.Parameters`. ``CaselessDict`` is now generic over the value type, with keys typed as ``str``. ``Parameters`` sets the value type to ``str``. @Aditi0004
