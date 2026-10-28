@@ -179,3 +179,14 @@ def test_component_duration_calculated_fallback(component_class):
 
     # Should calculate duration from start and end (no DURATION property)
     assert component.duration == timedelta(hours=2, minutes=30)
+
+
+def test_todo_duration_due_without_dtstart_is_zero():
+    """A VTODO with only DUE occupies that instant and has zero duration.
+
+    See https://github.com/collective/icalendar/issues/1786
+    """
+    todo = Todo()
+    todo.end = datetime(2026, 1, 1, 12, 0)
+
+    assert todo.duration == timedelta(0)

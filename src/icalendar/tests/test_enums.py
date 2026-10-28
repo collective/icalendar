@@ -37,11 +37,10 @@ def test_enum_has_description(enum):
     assert "Description:" in enum.__doc__
 
 
-def test_enum_can_be_pickled():
-    """Enum members retain their identity after a pickle round trip."""
-    related = enums.RELATED.START
-
-    assert pickle.loads(pickle.dumps(related)) is related  # noqa: S301
+def test_enum_can_be_pickled(enum):
+    """Every enum member retains their identity after a pickle round trip."""
+    for member in enum:
+        assert pickle.loads(pickle.dumps(member)) is member  # noqa: S301
 
 
 def test_value_enum_includes_binary():

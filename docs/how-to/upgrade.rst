@@ -20,6 +20,73 @@ This section describes the major changes to icalendar in version 8.0.0.
 Breaking changes
 ----------------
 
+This section describes the breaking changes in icalendar 8.0.0, and how to adapt your code to these changes.
+
+``Component.from_ical`` no longer reads files from a ``str`` path
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+:meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` no longer reads a file when it is given a ``str`` that matches a path on the file system.
+``str`` and ``bytes`` values are now always parsed as iCalendar data.
+This prevents untrusted input from causing unintended local file reads.
+
+If your code passes a file path as a ``str``:
+
+.. code-block:: python
+
+    from icalendar import Calendar
+
+    calendar = Calendar.from_ical("/path/to/calendar.ics")
+
+…then pass a :class:`pathlib.Path` instead.
+
+.. code-block:: python
+
+    from pathlib import Path
+
+    from icalendar import Calendar
+
+    calendar = Calendar.from_ical(Path("/path/to/calendar.ics"))
+
+
+..  _vbinary-obj-removed:
+
+``vBinary.obj`` removed
+'''''''''''''''''''''''
+
+``vBinary.obj`` corrupted data.
+Use :meth:`vBinary.bytes <icalendar.prop.binary.vBinary.bytes>` instead.
+
+The example below shows how to correctly access binary data:
+
+.. code-block:: pycon
+
+    >>> from icalendar import Calendar
+    >>> cal = Calendar.example("rfc_7986_image.ics")
+    >>> v_binary = cal.events[1]["IMAGE"]
+    >>> v_binary.bytes[:4]  # correct access for PNG image data
+    b'\x89PNG'
+
+For backward compatibility, if corrupt data is acceptable and you need to get the bytes as a Unicode string, use :meth:`~icalendar.parser_tools.to_unicode` as shown in the following code:
+
+.. code-block:: pycon
+
+    >>> from icalendar.parser_tools import to_unicode
+    >>> string = to_unicode(v_binary.bytes)  # corrupts data
+
+..  _removed-from-icalendar-parser-string:
+
+Functions removed from :mod:`icalendar.parser.string`
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+These functions have been removed from :mod:`icalendar.parser.string`:
+
+* ``escape_char``
+* ``escape_string``
+* ``foldline``,
+* ``unescape_char``
+* ``unescape_string``
+
+
 .. _upgrade-7.0.0:
 
 7.0.0
