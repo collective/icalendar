@@ -7,7 +7,7 @@ from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import InvalidCalendar, JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
@@ -27,8 +27,28 @@ if TYPE_CHECKING:
     from icalendar.prop import VPROPERTY
 
 
+def _contains_part_separator(value: str) -> bool:
+    """Whether a text value of a recurrence rule part contains a separator.
+
+    RECUR has no escaping, so a text value, such as that of ``RSCALE`` or an
+    unknown part, cannot contain the part separator ``;`` or the list
+    separator ``,``.
+
+    Parameters:
+        value: A value of one key/value pair in :class:`vRecur`.
+
+    Returns:
+        Whether a separator is present and the value must be rejected.
+    """
+    return ";" in value or "," in value
+
+
 class vRecur(CaselessDict):
     """Recurrence definition.
+
+    The dateutil spelling ``byweekday`` is accepted as an alias for the
+    iCalendar ``BYDAY`` rule part. It is normalized to ``BYDAY`` when a
+    recurrence is parsed or serialized.
 
     Property Name:
         RRULE
@@ -136,7 +156,6 @@ class vRecur(CaselessDict):
         "BYMINUTE",
         "BYHOUR",
         "BYDAY",
-        "BYWEEKDAY",
         "BYMONTHDAY",
         "BYYEARDAY",
         "BYWEEKNO",
@@ -164,7 +183,6 @@ class vRecur(CaselessDict):
             "WKST": vWeekday,
             "BYDAY": vWeekday,
             "FREQ": vFrequency,
-            "BYWEEKDAY": vWeekday,
             "SKIP": vSkip,  # RFC 7529
             "RSCALE": vText,  # RFC 7529
         }
@@ -185,11 +203,28 @@ class vRecur(CaselessDict):
             if not isinstance(v, SEQUENCE_TYPES):
                 kwargs[k] = [v]
         super().__init__(*args, **kwargs)
+        self._normalize_byweekday()
         self.params = Parameters(params)
+
+    @staticmethod
+    def _normalize_key(key: str) -> str:
+        """Return the iCalendar name for a recurrence rule part."""
+        return "BYDAY" if key.upper() == "BYWEEKDAY" else key
+
+    def _normalize_byweekday(self) -> None:
+        """Normalize the dateutil spelling to the RFC 5545 spelling."""
+        if "BYWEEKDAY" in self:
+            if "BYDAY" in self:
+                raise ValueError("BYDAY and BYWEEKDAY cannot both be specified")
+            self["BYDAY"] = self.pop("BYWEEKDAY")
+
+    def _normalized(self) -> Self:
+        """Return a recurrence with canonical rule-part names."""
+        return type(self)(self) if "BYWEEKDAY" in self else self
 
     def to_ical(self):
         result = []
-        for key, vals in self.sorted_items():
+        for key, vals in self._normalized().sorted_items():
             typ = self.types.get(key, vText)
             if not isinstance(vals, SEQUENCE_TYPES):
                 vals = [vals]
@@ -204,6 +239,7 @@ class vRecur(CaselessDict):
     @classmethod
     def parse_type(cls, key, values):
         # integers
+        key = cls._normalize_key(key)
         parser = cls.types.get(key, vText)
         return [parser.from_ical(v) for v in values.split(",")]
 
@@ -220,6 +256,7 @@ class vRecur(CaselessDict):
                     # E.g. incorrect trailing semicolon, like (issue #157):
                     # FREQ=YEARLY;BYMONTH=11;BYDAY=1SU;
                     continue
+                key = cls._normalize_key(key)
                 recur[key] = cls.parse_type(key, vals)
             return cls(recur)
         except ValueError:
@@ -237,7 +274,7 @@ class vRecur(CaselessDict):
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
         recur = {}
-        for k, v in self.items():
+        for k, v in self._normalized().sorted_items():
             key = k.lower()
             if key.upper() in self.jcal_not_a_list:
                 value = v[0] if isinstance(v, list) and len(v) == 1 else v
@@ -260,7 +297,7 @@ class vRecur(CaselessDict):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
@@ -278,19 +315,36 @@ class vRecur(CaselessDict):
             JCalParsingError.validate_jcal_token(
                 key, "recurrence rule part name", cls, path=[3, key]
             )
+            key = cls._normalize_key(key)
             value_type = cls.types.get(key, vText)
             with JCalParsingError.reraise_with_path_added(3, key):
                 if isinstance(value, list):
                     recur[key.lower()] = values = []
                     for i, v in enumerate(value):
                         with JCalParsingError.reraise_with_path_added(i):
-                            values.append(value_type.parse_jcal_value(v))
+                            values.append(cls._parse_jcal_part_value(value_type, v))
                 else:
-                    recur[key] = value_type.parse_jcal_value(value)
+                    recur[key] = cls._parse_jcal_part_value(value_type, value)
         until = recur.get("until")
         if until is not None and not isinstance(until, list):
             recur["until"] = [until]
         return cls(recur, params=params)
+
+    @classmethod
+    def _parse_jcal_part_value(cls, value_type: type, jcal_value: Any) -> VPROPERTY:
+        """Parse the jCal value of one recurrence rule part.
+
+        Raises:
+            ~error.JCalParsingError: If a text value contains a part separator.
+        """
+        value = value_type.parse_jcal_value(jcal_value)
+        if value_type is vText and _contains_part_separator(value):
+            raise JCalParsingError(
+                "The value must not contain a semicolon or comma.",
+                cls,
+                value=jcal_value,
+            )
+        return value
 
     @property
     def count(self) -> int | None:
@@ -469,7 +523,13 @@ class vRecur(CaselessDict):
             if from_xcal is None:
                 from_xcal = v_prop.from_xcal
             value = from_xcal(parser)
-            self.setdefault(key, []).append(value)
+            if v_prop is vText and _contains_part_separator(value):
+                raise XCalParsingError(
+                    "Expected a value without a semicolon or comma", str(value), child
+                )
+            # Keep UNTIL as a raw date/time, as from_ical and from_jcal do.
+            parsed_value = value.dt if isinstance(value, vDDDTypes) else value
+            self.setdefault(key, []).append(parsed_value)
         return self
 
     def to_xcal(self, element: Element) -> None:
