@@ -51,7 +51,7 @@ def test_whitespace_is_ignored(types_factory: TypesFactory):
     assert vBinary.from_xcal(e).bytes == b"The quick"
 
 
-INVALID_VALUES = ["INVALID!", "a"]
+INVALID_VALUES = ["INVALID!", "a", "é"]
 
 if sys.version_info >= (3, 12):
     INVALID_VALUES.append("MTIz=")

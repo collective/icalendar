@@ -6,14 +6,31 @@ from typing import ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar.error import (
+    Base64DecodingError,
+    ICalParsingError,
+    JCalParsingError,
+    XCalParsingError,
+)
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 
+def _decode_base64(value: str | bytes) -> bytes:
+    """Decode BASE64 data or raise a data error."""
+    try:
+        return base64.b64decode(value, validate=True)
+    except (binascii.Error, ValueError) as e:
+        raise Base64DecodingError("Not valid base 64 encoding.") from e
+
+
 class vBinary:
     """Binary property values are Base64 encoded.
+
+    See also:
+
+        :doc:`/explanation/base64` explains Base64 encoding and value types.
 
     ..  versionremoved:: 8.0.0
         Removed ``obj`` attribute, use :attr:`bytes` to access the binary content.
@@ -48,9 +65,9 @@ class vBinary:
     @staticmethod
     def from_ical(ical: str | bytes) -> bytes:
         try:
-            return base64.b64decode(ical, validate=True)
-        except (binascii.Error, ValueError) as e:
-            raise ValueError("Not valid base 64 encoding.") from e
+            return _decode_base64(ical)
+        except Base64DecodingError as e:
+            raise ICalParsingError(str(e)) from e
 
     @property
     def base64data(self) -> str:
@@ -76,9 +93,9 @@ class vBinary:
             value: A Base64-encoded string.
 
         Raises:
-            ValueError: If ``value`` isn't valid Base64.
+            ~error.Base64DecodingError: If ``value`` is not valid BASE64.
         """
-        self.bytes = self.from_ical(value)
+        self.bytes = _decode_base64(value)
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
@@ -128,8 +145,12 @@ class vBinary:
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
+        try:
+            binary = _decode_base64(jcal_property[3])
+        except Base64DecodingError as e:
+            raise JCalParsingError(str(e), cls, 3) from e
         return cls(
-            cls.from_ical(jcal_property[3]),
+            binary,
             params=Parameters.from_jcal_property(jcal_property),
         )
 
@@ -153,8 +174,8 @@ class vBinary:
         element = parser.parse_tag(cls.default_value)
         text = element.get_text_without_whitespace()
         try:
-            binary = base64.b64decode(text, validate=True)
-        except binascii.Error as e:
+            binary = _decode_base64(text)
+        except Base64DecodingError as e:
             raise XCalParsingError(
                 "Expected base64 encoded data",
                 None,  # do not print potentially huge chunks of data

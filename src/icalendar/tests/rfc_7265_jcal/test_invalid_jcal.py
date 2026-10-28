@@ -11,6 +11,7 @@ from icalendar import (
     InvalidCalendar,
     JCalParsingError,
     Parameters,
+    vBinary,
     vDate,
     vDatetime,
     vDDDTypes,
@@ -253,6 +254,9 @@ def test_failing_example_delegated_to(calendars):
         (vTime, "time", r"Cannot parse time\.", ""),
         (vTime, "time", r"Cannot parse time\.", "asd"),
         (vDuration, "duration", r"Cannot parse duration\.", "PXD"),
+        (vBinary, "binary", r"Not valid base 64 encoding\.", "SGVsbG8"),
+        (vBinary, "binary", r"Not valid base 64 encoding\.", "!!!"),
+        (vBinary, "binary", r"Not valid base 64 encoding\.", "é"),
         (
             vDDDTypes,
             "date-time",
@@ -261,8 +265,8 @@ def test_failing_example_delegated_to(calendars):
         ),
     ],
 )
-def test_date_time_parsing_errors(v_prop, message, ty, value):
-    """An empty datetime should raise an error."""
+def test_value_parsing_errors(v_prop, message, ty, value):
+    """Invalid data must raise a jCal error with the value path."""
     with pytest.raises(
         JCalParsingError,
         match=rf"\[3\] in {v_prop.__name__}: {message}",

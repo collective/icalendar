@@ -50,3 +50,46 @@ def test_delete_value_None(p):
     p.value = None
     assert p.value is None
     assert "VALUE" not in p
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("base64", "BASE64"),
+        ("BaSe64", "BASE64"),
+        ("8bit", "8BIT"),
+        (["base64", "8bit"], "8BIT"),
+        (["8bit", "base64"], "BASE64"),
+        ([], "8BIT"),
+    ],
+)
+def test_encoding_parameter(value, expected):
+    params = Parameters(encoding=value)
+    assert params.encoding == expected
+    assert params["ENCODING"] == value
+
+
+def test_encoding_parameter_default_and_delete(p):
+    assert p.encoding == "8BIT"
+    assert "ENCODING" not in p
+    p.encoding = "base64"
+    assert p.encoding == "BASE64"
+    assert p["ENCODING"] == "BASE64"
+    del p.encoding
+    del p.encoding
+    assert p.encoding == "8BIT"
+    assert "ENCODING" not in p
+    p.encoding = "base64"
+    p.encoding = None
+    assert p.encoding == "8BIT"
+    assert "ENCODING" not in p
+    del p.encoding
+    assert p.encoding == "8BIT"
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["ENCODING=8BIT;ENCODING=base64", "ENCODING=8BIT,base64"],
+)
+def test_repeated_encoding_parameter(value):
+    assert Parameters.from_ical(value).encoding == "BASE64"
