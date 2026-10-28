@@ -6,7 +6,7 @@ from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
-from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.match import XCalRegexMatcher
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
@@ -89,10 +89,21 @@ class vDate(TimeBase):
 
     @staticmethod
     def from_ical(ical: str) -> date:
+        """Parse an iCalendar DATE value.
+
+        Parameters:
+            ical (str | bytes): Required. The DATE value in ``YYYYMMDD`` format.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid DATE.
+        """
         # date-value = 4DIGIT 2DIGIT 2DIGIT, no separators,
         # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
         if len(ical) != 8 or not ical.isascii() or not ical.isdigit():
-            raise ValueError(f"Wrong date format {ical}")
+            raise ICalParsingError(
+                "Wrong date format",
+                value=ical,
+            )
         try:
             timetuple = (
                 int(ical[:4]),  # year
@@ -101,7 +112,10 @@ class vDate(TimeBase):
             )
             return date(*timetuple)
         except Exception as e:
-            raise ValueError(f"Wrong date format {ical}") from e
+            raise ICalParsingError(
+                "Wrong date format",
+                value=ical,
+            ) from e
 
     @classmethod
     def examples(cls) -> list[Self]:
