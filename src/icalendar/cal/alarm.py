@@ -391,6 +391,7 @@ class Alarm(Component):
         cls,
         /,
         action: str | None = None,
+        trigger: timedelta | datetime | None = None,
         attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: ATTENDEE_TYPE_SETTER = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
@@ -413,6 +414,7 @@ class Alarm(Component):
             action: The :attr:`ACTION` of the alarm. Typical values are
                 ``"AUDIO"``, ``"DISPLAY"``, and ``"EMAIL"``. When you set
                 ``"AUDIO"``, the alarm accepts at most one attachment.
+            trigger: The required :attr:`TRIGGER` of the alarm.
             attachments: The :attr:`attachments` of the alarm.
             attendees: The :attr:`attendees` of the alarm.
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
@@ -432,6 +434,11 @@ class Alarm(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
+        if cls._validate_new:
+            if not action:
+                raise InvalidCalendar("Alarm requires an ACTION")
+            if trigger is None:
+                raise InvalidCalendar("Alarm requires a TRIGGER")
         alarm: Self = super().new(
             links=links,
             related_to=related_to,
@@ -440,6 +447,8 @@ class Alarm(Component):
         )
         if action is not None:
             alarm.ACTION = action
+        if trigger is not None:
+            alarm.TRIGGER = trigger
         alarm.attachments = attachments
         alarm.summary = summary
         alarm.description = description
@@ -545,6 +554,7 @@ class Alarm(Component):
             raise InvalidCalendar("DISPLAY alarm requires a trigger")
         alarm: Alarm = cls.new(
             action="DISPLAY",
+            trigger=trigger,
             description=description,
             uid=uid,
             links=links,
@@ -552,7 +562,6 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
-        alarm.TRIGGER = trigger
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
@@ -625,6 +634,7 @@ class Alarm(Component):
             raise InvalidCalendar("AUDIO alarm requires a trigger")
         alarm: Alarm = cls.new(
             action="AUDIO",
+            trigger=trigger,
             attachments=attachments,
             uid=uid,
             links=links,
@@ -632,7 +642,6 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
-        alarm.TRIGGER = trigger
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
@@ -736,6 +745,7 @@ class Alarm(Component):
             raise InvalidCalendar("EMAIL alarm requires at least one valid attendee")
         alarm: Alarm = cls.new(
             action="EMAIL",
+            trigger=trigger,
             attachments=attachments,
             summary=summary,
             description=description,
@@ -746,7 +756,6 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
-        alarm.TRIGGER = trigger
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
 

@@ -1,0 +1,1 @@
+Fixed broken documentation links to :class:`~icalendar.cal.availability.Availability` and :attr:`~icalendar.cal.calendar.DEFAULT_PRODID`. I used AI to assist me with this change. @Mohammed-Ahmed7
