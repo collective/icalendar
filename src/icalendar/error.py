@@ -18,6 +18,13 @@ class InvalidCalendar(ValueError):
     """
 
 
+class InvalidToken(InvalidCalendar):
+    """A name is not a valid iCalendar token.
+
+    ..  versionadded:: 0.0.0
+    """
+
+
 class ICalParsingError(InvalidCalendar):
     """Could not parse an iCalendar."""
 
@@ -146,6 +153,14 @@ class JCalParsingError(InvalidCalendar):
     """Could not parse a part of the JCal."""
 
     _default_value = object()
+    path: list[str | int]
+    """The location in the jCal structure where the error occurred."""
+    parser: str
+    """The parser class or its name where the error occurred."""
+    message: str
+    """A description of the error that occurred while parsing."""
+    value: object
+    """The value which caused the error, if available."""
 
     def __init__(
         self,
@@ -189,7 +204,7 @@ class JCalParsingError(InvalidCalendar):
         """Automatically re-raise the exception with path components added.
 
         Raises:
-            ~error.JCalParsingError: If there was an exception in the context.
+            ~icalendar.error.JCalParsingError: If there was an exception in the context.
         """
         try:
             yield
@@ -227,7 +242,7 @@ class JCalParsingError(InvalidCalendar):
             path: The location in the jCal structure where the error occurred.
 
         Raises:
-            ~error.JCalParsingError: if the property is not valid.
+            ~icalendar.error.JCalParsingError: if the property is not valid.
 
         ..  versionchanged:: 7.3.0
             The name (first item of the list) is validated by
@@ -342,7 +357,7 @@ class JCalParsingError(InvalidCalendar):
             path: The jCal path to ``name``, used to locate it in the error.
 
         Raises:
-            ~error.JCalParsingError: If ``name`` is not a valid lowercase
+            ~icalendar.error.JCalParsingError: If ``name`` is not a valid lowercase
                 iCalendar token.
 
         See also:
@@ -354,7 +369,7 @@ class JCalParsingError(InvalidCalendar):
 
         try:
             validate_token(name)
-        except ValueError:
+        except InvalidToken:
             raise cls(
                 rf"The {kind} must be a valid iCalendar token, matching the "
                 rf"regular expression pattern `[\w.-]+`.",
@@ -411,6 +426,7 @@ __all__ = [
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",
+    "InvalidToken",
     "JCalParsingError",
     "LocalTimezoneMissing",
     "NoCalendarsFound",

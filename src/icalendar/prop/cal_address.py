@@ -106,6 +106,7 @@ class vCalAddress(str):
         DELEGATED_FROM,
         DELEGATED_TO,
         DIR,
+        EMAIL,
         LANGUAGE,
         MEMBER,
         PARTSTAT,
@@ -273,7 +274,7 @@ class vCalAddress(str):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)

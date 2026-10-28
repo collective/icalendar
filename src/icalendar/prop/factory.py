@@ -27,10 +27,12 @@ from icalendar.prop.inline import vInline
 from icalendar.prop.n import vN
 from icalendar.prop.org import vOrg
 from icalendar.prop.recur import vFrequency, vRecur, vWeekday
+from icalendar.prop.request_status import vRequestStatus
 from icalendar.prop.text import vText
 from icalendar.prop.uid import vUid
 from icalendar.prop.unknown import vUnknown
 from icalendar.prop.uri import vUri
+from icalendar.prop.xml import vXml
 from icalendar.prop.xml_reference import vXmlReference
 
 from .integer import vInt
@@ -85,7 +87,9 @@ class TypesFactory(CaselessDict):
             vOrg,
             vUid,
             vXmlReference,
+            vXml,
             vUnknown,
+            vRequestStatus,
             vBroken,
         )
         self["binary"] = vBinary
@@ -106,12 +110,14 @@ class TypesFactory(CaselessDict):
         self["inline"] = vInline
         self["date-time-list"] = vDDDLists
         self["categories"] = vCategory
+        self["request-status-text"] = vRequestStatus  # RFC 5545 and 6321
         self["adr"] = vAdr  # RFC 6350 vCard
         self["n"] = vN  # RFC 6350 vCard
         self["org"] = vOrg  # RFC 6350 vCard
         self["unknown"] = vUnknown  # RFC 7265
         self["uid"] = vUid  # RFC 9253
         self["xml-reference"] = vXmlReference  # RFC 9253
+        self["xml-text"] = vXml  # RFC 6321
         self["x-broken"] = vBroken
 
     #################################################
@@ -192,8 +198,10 @@ class TypesFactory(CaselessDict):
             "dtstamp": "date-time",
             "last-modified": "date-time",
             "sequence": "integer",
+            # XML property (RFC 6321)
+            "xml": "xml-text",
             # Miscellaneous Component Properties
-            "request-status": "text",
+            "request-status": "request-status-text",
             ####################################
             # parameter types (luckily there is no name overlap)
             "altrep": "uri",
@@ -292,7 +300,7 @@ class TypesFactory(CaselessDict):
         The result is a lowercase :rfc:`7265` value type, for example
         ``"date-time"`` for ``DTSTART`` or ``"duration"`` for ``TRIGGER``.
         This is the value type a property uses when no explicit ``VALUE``
-        parameter is given, so it tells :func:`Component.from_jcal` whether a
+        parameter is given, so it tells :meth:`Component.from_jcal <icalendar.cal.component.Component.from_jcal>` whether a
         ``VALUE`` parameter has to be restored from the jCal type field.
 
         Parameters:
@@ -301,16 +309,13 @@ class TypesFactory(CaselessDict):
         Returns:
             The default jCal value type as a lowercase string.
         """
-        internal = self.types_map.get(name.lower(), "unknown")
+        internal = self.types_map.get(name, "unknown").lower()
         if internal in self._jcal_value_types:
             return internal
         # Internal keys such as ``categories`` or ``date-time-list`` are not
         # jCal value types themselves; ask the value class for the type it
         # actually serialises to.
-        try:
-            return self[internal].examples()[0].VALUE.lower()
-        except (KeyError, IndexError, AttributeError):
-            return "unknown"
+        return self[internal].default_value.lower()
 
     def to_ical(self, name, value):
         """Encodes a named value from a primitive python type to an icalendar
