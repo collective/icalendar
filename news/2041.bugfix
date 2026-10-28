@@ -1,0 +1,1 @@
+Fix ``_unescape_char`` corrupting a serialized escaped backslash followed by "n"/"N": the backslash pair is now consumed in a single left-to-right pass, so unescaping a serialized ``C:\\numbers`` yields ``C:\numbers`` again and round-trips with ``_escape_char``. @rahul05ranjan

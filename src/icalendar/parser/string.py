@@ -61,6 +61,33 @@ def _escape_char(text: str | bytes) -> str:
     )
 
 
+# The order of the alternatives is irrelevant: the substitution scans the
+# text once, left to right, so an escaped backslash ("\\\\") is consumed as
+# a pair before the character after it can be mistaken for an escape. This is
+# what makes a literal backslash followed by "n" or "N" survive -- the
+# sequential str.replace chain did not, and a serialized "C:\\\\numbers"
+# (the _escape_char form of "C:\\numbers") came back as "C:\\" + a newline
+# + "umbers" instead of "C:\\numbers".
+_UNESCAPE_CHAR_REGEX = re.compile(r"\r\n|\\N|\\n|\\\\|\\,|\\;")
+_UNESCAPE_CHAR_BYTES_REGEX = re.compile(rb"\r\n|\\N|\\n|\\\\|\\,|\\;")
+_UNESCAPE_CHAR_REPLACEMENTS = {
+    "\r\n": "\n",
+    "\\N": "\n",
+    "\\n": "\n",
+    "\\\\": "\\",
+    "\\,": ",",
+    "\\;": ";",
+}
+_UNESCAPE_CHAR_BYTES_REPLACEMENTS = {
+    b"\r\n": b"\n",
+    b"\\N": b"\n",
+    b"\\n": b"\n",
+    b"\\\\": b"\\",
+    b"\\,": b",",
+    b"\\;": b";",
+}
+
+
 def _unescape_char(text: str | bytes) -> str | bytes:
     r"""Unescape iCalendar TEXT values.
 
@@ -77,34 +104,30 @@ def _unescape_char(text: str | bytes) -> str | bytes:
         TypeError: If ``text`` is neither ``str`` nor ``bytes``.
 
     Note:
-        The replacement order is critical to avoid double-unescaping:
+        The text is scanned once, left to right, so every backslash pair
+        (``\\\\`` -> ``\\``) is consumed as a unit before the character
+        after it is considered. With sequential replacements instead, a
+        literal backslash followed by "n" or "N" was corrupted into a
+        newline: ``\\\\numbers`` (the escaped form of ``\\numbers``)
+        became ``\\`` + a newline + ``umbers``.
 
-        1. ``\N`` -> ``\n`` (intermediate step)
-        2. ``\r\n`` -> ``\n`` (normalize line endings)
+        Conversions performed, in scan order:
+
+        1. ``\N`` -> ``\n`` (normalize the uppercase newline escape)
+        2. ``\r\n`` -> ``\n`` (normalize raw line endings)
         3. ``\n`` -> newline (unescape newlines)
         4. ``\,`` -> ``,`` (unescape commas)
         5. ``\;`` -> ``;`` (unescape semicolons)
-        6. ``\\`` -> ``\`` (unescape backslashes last)
+        6. ``\\`` -> ``\`` (unescape backslashes)
     """
     if not isinstance(text, (str, bytes)):
         raise TypeError(f"Expected str or bytes, got {type(text).__name__}")
-    # NOTE: ORDER MATTERS!
     if isinstance(text, str):
-        return (
-            text.replace("\\N", "\\n")
-            .replace("\r\n", "\n")
-            .replace("\\n", "\n")
-            .replace("\\,", ",")
-            .replace("\\;", ";")
-            .replace("\\\\", "\\")
+        return _UNESCAPE_CHAR_REGEX.sub(
+            lambda match: _UNESCAPE_CHAR_REPLACEMENTS[match.group(0)], text
         )
-    return (
-        text.replace(b"\\N", b"\\n")
-        .replace(b"\r\n", b"\n")
-        .replace(b"\\n", b"\n")
-        .replace(b"\\,", b",")
-        .replace(b"\\;", b";")
-        .replace(b"\\\\", b"\\")
+    return _UNESCAPE_CHAR_BYTES_REGEX.sub(
+        lambda match: _UNESCAPE_CHAR_BYTES_REPLACEMENTS[match.group(0)], text
     )
 
 
