@@ -1,0 +1,1 @@
+Bumped the following actions: actions/upload-artifact 7.0.1 -> 7.0.2, github/codeql-action/upload-sarif 4.39.0 -> 4.39.1, astral-sh/setup-uv 10.0.1 -> 10.3.2, actions/setup-python 7.0.0 -> 7.1.0, actions/download-artifact 8.0.1 -> 8.0.2. @dependabot, @stevepiercy
