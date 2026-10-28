@@ -67,6 +67,7 @@ class Calendar(Component):
         "PRODID",
         "CALSCALE",
         "METHOD",
+        "URL",
         "DESCRIPTION",
         "X-WR-CALDESC",
         "NAME",
@@ -629,7 +630,7 @@ Example:
             :class:`Calendar`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~icalendar.error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -671,7 +672,7 @@ Example:
         This method can be called explicitly to validate a calendar before output.
 
         Raises:
-            ~error.IncompleteComponent: If the calendar lacks required properties or
+            ~icalendar.error.IncompleteComponent: If the calendar lacks required properties or
                 components.
         """
         if not self.get("PRODID"):
