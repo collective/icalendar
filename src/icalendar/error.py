@@ -18,6 +18,13 @@ class InvalidCalendar(ValueError):
     """
 
 
+class InvalidToken(InvalidCalendar):
+    """A name is not a valid iCalendar token.
+
+    ..  versionadded:: 0.0.0
+    """
+
+
 class ICalParsingError(InvalidCalendar):
     """Could not parse an iCalendar."""
 
@@ -343,7 +350,7 @@ class JCalParsingError(InvalidCalendar):
 
         try:
             validate_token(name)
-        except ValueError:
+        except InvalidToken:
             raise cls(
                 rf"The {kind} must be a valid iCalendar token, matching the "
                 rf"regular expression pattern `[\w.-]+`.",
@@ -399,6 +406,7 @@ __all__ = [
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",
+    "InvalidToken",
     "JCalParsingError",
     "LocalTimezoneMissing",
     "XCalParsingError",

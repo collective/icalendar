@@ -65,7 +65,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
                 depth += 1
             elif (
                 line[:4].upper() == "END:"
-                and line[4:].strip().upper() == component_name
+                and line[4:].strip().upper() == component_name.strip()
             ):
                 depth -= 1
                 if depth == 0:
