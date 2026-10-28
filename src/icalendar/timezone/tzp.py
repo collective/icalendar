@@ -131,8 +131,6 @@ class TZP:
             return self.__provider.localize(dt_full, tz).timetz()
         dt = to_datetime(dt)
         if tz is None:
-            if isinstance(dt, date):
-                return to_datetime(dt)
             return dt.replace(tzinfo=None)
         return self.__provider.localize(dt, tz)
 
