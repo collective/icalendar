@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from datetime import date, datetime, tzinfo
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
-if TYPE_CHECKING:
-    from icalendar.compatibility import TypeGuard, TypeIs
+# These imports must be available at runtime for get_type_hints().
+from icalendar.compatibility import TypeGuard, TypeIs  # noqa: TC001
 
 
 def is_date(dt: date | datetime) -> bool:

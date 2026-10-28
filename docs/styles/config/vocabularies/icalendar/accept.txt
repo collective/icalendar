@@ -1,14 +1,20 @@
+# Remove dunder methods after converting to MyST, and make them inline literals in links in contribute/style.rst
+__init__
+__new__
 Args
 backported
+contentline
 (?i)datetime
+defusedxml
 dicts
 [Dd]ocstrings?
 fuzzer
 Hacktoberfest
 Hanoka
-\.ical
+icalendar(\.[a-z]+)+
 iCal
 (?i)icalendar
+IDEs?
 jCal
 Kunzmann
 Napolean
@@ -16,6 +22,8 @@ Nicco
 Params
 Penner
 (?i)Plone
+Python
+python\-icalendar
 Repology
 recur.recur
 reformats
@@ -29,10 +37,12 @@ src
 (?i)subpackages?
 subtyping
 towncrier
+tox's
 (?i)Traceback
 (?i)unescaped
 uv
 vCard
 xCal
+xinclude
 Xcode
 zizmor

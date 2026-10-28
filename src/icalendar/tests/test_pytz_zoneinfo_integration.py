@@ -11,7 +11,7 @@ except ImportError:
     pytz = None
 import copy
 import pickle
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 import pytest
 from dateutil.rrule import MONTHLY, rrule
@@ -126,3 +126,9 @@ def test_a_date_with_a_tzid_uses_the_offset_of_that_date(tzp, value, expected_of
     # what the same value written as a date-time is read as
     assert offset == vDDDTypes.from_ical(f"{value}T000000", timezone=tzid).utcoffset()
     assert offset == expected_offset
+
+
+def test_localize_date_with_name_returns_datetime(tzp):
+    """Edge case: we allow None as timezone and date does not support timezones."""
+    d = tzp.localize(date(2026, 10, 19), None)
+    assert d == datetime(2026, 10, 19)

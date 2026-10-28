@@ -4,6 +4,7 @@ from datetime import date, datetime, time, timedelta
 import pytest
 
 from icalendar.parser import Parameters
+from icalendar.prop.factory import TypesFactory
 
 
 class TestProp(unittest.TestCase):
@@ -344,6 +345,21 @@ class TestProp(unittest.TestCase):
         cats = list(c)
         assert cats == ["APPOINTMENT", "EDUCATION"]
 
+    def test_vcategory_hash(self):
+        from icalendar.prop import vCategory
+
+        category = vCategory(["WORK", "PERSONAL"])
+        assert hash(category) == hash(tuple(category.cats))
+
+    def test_vcategory_repr(self):
+        from icalendar.prop import vCategory
+
+        category = vCategory(["WORK", "PERSONAL"])
+        category_repr = repr(category)
+        assert category_repr == (
+            "vCategory([vText(b'WORK'), vText(b'PERSONAL')], params=Parameters({}))"
+        )
+
     def test_prop_TypesFactory(self):
         from icalendar.prop import TypesFactory
 
@@ -423,6 +439,7 @@ RFC_DEFAULT_VALUE_TYPES = {
     "CONTACT": "text",
     "RESOURCES": "text",
     "REQUEST-STATUS": "text",
+    "XML": "text",
     # URI
     "ATTACH": "uri",
     "URL": "uri",
@@ -464,3 +481,14 @@ def test_default_value_type_matches_rfc(name, expected):
     assert factory.default_value_type(name) == expected
     # Property names are case-insensitive.
     assert factory.default_value_type(name.lower()) == expected
+
+
+def test_types_factory_instance_is_a_singleton():
+    """The singleton pattern implies identity."""
+    assert TypesFactory.instance() is TypesFactory().instance()
+
+
+def test_all_types_map_values_are_in_the_types_factory(types_factory):
+    """This checks that we cannot get an error in TypesMap.default_value_type"""
+    for value in types_factory.types_map.values():
+        assert value in types_factory
