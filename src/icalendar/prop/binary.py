@@ -1,15 +1,22 @@
 """BINARY values from :rfc:`5545`."""
 
+from __future__ import annotations
+
 import base64
 import binascii
-from typing import ClassVar
-from xml.etree.ElementTree import Element, SubElement
+from io import BytesIO
+from typing import TYPE_CHECKING, ClassVar
+from xml.etree.ElementTree import Element, ParseError, SubElement, tostring
 
-from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar import config
+from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
+    from icalendar.prop.xml import vXml
 
 
 class vBinary:
@@ -133,8 +140,56 @@ class vBinary:
             params=Parameters.from_jcal_property(jcal_property),
         )
 
+    def to_xml(self) -> vXml:
+        """Parse the binary bytes as XML.
+
+        The configured XML parser uses the bytes' XML declaration or byte order
+        mark to determine the encoding. VALUE and ENCODING are removed from the
+        returned TEXT value's parameters; other parameters are preserved.
+        Characters that XML permits but TEXT would change are written as XML
+        character references.
+        This does not change the binary value.
+
+        Returns:
+            A new :class:`~icalendar.prop.xml.vXml` with the parsed XML element.
+
+        Raises:
+            xml.etree.ElementTree.ParseError: If the bytes are not XML.
+        """
+        from icalendar.prop.xml import vXml
+
+        try:
+            element = config.parse_xml(BytesIO(self.bytes)).getroot()
+        except LookupError as error:
+            raise ParseError(error) from error
+        params = {
+            name: value
+            for name, value in self.params.items()
+            if name not in {"VALUE", "ENCODING"}
+        }
+        text = tostring(element, encoding="unicode")
+        text = text.replace("\r", "&#13;").replace("\x7f", "&#127;")
+        return vXml(text, params=params)
+
     def to_xcal(self, element: Element):
-        """The xCal representation of this property according to :rfc:`6321`."""
+        """The xCal representation of this property according to :rfc:`6321`.
+
+        XML properties are written as extension elements, just like TEXT XML.
+        Other BINARY properties retain their Base64 representation.
+
+        Raises:
+            ~icalendar.error.InvalidCalendar: If an XML property cannot be
+                represented as an xCal extension element.
+        """
+        if element.tag == "xml":
+            try:
+                xml = self.to_xml()
+            except ParseError as error:
+                raise InvalidCalendar(
+                    f"Cannot write the XML property to xCal: {error}"
+                ) from error
+            xml.to_xcal(element)
+            return
         self.params.to_xcal(element)
         xml = SubElement(element, self.default_value.lower())
         xml.text = self.base64data
