@@ -71,12 +71,26 @@ class ElementAdapter:
         return children
 
     def get_child_with_tag(self, tag: str) -> ChildElementAdapter | None:
-        """Get the first child element with the given tag."""
+        """Get the first iCalendar child element with the given tag."""
         tag = tag.lower()
-        for child in self.children:
+        for child in self.icalendar_children:
             if child.tag == tag:
                 return child
         return None
+
+    @property
+    def icalendar_children(self) -> list[ChildElementAdapter]:
+        """Child elements excluding foreign namespaces, per :rfc:`6321#section-4.1`.
+
+        Unqualified elements remain supported for compatibility.
+        Use :attr:`children` to inspect all elements, including extensions.
+        """
+        return [
+            child
+            for child in self.children
+            if not child.element.tag.startswith("{")
+            or child.element.tag.startswith("{urn:ietf:params:xml:ns:icalendar-2.0}")
+        ]
 
     def parse_tag(self, tag: str):
         """Get the first child element with the given tag.
