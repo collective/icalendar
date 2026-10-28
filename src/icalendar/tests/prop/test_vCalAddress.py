@@ -1,3 +1,5 @@
+import pytest
+
 from icalendar.parser import Parameters
 from icalendar.prop import vCalAddress
 
@@ -55,3 +57,24 @@ def test_set_the_name():
     address.name = "Yemaya :)"
     assert address.name == "Yemaya :)"
     assert address.params["CN"] == "Yemaya :)"
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "mailto:icalendar@email.list",
+        "MAILTO:yemaya@posteo.net",
+        "me@you.we",
+        "https://example.com/principals/jane",
+    ],
+)
+def test_uri_is_the_unchanged_value(value):
+    """The uri attribute returns the value as it is, like vUri.uri."""
+    address = vCalAddress(value)
+    assert address.uri == value
+    assert type(address.uri) is str
+
+
+def test_uri_is_the_same_as_ical_value():
+    address = vCalAddress("mailto:icalendar@email.list")
+    assert address.uri == address.ical_value

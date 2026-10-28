@@ -8,6 +8,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, TypeAlias
 from uuid import UUID
 
+from icalendar.attr.property_list import PropertyListView
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser.string import _RFC_5545_IANA_TOKEN_REGEX
@@ -1850,7 +1851,8 @@ def get_start_end_duration_with_validation(
         tuple: (start, end, duration) values from the component.
 
     Raises:
-        ~error.InvalidCalendar: If the component violates RFC 5545 constraints.
+        ~icalendar.error.InvalidCalendar: If the component violates
+            RFC 5545 constraints.
 
     """
     start = getattr(component, start_property, None)
@@ -1898,7 +1900,7 @@ def get_start_property(component: Event | Todo) -> date | datetime:
         The ``DTSTART`` value.
 
     Raises:
-        ~error.IncompleteComponent: If no ``DTSTART`` is present.
+        ~icalendar.error.IncompleteComponent: If no ``DTSTART`` is present.
 
     """
     # Trigger validation by calling _get_start_end_duration
@@ -1924,7 +1926,7 @@ def get_end_property(
         The computed end value.
 
     Raises:
-        ~error.IncompleteComponent: If the provided information is incomplete
+        ~icalendar.error.IncompleteComponent: If the provided information is incomplete
             to compute the end property.
 
     """
@@ -2367,7 +2369,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
 
 
 LINKS_TYPE_SETTER: TypeAlias = (
-    str | vUri | vUid | vXmlReference | None | list[str | vUri | vUid | vXmlReference]
+    str | vUri | vUid | vXmlReference | list[str | vUri | vUid | vXmlReference] | None
 )
 
 
@@ -2392,7 +2394,7 @@ def _del_links(self: Component) -> None:
 links_property = property(_get_links, _set_links, _del_links)
 
 RELATED_TO_TYPE_SETTER: TypeAlias = (
-    None | str | vText | vUri | vUid | list[str | vText | vUri | vUid]
+    str | vText | vUri | vUid | list[str | vText | vUri | vUid] | None
 )
 
 
@@ -2521,26 +2523,17 @@ def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
     See also :class:`icalendar.enums.RELTYPE`.
 
     """
-    result = self.get("RELATED-TO", [])
-    if not isinstance(result, list):
-        return [result]
-    return result
+    return PropertyListView(self, "RELATED-TO")
 
 
 def _set_related_to(self: Component, values: RELATED_TO_TYPE_SETTER) -> None:
     """Set the RELATED-TO properties."""
-    _del_related_to(self)
-    if values is None:
-        return
-    if not isinstance(values, list):
-        values = [values]
-    for value in values:
-        self.add("RELATED-TO", value)
+    PropertyListView(self, "RELATED-TO").replace_with(values)
 
 
 def _del_related_to(self: Component):
     """Delete the RELATED-TO properties."""
-    self.pop("RELATED-TO", None)
+    PropertyListView(self, "RELATED-TO").clear()
 
 
 related_to_property = property(_get_related_to, _set_related_to, _del_related_to)
@@ -2584,10 +2577,7 @@ def _get_concepts(self: Component) -> list[vUri]:
 
         :attr:`icalendar.prop.categories.vCategory`
     """
-    concepts = self.get("CONCEPT", [])
-    if not isinstance(concepts, list):
-        concepts = [concepts]
-    return concepts
+    return PropertyListView(self, "CONCEPT")
 
 
 CONCEPTS_TYPE_SETTER: TypeAlias = list[vUri | str] | str | vUri | None
@@ -2595,18 +2585,12 @@ CONCEPTS_TYPE_SETTER: TypeAlias = list[vUri | str] | str | vUri | None
 
 def _set_concepts(self: Component, concepts: CONCEPTS_TYPE_SETTER):
     """Set the concepts."""
-    _del_concepts(self)
-    if concepts is None:
-        return
-    if not isinstance(concepts, list):
-        concepts = [concepts]
-    for value in concepts:
-        self.add("CONCEPT", value)
+    PropertyListView(self, "CONCEPT").replace_with(concepts)
 
 
 def _del_concepts(self: Component):
     """Delete the concepts."""
-    self.pop("CONCEPT", None)
+    PropertyListView(self, "CONCEPT").clear()
 
 
 concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
@@ -2615,26 +2599,17 @@ concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
 def multi_string_property(name: str, doc: str):
     """A property for an iCalendar Property that can occur multiple times."""
 
-    def fget(self: Component) -> list[str]:
+    def fget(self: Component) -> PropertyListView:
         """Get the values of a multi-string property."""
-        value = self.get(name, [])
-        if not isinstance(value, list):
-            value = [value]
-        return value
+        return PropertyListView(self, name)
 
     def fset(self: Component, value: list[str] | str | None) -> None:
         """Set the values of a multi-string property."""
-        fdel(self)
-        if value is None:
-            return
-        if not isinstance(value, list):
-            value = [value]
-        for value in value:
-            self.add(name, value)
+        PropertyListView(self, name).replace_with(value)
 
     def fdel(self: Component):
         """Delete the values of a multi-string property."""
-        self.pop(name, None)
+        PropertyListView(self, name).clear()
 
     return property(fget, fset, fdel, doc=doc)
 
@@ -2739,6 +2714,18 @@ Example:
         >>> event = Event.new(request_status="2.0;Success")
         >>> event.REQUEST_STATUS == ["2.0;Success"]
         True
+
+    :class:`~icalendar.prop.request_status.vRequestStatus` defines
+    properties for ease of use:
+
+    .. code-block:: pycon
+
+        >>> request_status = event.REQUEST_STATUS[0]
+        >>> request_status.code
+        (2, 0)
+        >>> request_status.description
+        'Success'
+
 """,
 )
 
@@ -2788,9 +2775,51 @@ Example:
 """,
 )
 
+XML_property = multi_string_property(
+    "XML",
+    """This property embeds XML elements into a component.
+
+You can assign XML text, an :class:`~xml.etree.ElementTree.Element`,
+an :class:`~icalendar.parser.xcal.adapter.ElementAdapter`,
+a list of these, or ``None`` to this property.
+The values become :class:`~icalendar.prop.xml.vXml` values.
+A :class:`~icalendar.prop.text.vText` value is not converted,
+so it is written as text in xCal.
+XML with the value type BINARY is a :class:`~icalendar.prop.binary.vBinary`.
+Assigning ``None`` or an empty list removes all XML values,
+as does deleting the property.
+
+The XML property is defined in :rfc:`6321#section-4.2`.
+It can be specified multiple times in any component.
+Its value is an XML element in a namespace other than the iCalendar namespace.
+In xCal, the element is part of the properties of the component,
+see :rfc:`6321#section-4.1`.
+
+.. note::
+
+    To change the values, assign a new list or use ``add()``.
+    Changing the returned list does not always change the component.
+
+Example:
+    Add XML to an event and get the XML elements:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.XML = '<a xmlns="http://example.com/ns">text</a>'
+        >>> print(event.to_ical().decode())
+        BEGIN:VEVENT
+        XML:<a xmlns="http://example.com/ns">text</a>
+        END:VEVENT
+        >>> [xml.element.tag for xml in event.XML]
+        ['{http://example.com/ns}a']
+""",
+)
+
 
 ATTACHMENTS_TYPE_SETTER: TypeAlias = (
-    str | bytes | vUri | vBinary | None | list[str | bytes | vUri | vBinary]
+    str | bytes | vUri | vBinary | list[str | bytes | vUri | vBinary] | None
 )
 
 
@@ -2904,8 +2933,10 @@ __all__ = [
     "LINKS_TYPE_SETTER",
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
+    "PropertyListView",
     "REQUEST_STATUS_property",
     "RESOURCES_property",
+    "XML_property",
     "attachments_property",
     "attendees_property",
     "busy_type_property",
