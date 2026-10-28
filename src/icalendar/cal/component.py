@@ -621,10 +621,14 @@ class Component(CaselessDict):
         contentlines.append("")  # remember the empty string in the end
         return contentlines
 
-    def to_ical(self, sorted: bool = True):
-        """
-        :param sorted: Whether parameters and properties should be
-                       lexicographically sorted.
+    def to_ical(self, sorted: bool = True) -> bytes:
+        """The :rfc:`5545` representation of the component.
+
+        Parameters:
+            sorted: Sort the properties inside the component sections.
+
+        Returns:
+            The :rfc:`5545` representation of the component as bytes.
         """
 
         content_lines = self.content_lines(sorted=sorted)
