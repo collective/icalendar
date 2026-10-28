@@ -1,6 +1,7 @@
 """We would like to have certain errors for invalid JCal."""
 
 from json import JSONDecodeError
+from pprint import pprint
 
 import pytest
 
@@ -235,7 +236,8 @@ def test_failing_example_delegated_to(calendars):
     """Check the failing example."""
     calendar: Calendar = calendars.rfc_7256_multi_value_parameters
     jcal = calendar.to_jcal()
-    delegated_to = jcal[2][0][1][0][1]["delegated-to"]
+    pprint(jcal)
+    delegated_to = jcal[2][0][1][1][1]["delegated-to"]
     assert delegated_to == [
         "mailto:jdoe@example.com",
         "mailto:jqpublic@example.com",
@@ -432,7 +434,7 @@ def test_int_parameters(int_expected, key, as_list):
     # parse bad value
     with pytest.raises(
         JCalParsingError,
-        match=f'\\[3\\]\\["{key}"\\](?:\\[0\\])? in vInt: The value must be an integer.',
+        match=f'\\[3\\]\\["{key}"\\](?:\\[0\\])? in v(NonNegative)?Int: The value must be an integer.',
     ):
         vRecur.from_jcal(["rrule", {}, "recur", {key: int_expected}])
 
@@ -463,6 +465,59 @@ def test_skip():
         match=r"in vSkip: The value must be a valid skip value\.",
     ):
         vSkip.parse_jcal_value("INVALID")
+
+
+@pytest.mark.parametrize("key", ["rscale", "x-foo"])
+@pytest.mark.parametrize("value", ["a;COUNT=100000", "GREGORIAN;FREQ=SECONDLY", "a,b"])
+@pytest.mark.parametrize("as_list", [False, True])
+def test_recur_text_part_must_not_contain_separator(key, value, as_list):
+    """A text value of an RRULE part cannot contain ``;`` or ``,``.
+
+    RECUR has no escaping, so the value would add rule parts or list
+    values once the rule is serialized to iCalendar and parsed again.
+    """
+    index = r"\[0\]" if as_list else ""
+    with pytest.raises(
+        JCalParsingError,
+        match=rf'\[3\]\["{key}"\]{index} in vRecur: '
+        r"The value must not contain a semicolon or comma\.",
+    ):
+        vRecur.from_jcal(
+            [
+                "rrule",
+                {},
+                "recur",
+                {"freq": "daily", key: [value] if as_list else value},
+            ]
+        )
+
+
+def test_recur_text_part_cannot_change_the_rule():
+    """An injected COUNT or FREQ does not survive a jCal to iCalendar conversion."""
+    jcal = [
+        "vcalendar",
+        [],
+        [
+            [
+                "vevent",
+                [
+                    [
+                        "rrule",
+                        {},
+                        "recur",
+                        {
+                            "freq": "daily",
+                            "count": 2,
+                            "x-a": "x;COUNT=100000;FREQ=SECONDLY",
+                        },
+                    ]
+                ],
+                [],
+            ]
+        ],
+    ]
+    with pytest.raises(JCalParsingError):
+        Calendar.from_jcal(jcal)
 
 
 INVALID_NAME_TOKENS = ["x-foo:INJECT", "x-foo\rRRULE", "a;b", "a=b", "a,b", "a b", ""]

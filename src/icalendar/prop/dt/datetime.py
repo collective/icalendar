@@ -2,15 +2,25 @@
 
 from datetime import datetime
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.adapter import ElementAdapter
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.match import XCalRegexMatcher
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import to_unicode
 from icalendar.timezone import tzp
 from icalendar.timezone.tzid import is_utc
 
 from .base import TimeBase
+
+XCAL_DATETIME_REGEX = XCalRegexMatcher(
+    r"(\d\d\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(Z?)",
+    "Expected date-time format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ",
+)
 
 
 class vDatetime(TimeBase):
@@ -97,7 +107,7 @@ class vDatetime(TimeBase):
         self.params = Parameters(params)
         self.params.update_tzid_from(dt)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         dt = self.dt
 
         s = (
@@ -110,7 +120,17 @@ class vDatetime(TimeBase):
 
     @staticmethod
     def from_ical(ical, timezone=None):
-        """Create a datetime from the RFC string."""
+        """Create a datetime from the RFC string.
+
+        Parameters:
+            ical (str | bytes): Required. The iCalendar DATE-TIME value to parse.
+            timezone (str | datetime.tzinfo | None): The time zone name or object
+                used to localize the result. If ``None``, a trailing ``Z`` selects
+                UTC and other values remain floating.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid DATE-TIME.
+        """
         ical = to_unicode(ical)
         tzinfo = None
         if isinstance(timezone, str):
@@ -124,7 +144,10 @@ class vDatetime(TimeBase):
         ical_value = ical.rpartition(":")[2]
 
         if len(ical_value) < 15 or ical_value[8] != "T":
-            raise ValueError(f"Wrong datetime format: {ical}")
+            raise ICalParsingError(
+                "Wrong datetime format",
+                value=ical,
+            )
 
         try:
             timetuple = (
@@ -142,13 +165,23 @@ class vDatetime(TimeBase):
             if ical_value[15:] == "Z":
                 return tzp.localize_utc(datetime(*timetuple))
         except Exception as e:
-            raise ValueError(f"Wrong datetime format: {ical}") from e
-        raise ValueError(f"Wrong datetime format: {ical}")
+            raise ICalParsingError(
+                "Wrong datetime format",
+                value=ical,
+            ) from e
+        raise ICalParsingError(
+            "Wrong datetime format",
+            value=ical,
+        )
 
     @classmethod
     def examples(cls) -> list[Self]:
         """Examples of vDatetime."""
-        return [cls(datetime(2025, 11, 10, 16, 52))]
+        return [
+            cls(tzp.localize_utc(datetime(2025, 11, 10, 16, 52))),
+            cls(tzp.localize(datetime(2025, 11, 10, 16, 52), "America/New_York")),
+            cls(datetime(2025, 11, 10, 16, 52)),
+        ]
 
     from icalendar.param import VALUE
 
@@ -168,7 +201,7 @@ class vDatetime(TimeBase):
         """Parse a jCal string to a :class:`datetime.datetime`.
 
         Raises:
-            ~error.JCalParsingError: If it can't parse a date-time value.
+            ~icalendar.error.JCalParsingError: If it can't parse a date-time value.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         utc = jcal.endswith("Z")
@@ -190,7 +223,7 @@ class vDatetime(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
@@ -202,6 +235,81 @@ class vDatetime(TimeBase):
             dt,
             params=params,
         )
+
+    def to_xcal(self, element: Element) -> None:
+        """The xCal representation of this property according to :rfc:`6321`.
+
+        Parameters:
+            element: The element to add the property to.
+        """
+        self.params.to_xcal(element)
+        self.to_xcal_value_only(element, self.default_value)
+
+    def to_xcal_value_only(self, element: Element, tag: str):
+        """The xCal representation of this property according to :rfc:`6321`.
+
+        In contrast to :meth:`to_xcal`, this method does not add the parameters.
+
+        Parameters:
+            element: The element to add the property to.
+            tag: The tag to use.
+        """
+        element = SubElement(element, tag.lower())
+        text = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
+        if is_utc(self.dt):
+            text += "Z"
+        element.text = text
+
+    @classmethod
+    def from_xcal_element(cls, element: ElementAdapter) -> datetime:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Returns:
+            The datetime object, possibly with a UTC timezone.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        year, month, day, hour, minute, second, utc = XCAL_DATETIME_REGEX.groups(
+            element
+        )
+        if second == "60":
+            # This is wrong but we have no way to represent this
+            second = 59
+        try:
+            dt = datetime(
+                int(year), int(month), int(day), int(hour), int(minute), int(second)
+            )
+        except ValueError as e:
+            raise XCalParsingError(
+                "Date-time is out of range", element.get_xsd_token(), element
+            ) from e
+        if utc:
+            dt = tzp.localize_utc(dt)
+        return dt
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        dt = cls.from_xcal_element(element)
+        tzid = params.tzid
+        if tzid:
+            if is_utc(dt):
+                raise XCalParsingError(f"Cannot mix {tzid} with UTC", None, element)
+            dt = tzp.localize(dt, tzid)
+        return cls(dt, params=params)
 
 
 __all__ = ["vDatetime"]
