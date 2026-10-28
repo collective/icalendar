@@ -88,7 +88,7 @@ class vDate(TimeBase):
         return s.encode("utf-8")
 
     @staticmethod
-    def from_ical(ical) -> date:
+    def from_ical(ical: str) -> date:
         # date-value = 4DIGIT 2DIGIT 2DIGIT, no separators,
         # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
         if len(ical) != 8 or not ical.isascii() or not ical.isdigit():
@@ -194,6 +194,17 @@ class vDate(TimeBase):
             d,
             params=params,
         )
+
+    @property
+    def ical_value(self) -> date:
+        """Returns the date as a date value, in year-month-day format.
+
+        .. seealso::
+
+            :rfc:`5545#section-3.3.4` for the ``DATE`` value type.
+
+        """
+        return self.dt
 
 
 __all__ = ["vDate"]
