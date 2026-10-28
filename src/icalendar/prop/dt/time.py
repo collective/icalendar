@@ -206,7 +206,13 @@ class vTime(TimeBase):
             )
 
         try:
-            timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
+            second = int(ical[4:6])
+            if second == 60:
+                # RFC 5545 permits time-second = 00-60 to account for positive
+                # leap seconds. This is wrong but we have no way to represent
+                # this, so we clamp it like the xCal path does.
+                second = 59
+            timetuple = (int(ical[:2]), int(ical[2:4]), second)
 
             if tzinfo:
                 return tzp.localize(time(*timetuple), tzinfo)
@@ -250,6 +256,11 @@ class vTime(TimeBase):
         hour = int(match.group("hour"))
         minute = int(match.group("minute"))
         second = int(match.group("second"))
+        if second == 60:
+            # RFC 5545 permits time-second = 00-60 to account for positive
+            # leap seconds. This is wrong but we have no way to represent
+            # this, so we clamp it like the xCal path does.
+            second = 59
         utc = bool(match.group("utc"))
         return time(hour, minute, second, tzinfo=timezone.utc if utc else None)
 

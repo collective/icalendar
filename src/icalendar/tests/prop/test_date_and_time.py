@@ -89,3 +89,26 @@ def test_reformed_UTC_serialization(events):
     # TODO: the UTC parameter is special - it can be present but should not be serialized
     # How should we treat the parameter?
     # I think: have it there, but do not serialize it
+
+
+@pytest.mark.parametrize("value", ["20161231T235960Z", "20161231T235960"])
+def test_vdatetime_from_ical_accepts_leap_second(value):
+    """A time-second of 60 is valid RFC 5545 (leap seconds) and is clamped to 59.
+
+    RFC 5545 section 3.3.5 defines time-second as 00-60; the xCal path of
+    vDatetime already clamps 60 to 59. The iCalendar path must accept it too
+    instead of raising ``ValueError: Wrong datetime format``.
+    """
+    parsed = vDatetime.from_ical(value)
+    assert (parsed.year, parsed.hour, parsed.minute, parsed.second) == (
+        2016,
+        23,
+        59,
+        59,
+    )
+
+
+def test_vdatetime_parse_jcal_value_accepts_leap_second():
+    """A jCal time-second of 60 is valid RFC 5545/7265 (leap seconds) and clamps to 59."""
+    parsed = vDatetime.parse_jcal_value("2016-12-31T23:59:60Z")
+    assert (parsed.hour, parsed.minute, parsed.second) == (23, 59, 59)
