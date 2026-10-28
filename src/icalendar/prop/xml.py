@@ -49,6 +49,8 @@ class vXml(vText):
     The element is in a namespace other than the iCalendar namespace.
     The default value type is TEXT, so the value is the XML as text.
     XML with the value type BINARY is a :class:`~icalendar.prop.binary.vBinary`.
+    Its :meth:`~icalendar.prop.binary.vBinary.to_xml` method converts it to a
+    :class:`vXml`, and xCal serialization performs this conversion automatically.
     Use :attr:`element` to get the XML element.
 
     In xCal, the XML property does not exist.
@@ -199,6 +201,14 @@ class vXml(vText):
         if element.is_extension:
             return cls(element)
         return super().from_xcal(xcal)
+
+    def to_xml(self) -> Self:
+        """Return this XML value unchanged.
+
+        This also accepts values whose XML has not yet been validated, just
+        like the constructor. Use :attr:`element` to parse and validate the XML.
+        """
+        return self
 
     def to_xcal(self, element: Element) -> None:
         """Copy the attribute :attr:`element` into the parameter ``element``.

@@ -1,0 +1,1 @@
+Fixed BINARY XML properties being written as Base64 properties instead of extension elements in xCal, and added ``to_xml()`` conversion for binary and XML values. AI (OpenAI Codex) assisted with implementation and regression tests. @crown-sports
