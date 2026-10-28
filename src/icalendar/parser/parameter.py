@@ -193,16 +193,14 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def _single_string_parameter(func: Callable | None = None, upper: bool = False):
+def _single_string_parameter(upper: bool = False):
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
-        upper: Convert the value to uppercase
-        func: The function to decorate.
+        upper: Convert the return value of the property getter to uppercase.
 
     Returns:
-        The property for the parameter or a decorator for the parameter
-        if func is ``None``.
+        The property for the parameter.
     """
 
     def decorator(func: Callable) -> property:
@@ -231,9 +229,7 @@ def _single_string_parameter(func: Callable | None = None, upper: bool = False):
 
         return property(fget, fset, fdel, doc=func.__doc__)
 
-    if func is None:
-        return decorator
-    return decorator(func)
+    return decorator
 
 
 single_string_parameter = deprecate_for_version_9(_single_string_parameter)
@@ -457,7 +453,7 @@ class Parameters(CaselessDict[str | list[str]]):
             del jcal["tzid"]
         return jcal
 
-    @_single_string_parameter
+    @_single_string_parameter()
     def tzid(self) -> str | None:
         """The TZID parameter from :rfc:`5545`."""
 
