@@ -1,19 +1,46 @@
 """RECUR property type from :rfc:`5545`."""
 
-from typing import Any, ClassVar
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import InvalidCalendar, JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
-from icalendar.prop.integer import vInt
+from icalendar.prop.integer import vInt, vNonNegativeInt
 from icalendar.prop.recur.frequency import vFrequency
 from icalendar.prop.recur.month import vMonth
 from icalendar.prop.recur.skip import vSkip
 from icalendar.prop.recur.weekday import vWeekday
 from icalendar.prop.text import vText
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
+    from icalendar.prop import VPROPERTY
+
+
+def _contains_part_separator(value: str) -> bool:
+    """Whether a text value of a recurrence rule part contains a separator.
+
+    RECUR has no escaping, so a text value, such as that of ``RSCALE`` or an
+    unknown part, cannot contain the part separator ``;`` or the list
+    separator ``,``.
+
+    Parameters:
+        value: A value of one key/value pair in :class:`vRecur`.
+
+    Returns:
+        Whether a separator is present and the value must be rejected.
+    """
+    return ";" in value or "," in value
 
 
 class vRecur(CaselessDict):
@@ -135,13 +162,15 @@ class vRecur(CaselessDict):
         "SKIP",
     )
 
-    types = CaselessDict(
+    types: ClassVar[
+        dict[str, type[vInt | vMonth | vFrequency | vWeekday | vSkip | vText]]
+    ] = CaselessDict(
         {
-            "COUNT": vInt,
-            "INTERVAL": vInt,
-            "BYSECOND": vInt,
-            "BYMINUTE": vInt,
-            "BYHOUR": vInt,
+            "COUNT": vNonNegativeInt,
+            "INTERVAL": vNonNegativeInt,
+            "BYSECOND": vNonNegativeInt,
+            "BYMINUTE": vNonNegativeInt,
+            "BYHOUR": vNonNegativeInt,
             "BYWEEKNO": vInt,
             "BYMONTHDAY": vInt,
             "BYYEARDAY": vInt,
@@ -224,7 +253,7 @@ class vRecur(CaselessDict):
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
         recur = {}
-        for k, v in self.items():
+        for k, v in self.sorted_items():
             key = k.lower()
             if key.upper() in self.jcal_not_a_list:
                 value = v[0] if isinstance(v, list) and len(v) == 1 else v
@@ -247,7 +276,7 @@ class vRecur(CaselessDict):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
@@ -271,13 +300,29 @@ class vRecur(CaselessDict):
                     recur[key.lower()] = values = []
                     for i, v in enumerate(value):
                         with JCalParsingError.reraise_with_path_added(i):
-                            values.append(value_type.parse_jcal_value(v))
+                            values.append(cls._parse_jcal_part_value(value_type, v))
                 else:
-                    recur[key] = value_type.parse_jcal_value(value)
+                    recur[key] = cls._parse_jcal_part_value(value_type, value)
         until = recur.get("until")
         if until is not None and not isinstance(until, list):
             recur["until"] = [until]
         return cls(recur, params=params)
+
+    @classmethod
+    def _parse_jcal_part_value(cls, value_type: type, jcal_value: Any) -> VPROPERTY:
+        """Parse the jCal value of one recurrence rule part.
+
+        Raises:
+            ~error.JCalParsingError: If a text value contains a part separator.
+        """
+        value = value_type.parse_jcal_value(jcal_value)
+        if value_type is vText and _contains_part_separator(value):
+            raise JCalParsingError(
+                "The value must not contain a semicolon or comma.",
+                cls,
+                value=jcal_value,
+            )
+        return value
 
     @property
     def count(self) -> int | None:
@@ -340,7 +385,7 @@ class vRecur(CaselessDict):
             # (RFC 5545 doesn't say COUNT must be positive, only non-negative
             # per its digit-only grammar), and is stored as such.
             raise InvalidCalendar(f"COUNT must be >= 0, got {value}")
-        self["COUNT"] = [vInt(value)]
+        self["COUNT"] = [vNonNegativeInt(value)]
 
     @count.deleter
     def count(self) -> None:
@@ -429,6 +474,54 @@ class vRecur(CaselessDict):
         return True
 
     __hash__ = None
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        if parser.tag != cls.default_value.lower():
+            self = cls.from_xcal(parser.parse_tag(cls.default_value))
+            self.params = params
+            return self
+        self = cls(params=params)
+        while not parser.is_finished():
+            child = parser.child
+            key = child.tag
+            v_prop = cls.types.get(key, vText)
+            from_xcal: Callable[[XCalParser], VPROPERTY] | None = getattr(
+                v_prop, "from_xcal_in_recur", None
+            )
+            if from_xcal is None:
+                from_xcal = v_prop.from_xcal
+            value = from_xcal(parser)
+            if v_prop is vText and _contains_part_separator(value):
+                raise XCalParsingError(
+                    "Expected a value without a semicolon or comma", str(value), child
+                )
+            # Keep UNTIL as a raw date/time, as from_ical and from_jcal do.
+            parsed_value = value.dt if isinstance(value, vDDDTypes) else value
+            self.setdefault(key, []).append(parsed_value)
+        return self
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        recur_element = SubElement(element, self.default_value.lower())
+        for key, value in self.sorted_items():
+            value = value if isinstance(value, list) else [value]
+            for v in value:
+                if not hasattr(v, "to_xcal"):
+                    v_prop = self.types.get(key, vText)
+                    v = v_prop(v)
+                v.to_xcal(recur_element)
+                recur_element[-1].tag = key.lower()
 
 
 __all__ = ["vRecur"]

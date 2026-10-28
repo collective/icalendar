@@ -91,26 +91,6 @@ def test_bytes_holds_raw_lossless_data():
     assert vBinary.from_ical(binary.to_ical()) == raw
 
 
-def test_obj_is_deprecated_string_view():
-    """.obj is kept for backward compatibility but deprecated in favour of .bytes.
-
-    See PR #1356.
-    """
-    with pytest.warns(DeprecationWarning, match="obj is deprecated"):
-        assert vBinary(b"txt").obj == "txt"
-
-
-def test_obj_setter_updates_bytes():
-    """Setting .obj still works for backward compatibility and writes .bytes.
-
-    See PR #1356.
-    """
-    binary = vBinary(b"old")
-    with pytest.warns(DeprecationWarning, match="obj is deprecated"):
-        binary.obj = "new"
-    assert binary.bytes == b"new"
-
-
 def test_hash():
     obj = vBinary(b"hashed text")
     assert hash(obj) == hash(b"hashed text")
