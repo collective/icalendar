@@ -1,0 +1,46 @@
+# GitHub action that analyzes PR and issue authors' recent activity patterns to detect automation signals.
+# https://github.com/MatteoGabriele/agentscan-action
+name: AgentScan
+
+on:
+  # zizmor: ignore[dangerous-triggers] - pull_request_target needed to comment on PRs from forks
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+  issues:
+    types:
+      - opened
+  issue_comment:
+    types:
+      - created
+
+jobs:
+  agentscan:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      contents: read
+    steps:
+#      - name: Cache AgentScan analysis
+#        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  #v6.1.0
+#        with:
+#          path: .agentscan-cache
+#          key: agentscan-cache-${{ github.actor }}
+#          restore-keys: agentscan-cache-
+      - name: AgentScan
+        uses: MatteoGabriele/agentscan-action@8112fb79b33fafb8506159df20129a34209ac410  # v2.5.0
+        with:
+#          allowed-users: "angatha,ennamarie19,niccokunzmann,peskypotato,SashankBhamidi,stevepiercy"
+          honeypot: true
+          message-honeypot: "Thanks for the {type}, @{username}! A maintainer will review it shortly."
+          message-honeypot-first-time: "Welcome, @{username}! Thanks for your first {type} here!"
+          label-automation: "agentscan:automated-account"
+          label-community-flagged: "agentscan:community-flagged"
+          label-mixed: "agentscan:needs-review"
+          mode: full
+          scan-issues: true
+          scan-pull-requests: true
+#          trusted-author-associations: "owner"
+

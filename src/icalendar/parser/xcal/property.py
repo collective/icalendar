@@ -42,6 +42,23 @@ class XCalPropertiesParser(XCalParser):
                 </version>
             </properties>
 
+        An element in a namespace other than the iCalendar namespace
+        becomes an XML property per :rfc:`6321#section-4.1`.
+        For example, these properties contain a KML element:
+
+        .. code-block:: xml
+
+            <properties>
+                <kml xmlns="http://www.opengis.net/kml/2.2"/>
+            </properties>
+
+        In iCalendar, the KML element is the value of an XML property.
+        :mod:`~xml.etree.ElementTree` chooses the namespace prefix:
+
+        .. code-block:: ics
+
+            XML:<ns0:kml xmlns:ns0="http://www.opengis.net/kml/2.2" />
+
     """
 
     def __init__(
@@ -94,6 +111,18 @@ class XCalPropertiesParser(XCalParser):
                     <text>-//Example Inc.//Example Client//EN</text>
                 </prodid>
         """
+        if self.child.is_extension:
+            # RFC 6321, section 4.1: "Extensions that are in a namespace other than
+            # the iCalendar XML namespace SHOULD be preserved in the iCalendar
+            # representation using the "XML" iCalendar property described in
+            # Section 4.2.  Only those extension elements that are immediate child
+            # elements of the IC:properties element are converted, any others are
+            # ignored."
+            # The whole element is the value. Its children are not parsed.
+            value_type = self._types_factory.for_property("XML")
+            self._component.add("XML", value_type.from_xcal(self.child))
+            self.done()
+            return
         property_parser = XCalPropertyParser(self.child, self._types_factory)
         values = []
         while not property_parser.is_finished():
