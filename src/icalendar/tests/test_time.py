@@ -100,3 +100,34 @@ def test_localized_time_utc(tzp):
 
     assert isinstance(localized, time)
     assert str(localized.tzinfo) == "UTC"
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "235960Z",
+        "235960",
+        "TZID=America/New_York:235960",
+    ],
+)
+def test_from_ical_accepts_leap_second(value):
+    """A time-second of 60 is valid RFC 5545 (leap seconds) and is clamped to 59.
+
+    RFC 5545 section 3.3.12 defines time-second as 00-60; the xCal path of
+    vTime already clamps 60 to 59. The iCalendar path must accept it too
+    instead of raising ICalParsingError.
+    """
+    parsed = vTime.from_ical(value)
+    assert (parsed.hour, parsed.minute, parsed.second) == (23, 59, 59)
+
+
+def test_parse_jcal_value_accepts_leap_second():
+    """A jCal time-second of 60 is valid RFC 5545/7265 (leap seconds) and clamps to 59."""
+    parsed = vTime.parse_jcal_value("23:59:60Z")
+    assert (parsed.hour, parsed.minute, parsed.second) == (23, 59, 59)
+
+
+def test_parse_jcal_value_still_rejects_out_of_range():
+    """A second beyond the RFC's 00-60 range is rejected."""
+    with pytest.raises(Exception):
+        vTime.parse_jcal_value("23:59:61")
