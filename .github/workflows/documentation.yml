@@ -18,7 +18,6 @@ on:
       - '.github/workflows/documentation.yml'
       - '.readthedocs.yaml'
       - '.vale.ini'
-      - 'uv.lock'
       - 'news/*.*'
 
 jobs:
@@ -35,10 +34,13 @@ jobs:
           fetch-tags: true
 
       - name: Install uv
-        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
-          # Install a specific version of uv.
-          version: "0.9.3"
+          # UV_VERSION can be set in the repository settings:
+          # Settings -> Secrets and variables -> Actions or click here:
+          # https://github.com/collective/icalendar/settings/variables/actions
+          # -> Variables -> UV_VERSION
+          version: "${{ vars.UV_VERSION }}"
 
       - name: Create Python virtual environment, install requirements
         run: make .venv PYTHONVERSION=${{ matrix.python-version }}
