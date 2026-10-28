@@ -3,23 +3,31 @@
 import base64
 import binascii
 from typing import ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
-from icalendar.compatibility import Self, deprecate_for_version_8
-from icalendar.error import JCalParsingError
+from icalendar.compatibility import Self
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import to_unicode
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 
 class vBinary:
-    """Binary property values are Base64 encoded."""
+    """Binary property values are Base64 encoded.
+
+    ..  versionremoved:: 8.0.0
+        Removed ``obj`` attribute, use :attr:`bytes` to access the binary content.
+
+        .. seealso:: :ref:`vbinary-obj-removed`.
+    """
 
     default_value: ClassVar[str] = "BINARY"
     params: Parameters
     bytes: bytes
     """The raw binary value of the BINARY property.
 
-    This is the authoritative storage and round-trips losslessly, including
-    for non-UTF-8 data. Use this instead of the deprecated :attr:`obj`.
+    This is the authoritative storage method, which round-trips losslessly, including
+    for non-UTF-8 data.
     """
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
@@ -72,23 +80,6 @@ class vBinary:
         """
         self.bytes = self.from_ical(value)
 
-    @property
-    @deprecate_for_version_8
-    def obj(self) -> str:
-        """Deprecated string view of the value.
-
-        .. deprecated:: 7.1.3
-            Use :attr:`bytes` for the raw binary value. ``obj`` decodes
-            :attr:`bytes` as text and is lossy for non-UTF-8 data. It will
-            be removed in icalendar 8.
-        """
-        return to_unicode(self.bytes)
-
-    @obj.setter
-    @deprecate_for_version_8
-    def obj(self, value: str | bytes) -> None:
-        self.bytes = value.encode("utf-8") if isinstance(value, str) else value
-
     def __eq__(self, other: object) -> bool:
         """self == other"""
         return isinstance(other, vBinary) and self.bytes == other.bytes
@@ -133,7 +124,7 @@ class vBinary:
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
@@ -141,6 +132,35 @@ class vBinary:
             cls.from_ical(jcal_property[3]),
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    def to_xcal(self, element: Element):
+        """The xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        xml = SubElement(element, self.default_value.lower())
+        xml.text = self.base64data
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        text = element.get_text_without_whitespace()
+        try:
+            binary = base64.b64decode(text, validate=True)
+        except binascii.Error as e:
+            raise XCalParsingError(
+                "Expected base64 encoded data",
+                None,  # do not print potentially huge chunks of data
+                element,
+            ) from e
+        return cls(binary, params=params)
 
 
 __all__ = ["vBinary"]

@@ -116,7 +116,13 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     If there are any changes to the module, then open a pull request and merge it.
 
-#.  Set an environment variable to use in subsequent commands during the release process.
+#.  Determine the new version of icalendar.
+
+    .. code-block:: shell
+
+        make new-version
+
+#.  Copy and paste the new version into an environment variable to use in subsequent commands during the release process.
 
     .. code-block:: shell
 
@@ -167,7 +173,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: shell
 
-        git add CHANGES.rst news/
+        git add CHANGES.rst news/ docs/conf.py
         git add .github/workflows/tests.yml  # Only for a new major release
         git commit -m"version $VERSION"
         git push  # to collective/icalendar
