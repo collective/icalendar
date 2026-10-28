@@ -2,7 +2,7 @@
 
 import re
 
-from icalendar.parser.parameter import Parameters
+from icalendar.parser.parameter import Parameters, closes_quoted_section
 from icalendar.parser.property import unescape_backslash, unescape_list_or_string
 from icalendar.parser.string import (
     _escape_string,
@@ -64,12 +64,17 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
             out.extend(pending_ws)
         pending_ws.clear()
 
-    for ch in st:
+    for i, ch in enumerate(st):
         # Handle escaped character (the backslash set escaped in previous iteration)
         if escaped:
             flush_pending()
             out.append(ch)
             escaped = False
+            # a DQUOTE preceded by a literal backslash still closes the
+            # quoted section when a delimiter (or the end) follows it —
+            # the shape icalendar writes for values ending in a backslash
+            if ch == '"' and in_quotes and closes_quoted_section(st, i):
+                in_quotes = False
             last_was_delimiter = False
             continue
 
@@ -192,9 +197,15 @@ class Contentline(str):
                 if escaped:
                     # the previous character was an escaping backslash:
                     # outside quotes it protects a delimiter, inside quotes
-                    # it protects the closing quote (``\"``), which must not
-                    # toggle the quote state (:rfc:`2445`-style input)
+                    # it protects an escaped quote (``\"``), which must not
+                    # toggle the quote state (:rfc:`2445`-style input). A
+                    # DQUOTE that closes the section is different: preceded
+                    # by a literal backslash and followed by a delimiter or
+                    # the end of the line, it closes (values ending in a
+                    # backslash, as icalendar itself writes them).
                     escaped = False
+                    if ch == '"' and closes_quoted_section(self, i):
+                        in_quotes = False
                 elif ch == "\\":
                     escaped = True
                 elif ch == '"':
@@ -277,6 +288,9 @@ class Contentline(str):
         separator. An escaped double quote (``\"``) inside a quoted section
         does not close it — :rfc:`2445`-style input such as ``CN="Qu\"ote"``
         keeps its quote state — so the separator after it is still found.
+        A DQUOTE preceded by a literal backslash does close the section
+        when the separator (or the end of the line) follows it, the shape
+        icalendar itself writes for values ending in a backslash.
 
         Returns:
             An integer representing the index position of the separator,
@@ -287,6 +301,8 @@ class Contentline(str):
         for i, ch in enumerate(self):
             if in_quotes and escaped:
                 escaped = False
+                if ch == '"' and closes_quoted_section(self, i):
+                    in_quotes = False
             elif in_quotes and ch == "\\":
                 escaped = True
             elif ch == '"':

@@ -140,6 +140,34 @@ def unescape_quoted_param_value(value: str) -> str:
 
 
 # parsing helper
+
+# A DQUOTE preceded by a backslash still closes its quoted section when a
+# structural delimiter (or the end of the string) follows it: icalendar
+# itself writes parameter values that end in a backslash as ``"…\"`` (see
+# :func:`param_value`), and :rfc:`5545`/:rfc:`6868` give the backslash no
+# escape meaning inside parameter values. A backslash-escaped DQUOTE is
+# honored as value content only when more value text follows it, the way
+# :rfc:`2445`-style producers emit ``CN="Qu\"ote"``.
+_STRUCTURAL_DELIMITERS = frozenset(";:,")
+
+
+def closes_quoted_section(text: str, quote_index: int) -> bool:
+    """Whether the DQUOTE at ``quote_index`` closes its quoted section.
+
+    The DQUOTE may be preceded by a literal backslash: if the next
+    non-whitespace character after it is a structural delimiter (``;``,
+    ``:`` or ``,``), or nothing but whitespace or the end of the string
+    follows, the backslash is content and the DQUOTE closes the quoted
+    section. A DQUOTE followed by other text is an escaped quote inside
+    the value instead.
+    """
+    for ch in text[quote_index + 1 :]:
+        if ch in " \t":
+            continue
+        return ch in _STRUCTURAL_DELIMITERS
+    return True
+
+
 def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     """Split a string on a separator, respecting double quotes.
 
@@ -179,8 +207,13 @@ def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     for i, ch in enumerate(st):
         if inquote and escaped:
             # an escaped character inside a quoted section is content:
-            # ``\"`` does not close the quote (RFC 2445-style input)
+            # ``\"`` does not close the quote (RFC 2445-style input) —
+            # unless a separator or the end of the string follows, which
+            # makes the backslash a literal one and the DQUOTE the closer
+            # (values ending in a backslash, as icalendar writes them).
             escaped = False
+            if ch == '"' and closes_quoted_section(st, i):
+                inquote = not inquote
         elif inquote and ch == "\\":
             escaped = True
         elif ch == '"':

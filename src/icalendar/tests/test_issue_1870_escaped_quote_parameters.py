@@ -168,13 +168,24 @@ class TestContentline:
             Contentline(line).parts()
 
     def test_x_prop_with_escaped_quote_in_param(self):
-        """An X- property (non-standard) with an escaped quote in a param
-        value inside a component parses the same way."""
+        r"""An X- property (non-standard) whose param value has a ``{BS}{Q}``
+        right before a colon: the DQUOTE closes the quoted section there —
+        preceded by a literal backslash, followed by a structural delimiter
+        — instead of reading as an escaped quote with the colon as content.
+
+        This is the same shape icalendar itself writes when a parameter
+        value ends in a backslash (upstream locks that round-trip in with
+        ``test_trailing_backslash_in_parameter_value_round_trips``), so
+        the close-before-delimiter reading wins over the
+        escaped-quote-with-colon reading for this ambiguous input. An
+        escaped DQUOTE *inside* a value still parses as content (``CN``
+        in the tests above).
+        """
         line = f'X-PROP;X-PARAM="text{BS}{Q}:content":value'
         name, params, value = Contentline(line).parts()
         assert name == "X-PROP"
-        assert value == "value"
-        assert params["X-PARAM"] == f"text{Q}:content"
+        assert value == f"content{Q}:value"
+        assert params["X-PARAM"] == f"text{BS}"
 
     def test_escaped_quote_in_the_value_is_untouched(self):
         """Escapes in the *value* part (after the colon) are handled by the
@@ -307,11 +318,12 @@ class TestEventParsing:
         assert event["DESCRIPTION"] == "plain"
 
     def test_x_prop_inside_component(self):
-        """The X-PARAM with escaped quote and colon from TestContentline
-        also survives full component parsing."""
+        r"""The X-PARAM with escaped quote and colon from TestContentline
+        also survives full component parsing, with the same
+        close-before-delimiter reading."""
         event = _event_with(f'X-PROP;X-PARAM="text{BS}{Q}:content":value')
-        assert event["X-PROP"].params["X-PARAM"] == f"text{Q}:content"
-        assert event["X-PROP"] == "value"
+        assert event["X-PROP"].params["X-PARAM"] == f"text{BS}"
+        assert event["X-PROP"] == f"content{Q}:value"
 
     def test_reserialization_keeps_the_participant(self):
         """The round-trip preserves the CN value: icalendar serializes a
@@ -352,26 +364,22 @@ class TestUnbalancedEscapes:
         r"""An escaped DQUOTE inside a parameter value followed by content
         that may or may not provide a balanced closing quote.
 
-        Only an *escaped* DQUOTE (``{BS}{Q}``) in the trailing content
-        balances the escape tracking and allows the line to parse — the
-        scanner sees the pair and treats it as content inside the quoted
-        section. A *raw* DQUOTE does not help: the escape-aware parameter
-        validator still finds an unmasked quote and rejects the value.
-        Without any quote at all, the parameter section runs to the end
-        and the value separator is never found.
+        Every shape parses the same way now: the ``{BS}{Q}`` is followed
+        by the value separator, so the DQUOTE closes the quoted section
+        there — the backslash is literal content — and the trailing
+        content becomes the value. This is the reading icalendar itself
+        needs for parameter values that end in a backslash (it writes
+        ``"…{BS}{Q}"`` for them, and upstream's
+        ``test_trailing_backslash_in_parameter_value_round_trips`` locks
+        that in), and it matches the expectations of the review template
+        this test grew out of. An escaped DQUOTE is honored as value
+        content only while value text follows it (``{BS}{Q}ote{Q}``).
         """
         line = f'X-PROP;X-PARAM="text{BS}{Q}:{content}'
-        if content == f"content_with{BS}{Q}":
-            # the trailing escaped DQUOTE balances: the line parses and
-            # the param value absorbs everything up to the end
-            name, params, _value = Contentline(line).parts()
-            assert name == "X-PROP"
-            assert params["X-PARAM"] is not None
-        else:
-            # raw quotes do not balance the escape tracking, and without
-            # any quote the section is unterminated — both are rejected
-            with pytest.raises(ValueError):
-                Contentline(line).parts()
+        name, params, value = Contentline(line).parts()
+        assert name == "X-PROP"
+        assert value == content
+        assert params["X-PARAM"] == f"text{BS}"
 
     def test_double_backslash_then_quote_alone(self):
         """``{BS}{BS}{Q}`` on its own: the left-to-right scan treats the
@@ -413,3 +421,41 @@ class TestUnbalancedEscapes:
         line = f'ATTENDEE;CN="a{BS}{BS}{Q}b":mailto:x@y.z'
         with pytest.raises(ValueError, match="not a valid parameter"):
             Contentline(line).parts()
+
+
+class TestCloseBeforeDelimiter:
+    r"""A DQUOTE preceded by a literal backslash closes the quoted section
+    when a structural delimiter (or the end of the string) follows it.
+
+    This is the shape icalendar itself writes for parameter values that
+    end in a backslash (``"Mallory{BS}{Q}"``), and upstream locks its
+    round-trip in with
+    ``test_property_params.test_trailing_backslash_in_parameter_value_round_trips``.
+    An escaped DQUOTE stays content only while value text follows it.
+    """
+
+    def test_q_split_closes_before_value_separator(self):
+        # the comma after the DQUOTE splits the two parameter values
+        assert q_split(f'"a{BS}{Q},b', ",") == [f'"a{BS}{Q}', "b"]
+
+    def test_parameter_value_keeps_its_trailing_backslash(self):
+        params = Parameters.from_ical(f'CN="Mallory{BS}{Q}')
+        assert params["CN"] == f"Mallory{BS}"
+
+    def test_contentline_finds_the_value_after_the_close(self):
+        name, params, value = Contentline(
+            f'ATTENDEE;CN="Mallory{BS}{Q}:mailto:x@y.z'
+        ).parts()
+        assert name == "ATTENDEE"
+        assert params["CN"] == f"Mallory{BS}"
+        assert value == "mailto:x@y.z"
+
+    def test_whitespace_between_close_and_delimiter(self):
+        # lenient OWS between the closing DQUOTE and the delimiter still
+        # closes the section (the OWS belongs around the delimiter)
+        _name, params, value = Contentline(
+            f'ATTENDEE;CN="Mallory{BS}{Q} ;RSVP=TRUE:mailto:x@y.z'
+        ).parts()
+        assert params["CN"] == f"Mallory{BS}"
+        assert params["RSVP"] == "TRUE"
+        assert value == "mailto:x@y.z"
