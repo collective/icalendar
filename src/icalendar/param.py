@@ -243,6 +243,24 @@ Description:
 """,  # noqa: E501
 )
 
+EMAIL = string_parameter(
+    "EMAIL",
+    """Specify an email address for a calendar user.
+
+Description:
+    This parameter can be specified on the ``ORGANIZER`` and ``ATTENDEE``
+    properties. It provides an email address for identifying or contacting the
+    calendar user, which can differ from the calendar address value.
+    See :rfc:`7986#section-6.2`.
+
+    Returns ``None`` when absent. Assign ``None`` or delete this property to
+    remove the parameter.
+
+    This is distinct from :attr:`email`, which returns the
+    calendar address value without its ``mailto:`` prefix.
+""",
+)
+
 
 def _default_return_busy() -> enums.FBTYPE | str:
     """Default value."""
@@ -827,6 +845,7 @@ __all__ = [
     "DELEGATED_FROM",
     "DELEGATED_TO",
     "DIR",
+    "EMAIL",
     "FBTYPE",
     "FMTTYPE",
     "GAP",
