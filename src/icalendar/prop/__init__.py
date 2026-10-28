@@ -70,10 +70,12 @@ from .integer import vInt
 from .n import NFields, vN
 from .org import vOrg
 from .recur import vFrequency, vMonth, vRecur, vSkip, vWeekday
+from .request_status import vRequestStatus
 from .text import vText
 from .uid import vUid
 from .unknown import vUnknown
 from .uri import vUri
+from .xml import vXml
 from .xml_reference import vXmlReference
 
 VPROPERTY: TypeAlias = (
@@ -106,7 +108,9 @@ VPROPERTY: TypeAlias = (
     | vGeo
     | vUnknown
     | vXmlReference
+    | vXml
     | vUid
+    | vRequestStatus
 )
 
 __all__ = [
@@ -137,6 +141,7 @@ __all__ = [
     "vOrg",
     "vPeriod",
     "vRecur",
+    "vRequestStatus",
     "vSkip",
     "vText",
     "vTime",
@@ -145,5 +150,6 @@ __all__ = [
     "vUnknown",
     "vUri",
     "vWeekday",
+    "vXml",
     "vXmlReference",
 ]
