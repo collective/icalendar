@@ -8,46 +8,33 @@ Members will be added and removed without deprecation warnings.
 """
 
 import functools
+import sys
 import warnings
 from collections.abc import Callable
-from typing import TYPE_CHECKING, ParamSpec, TypeVar
+from typing import TYPE_CHECKING, ParamSpec, TypeGuard, TypeVar
 
 P = ParamSpec("P")
 R = TypeVar("R")
 
-try:
+if sys.version_info >= (3, 11):
     from typing import Self
-except ImportError:
-    try:
-        from typing_extensions import Self
-    except ImportError:
-        Self = "Self"
-
-if TYPE_CHECKING:
-    import sys
-    from typing import TypeGuard
-
-    if sys.version_info >= (3, 13):
-        from typing import TypeIs
-    else:
-        from typing_extensions import TypeIs
-    if sys.version_info >= (3, 11):
-        from typing import Self
-    else:
-        from typing_extensions import Self
 else:
-    # we cannot use a TypeGuard = "TypeGuard" hack since it's used with a parameter
-    TypeGuard = TypeIs = Self = None
+    from typing_extensions import Self
+
+if sys.version_info >= (3, 13):
+    from typing import TypeIs
+else:
+    from typing_extensions import TypeIs
 
 
-def deprecate_for_version_8(func: Callable[P, R]) -> Callable[P, R]:
-    """Issue a warning for deprecated functions to be removed in version 8."""
+def deprecate_for_version_9(func: Callable[P, R]) -> Callable[P, R]:
+    """Issue a warning for deprecated functions to be removed in version 9."""
     public_name = func.__name__.removeprefix("_")
 
     @functools.wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         warnings.warn(
-            f"{public_name} is deprecated and will be removed in icalendar 8",
+            f"{public_name} is deprecated and will be removed in icalendar 9",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -61,5 +48,5 @@ __all__ = [
     "Self",
     "TypeGuard",
     "TypeIs",
-    "deprecate_for_version_8",
+    "deprecate_for_version_9",
 ]

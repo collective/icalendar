@@ -1,0 +1,7 @@
+extends: existence
+message: 'Commas and periods should be inside the quotes, except for single letters.'
+link: https://learn.microsoft.com/en-us/style-guide/punctuation/quotation-marks
+level: error
+nonword: true
+tokens:
+  - '["“][^"”“]{2,}["”][.,]'

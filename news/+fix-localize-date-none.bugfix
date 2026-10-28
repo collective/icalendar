@@ -1,0 +1,1 @@
+Allow :meth:`TZP.localize <icalendar.timezone.tzp.TZP.localize>` to localize :class:`~datetime.date` to floating :class:`datetime.datetime`. @niccokunzmann
