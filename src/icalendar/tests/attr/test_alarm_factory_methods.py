@@ -27,9 +27,30 @@ def _email(**kw) -> Alarm:
     return Alarm.new_email("Subject", "Body", _TRIGGER, [_ATTENDEE], **kw)
 
 
+def _new(**kw) -> Alarm:
+    return Alarm.new(action="DISPLAY", trigger=_TRIGGER, **kw)
+
+
 _ALL_FACTORIES = pytest.mark.parametrize(
     "factory", [_display, _audio, _email], ids=["new_display", "new_audio", "new_email"]
 )
+
+
+def test_new_sets_required_action_and_trigger():
+    alarm = Alarm.new(action="DISPLAY", trigger=_TRIGGER)
+
+    assert alarm.ACTION == "DISPLAY"
+    assert alarm.TRIGGER == _TRIGGER
+
+
+def test_new_requires_action():
+    with pytest.raises(InvalidCalendar, match="ACTION"):
+        Alarm.new(trigger=_TRIGGER)
+
+
+def test_new_requires_trigger():
+    with pytest.raises(InvalidCalendar, match="TRIGGER"):
+        Alarm.new(action="DISPLAY")
 
 
 def test_new_display_sets_action():
@@ -348,63 +369,63 @@ def test_factory_concepts_none_is_empty(factory):
 
 
 def test_alarm_new_uid_is_set():
-    alarm = Alarm.new(uid="test-alarm-uid-001")
+    alarm = _new(uid="test-alarm-uid-001")
     assert alarm.uid == "test-alarm-uid-001"
     assert "UID" in alarm
 
 
 def test_alarm_new_uid_none_omits_property():
-    alarm = Alarm.new(uid=None)
+    alarm = _new(uid=None)
     assert "UID" not in alarm
 
 
 def test_alarm_new_links_single():
     link = vUri("https://example.com/event")
-    alarm = Alarm.new(links=[link])
+    alarm = _new(links=[link])
     assert alarm.links == [link]
 
 
 def test_alarm_new_links_string_is_converted():
-    alarm = Alarm.new(links=["https://example.com/event"])
+    alarm = _new(links=["https://example.com/event"])
     assert alarm.links == [vUri("https://example.com/event")]
 
 
 def test_alarm_new_links_none_is_empty():
-    alarm = Alarm.new(links=None)
+    alarm = _new(links=None)
     assert alarm.links == []
     assert "LINK" not in alarm
 
 
 def test_alarm_new_related_to_single():
     rel = vText("some-uid-ref")
-    alarm = Alarm.new(related_to=[rel])
+    alarm = _new(related_to=[rel])
     assert alarm.related_to == [rel]
 
 
 def test_alarm_new_related_to_string_is_converted():
-    alarm = Alarm.new(related_to=["some-uid-ref"])
+    alarm = _new(related_to=["some-uid-ref"])
     assert alarm.related_to == [vText("some-uid-ref")]
 
 
 def test_alarm_new_related_to_none_is_empty():
-    alarm = Alarm.new(related_to=None)
+    alarm = _new(related_to=None)
     assert alarm.related_to == []
     assert "RELATED-TO" not in alarm
 
 
 def test_alarm_new_concepts_single():
     concept = vUri("https://example.com/concept")
-    alarm = Alarm.new(concepts=[concept])
+    alarm = _new(concepts=[concept])
     assert alarm.concepts == [concept]
 
 
 def test_alarm_new_concepts_string_is_converted():
-    alarm = Alarm.new(concepts=["https://example.com/concept"])
+    alarm = _new(concepts=["https://example.com/concept"])
     assert alarm.concepts == [vUri("https://example.com/concept")]
 
 
 def test_alarm_new_concepts_none_is_empty():
-    alarm = Alarm.new(concepts=None)
+    alarm = _new(concepts=None)
     assert alarm.concepts == []
     assert "CONCEPT" not in alarm
 
@@ -428,3 +449,85 @@ def test_new_email_string_attendee_normalizes(attendees, expected):
     )
     assert isinstance(alarm.attendees[0], vCalAddress)
     assert str(alarm.attendees[0]) == expected
+
+
+@pytest.mark.parametrize(
+    "invalid_attendees",
+    [
+        None,
+        [None],
+        [None, None],
+        "",
+        "   ",
+        [""],
+        ["   "],
+        ["  ", "   "],
+        [None, "   "],
+    ],
+)
+def test_new_email_with_none_or_empty_attendees_raises_invalid_calendar(
+    invalid_attendees,
+):
+    """Issue #1783: Alarm.new_email rejects None or empty attendee values."""
+    with pytest.raises(InvalidCalendar):
+        Alarm.new_email(
+            summary="S",
+            description="D",
+            trigger=timedelta(minutes=-30),
+            attendees=invalid_attendees,
+        )
+
+
+def test_new_email_filters_blank_strings_and_none_from_sequence():
+    """Sequence containing valid attendee along with blank strings or None filters out invalid elements."""
+    alarm = Alarm.new_email(
+        summary="S",
+        description="D",
+        trigger=timedelta(minutes=-30),
+        attendees=["valid@example.com", "   ", None, ""],
+    )
+    assert len(alarm.attendees) == 1
+    assert str(alarm.attendees[0]) == "mailto:valid@example.com"
+
+
+@_ALL_FACTORIES
+def test_factory_refids_single(factory):
+    ref = vText("ref-id-001")
+    alarm = factory(refids=[ref])
+    assert alarm.refids == [ref]
+
+
+@_ALL_FACTORIES
+def test_factory_refids_string_is_converted(factory):
+    alarm = factory(refids=["ref-id-001"])
+    assert alarm.refids == [vText("ref-id-001")]
+
+
+@_ALL_FACTORIES
+def test_factory_refids_none_is_empty(factory):
+    alarm = factory(refids=None)
+    assert alarm.refids == []
+    assert "REFID" not in alarm
+
+
+def test_new_email_with_all_optional_parameters():
+    alarm = Alarm.new_email(
+        summary="Summary",
+        description="Description",
+        trigger=timedelta(minutes=-15),
+        attendees=["user@example.com"],
+        uid="email-alarm-uid-999",
+        attachments=["https://example.com/doc.pdf"],
+        links=["https://example.com/link"],
+        related_to=["rel-001"],
+        refids=["ref-001"],
+        concepts=["https://example.com/concept"],
+    )
+    assert alarm.summary == "Summary"
+    assert alarm.description == "Description"
+    assert alarm.uid == "email-alarm-uid-999"
+    assert len(alarm.attendees) == 1
+    assert len(alarm.links) == 1
+    assert len(alarm.related_to) == 1
+    assert len(alarm.refids) == 1
+    assert len(alarm.concepts) == 1
