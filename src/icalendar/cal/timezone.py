@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
-from typing import TYPE_CHECKING
 
 import dateutil.rrule
 import dateutil.tz
@@ -22,15 +21,25 @@ from icalendar.timezone import TZP, tzp
 from icalendar.timezone.tzid import tzid_from_tzinfo
 from icalendar.tools import to_datetime
 
-if TYPE_CHECKING:
-    from icalendar.cal import Calendar
-
 
 class Timezone(Component):
     """
     A "VTIMEZONE" calendar component is a grouping of component
     properties that defines a time zone. It is used to describe the
     way in which a time zone changes its offset from UTC over time.
+
+    Examples:
+        Get the example Timezone.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Timezone
+            >>> timezone = Timezone.example()
+            >>> print(timezone["TZID"])
+            custom_Pacific/Fiji
+            >>> len(timezone.subcomponents)
+            5
+
     """
 
     subcomponents: list[TimezoneStandard | TimezoneDaylight]
@@ -48,15 +57,31 @@ class Timezone(Component):
     DEFAULT_LAST_DATE = date(2038, 1, 1)
 
     @classmethod
-    def example(cls, name: str = "pacific_fiji") -> Calendar:
-        """Return the timezone example with the given name."""
+    def example(cls, name: str = "pacific_fiji") -> Timezone:
+        """Return the timezone example with the given name.
+
+        Example:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Timezone
+                >>> timezone = Timezone.example()
+                >>> print(timezone["TZID"])
+                custom_Pacific/Fiji
+        """
         return cls.from_ical(get_example("timezones", name))
 
     @staticmethod
     def _extract_offsets(component: TimezoneDaylight | TimezoneStandard, tzname: str):
-        """extract offsets and transition times from a VTIMEZONE component
-        :param component: a STANDARD or DAYLIGHT component
-        :param tzname: the name of the zone
+        """Extract offsets and transition times from a VTIMEZONE component.
+
+        Args:
+            component: A STANDARD or DAYLIGHT timezone component.
+            tzname: The name of the timezone.
+
+        Returns:
+            A tuple containing whether the component represents daylight saving
+            time and its transition information.
         """
         offsetfrom = component.TZOFFSETFROM
         offsetto = component.TZOFFSETTO
@@ -259,16 +284,21 @@ class Timezone(Component):
     ) -> Timezone:
         """Return a VTIMEZONE component from a timezone object.
 
-        This works with pytz and zoneinfo and any other timezone.
-        The offsets are calculated from the tzinfo object.
+        Calculate offsets from a pytz, zoneinfo, or other timezone object.
 
         Parameters:
+            timezone: Required. The timezone object used to calculate transitions.
+            first_date: The starting date for the transition search.
+            last_date: The ending date for the transition search.
+            tzid: The timezone identifier. If None, derive it from
+                ``timezone``.
 
-        :param tzinfo: the timezone object
-        :param tzid: the tzid for this timezone. If None, it will be extracted from the tzinfo.
-        :param first_date: a datetime that is earlier than anything that happens in the calendar
-        :param last_date: a datetime that is later than anything that happens in the calendar
-        :raises ValueError: If we have no tzid and cannot extract one.
+        Returns:
+            :class:`Timezone`: The ``VTIMEZONE`` component for ``timezone``.
+
+        Raises:
+            ValueError: If ``tzid`` is None and cannot be derived from
+                ``timezone``.
 
         .. note::
             This can take some time. Please cache the results.

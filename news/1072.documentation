@@ -1,0 +1,1 @@
+Improved the ``Timezone._extract_offsets`` docstring to use Google-style documentation. I used ChatGPT GPT-5.6 Sol to assist with wording review and contribution workflow guidance. @bpiper02
