@@ -397,10 +397,10 @@ class Timezone(Component):
 
         Raises:
             ValueError: If the tzid is unknown.
-            
+
         Example:
             .. code-block:: pycon
-            
+
                 >>> from icalendar import Timezone
                 >>> tz = Timezone.from_tzid("Europe/Berlin")
                 >>> print(tz.to_ical()[:36])
