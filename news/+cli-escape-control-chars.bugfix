@@ -1,0 +1,1 @@
+Escape control characters in the output of the ``icalendar`` command line tool. ``ORGANIZER`` and ``ATTENDEE`` values are printed verbatim, so an ``.ics`` file could send terminal escape sequences that rewrite the displayed event or change the terminal title. I used AI to assist me with this change. @alhudz
