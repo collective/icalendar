@@ -386,21 +386,28 @@ class Timezone(Component):
     ) -> Timezone:
         """Create a VTIMEZONE from a tzid like ``"Europe/Berlin"``.
 
-        :param tzid: the id of the timezone
-        :param tzp: the timezone provider
-        :param first_date: a datetime that is earlier than anything
-            that happens in the calendar
-        :param last_date: a datetime that is later than anything
-            that happens in the calendar
-        :raises ValueError: If the tzid is unknown.
+        Parameters:
+            tzid: The id of the timezone.
+            tzp: The timezone provider.
+            first_date: A date that is earlier than anything that happens in the calendar.
+            last_date: A date that is later than anything that happens in the calendar.
 
-        >>> from icalendar import Timezone
-        >>> tz = Timezone.from_tzid("Europe/Berlin")
-        >>> print(tz.to_ical()[:36])
-        BEGIN:VTIMEZONE
-        TZID:Europe/Berlin
+        Returns:
+            A VTIMEZONE component for the given tzid.
 
-        .. note::
+        Raises:
+            ValueError: If the tzid is unknown.
+            
+        Example:
+            .. code-block:: pycon
+            
+                >>> from icalendar import Timezone
+                >>> tz = Timezone.from_tzid("Europe/Berlin")
+                >>> print(tz.to_ical()[:36])
+                BEGIN:VTIMEZONE
+                TZID:Europe/Berlin
+
+        Note:
             This can take some time. Please cache the results.
         """
         tz = tzp.timezone(tzid)
