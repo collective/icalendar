@@ -163,12 +163,16 @@ class Timezone(Component):
     def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):
         """convert this VTIMEZONE component to a timezone object
 
-        :param tzp: timezone provider to use
-        :param lookup_tzid: whether to use the TZID property to look up existing
-                            timezone definitions with tzp.
-                            If it is False, a new timezone will be created.
-                            If it is True, the existing timezone will be used
-                            if it exists, otherwise a new timezone will be created.
+        Parameters:
+            tzp: Timezone provider to use.
+            lookup_tzid: Whether to use the TZID property to look up existing
+                timezone definitions with ``tzp``. If ``True``, the existing
+                timezone is used if it exists; otherwise a new timezone is
+                created. If ``False``, a new timezone is always created.
+
+        Returns:
+            A timezone object, either looked up from ``tzp`` or newly created
+            from this component.
         """
         if lookup_tzid:
             tz = tzp.timezone(self.tz_name)
