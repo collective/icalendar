@@ -7,7 +7,13 @@ import pytest
 import icalendar
 from icalendar import enums
 
-ENUMS = [name for name in dir(enums) if name.isupper()]
+ENUMS = [
+    name
+    for name in dir(enums)
+    if name.isupper()
+    and isinstance(getattr(enums, name), type)
+    and issubclass(getattr(enums, name), enums.Enum)
+]
 
 
 @pytest.fixture(params=ENUMS)
@@ -37,11 +43,10 @@ def test_enum_has_description(enum):
     assert "Description:" in enum.__doc__
 
 
-def test_enum_can_be_pickled():
-    """Enum members retain their identity after a pickle round trip."""
-    related = enums.RELATED.START
-
-    assert pickle.loads(pickle.dumps(related)) is related  # noqa: S301
+def test_enum_can_be_pickled(enum):
+    """Every enum member retains their identity after a pickle round trip."""
+    for member in enum:
+        assert pickle.loads(pickle.dumps(member)) is member  # noqa: S301
 
 
 def test_value_enum_includes_binary():
@@ -75,3 +80,36 @@ def test_vbinary_default_value_is_a_value_enum_member():
     from icalendar.prop import vBinary
 
     assert vBinary.default_value in {member.value for member in enums.VALUE}
+
+
+def test_get_returns_member_for_valid_value():
+    """get() returns the enum member when a member has the given value."""
+    assert enums.PARTSTAT.get("ACCEPTED") is enums.PARTSTAT.ACCEPTED
+
+
+def test_get_is_case_insensitive():
+    """get() returns the enum member when a member has the given value even if it is in lowercase."""
+    assert enums.STATUS.get("confirmed") is enums.STATUS.CONFIRMED
+
+
+def test_get_returns_none_for_invalid_value():
+    """get() returns None when no member has the given value."""
+    assert enums.PARTSTAT.get("invalid-value") is None
+
+
+def test_get_returns_default_value_for_invalid_value():
+    """get() returns the default value when no member has the given value."""
+    default = "No value"
+    assert enums.PARTSTAT.get("invalid-value", default) == default
+
+
+def test_get_ignores_default_value_for_valid_value():
+    """get() ignores the default value when a member has the given value."""
+    default = "No value"
+    assert enums.PARTSTAT.get("ACCEPTED", default) is enums.PARTSTAT.ACCEPTED
+
+
+def test_constructor_still_raises_for_invalid_value():
+    """Calling the enum directly still raises ValueError for an unknown value."""
+    with pytest.raises(ValueError):
+        enums.PARTSTAT("no-value")

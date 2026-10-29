@@ -5,7 +5,7 @@ from typing import Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.adapter import ElementAdapter
 from icalendar.parser.xcal.base import XCalParser
@@ -107,7 +107,7 @@ class vDatetime(TimeBase):
         self.params = Parameters(params)
         self.params.update_tzid_from(dt)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         dt = self.dt
 
         s = (
@@ -120,7 +120,17 @@ class vDatetime(TimeBase):
 
     @staticmethod
     def from_ical(ical, timezone=None):
-        """Create a datetime from the RFC string."""
+        """Create a datetime from the RFC string.
+
+        Parameters:
+            ical (str | bytes): Required. The iCalendar DATE-TIME value to parse.
+            timezone (str | datetime.tzinfo | None): The time zone name or object
+                used to localize the result. If ``None``, a trailing ``Z`` selects
+                UTC and other values remain floating.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid DATE-TIME.
+        """
         ical = to_unicode(ical)
         tzinfo = None
         if isinstance(timezone, str):
@@ -134,7 +144,10 @@ class vDatetime(TimeBase):
         ical_value = ical.rpartition(":")[2]
 
         if len(ical_value) < 15 or ical_value[8] != "T":
-            raise ValueError(f"Wrong datetime format: {ical}")
+            raise ICalParsingError(
+                "Wrong datetime format",
+                value=ical,
+            )
 
         try:
             timetuple = (
@@ -152,8 +165,14 @@ class vDatetime(TimeBase):
             if ical_value[15:] == "Z":
                 return tzp.localize_utc(datetime(*timetuple))
         except Exception as e:
-            raise ValueError(f"Wrong datetime format: {ical}") from e
-        raise ValueError(f"Wrong datetime format: {ical}")
+            raise ICalParsingError(
+                "Wrong datetime format",
+                value=ical,
+            ) from e
+        raise ICalParsingError(
+            "Wrong datetime format",
+            value=ical,
+        )
 
     @classmethod
     def examples(cls) -> list[Self]:
@@ -182,7 +201,7 @@ class vDatetime(TimeBase):
         """Parse a jCal string to a :class:`datetime.datetime`.
 
         Raises:
-            ~error.JCalParsingError: If it can't parse a date-time value.
+            ~icalendar.error.JCalParsingError: If it can't parse a date-time value.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         utc = jcal.endswith("Z")
@@ -204,7 +223,7 @@ class vDatetime(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)

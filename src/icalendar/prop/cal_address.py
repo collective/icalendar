@@ -95,6 +95,22 @@ class vCalAddress(str):
         return str(self)
 
     @property
+    def uri(self) -> str:
+        """The calendar user address as a URI, usually the ``mailto:`` link.
+
+        This provides the same interface as :attr:`vUri.uri
+        <icalendar.prop.uri.vUri.uri>`.
+        Use :attr:`email` to get the address without ``mailto:``.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vCalAddress
+            >>> vCalAddress("mailto:jane_doe@example.com").uri
+            'mailto:jane_doe@example.com'
+        """
+        return self.ical_value
+
+    @property
     def email(self) -> str:
         """The email address without ``mailto:`` at the start."""
         if self.lower().startswith("mailto:"):
@@ -107,6 +123,7 @@ class vCalAddress(str):
         DELEGATED_FROM,
         DELEGATED_TO,
         DIR,
+        EMAIL,
         LANGUAGE,
         MEMBER,
         PARTSTAT,
@@ -274,7 +291,7 @@ class vCalAddress(str):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
