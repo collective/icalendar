@@ -158,6 +158,7 @@ nitpick_ignore_regex = [
         r"icalendar\.prop.*",
     ),  # Ignore old change log entry from before the re-org in 7.0.0a1
 ]
+suppress_warnings = ["ref.python"]
 
 
 # -- notfound.extension configuration ----------------------------------
