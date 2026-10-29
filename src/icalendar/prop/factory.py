@@ -300,7 +300,7 @@ class TypesFactory(CaselessDict):
         The result is a lowercase :rfc:`7265` value type, for example
         ``"date-time"`` for ``DTSTART`` or ``"duration"`` for ``TRIGGER``.
         This is the value type a property uses when no explicit ``VALUE``
-        parameter is given, so it tells :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` whether a
+        parameter is given, so it tells :meth:`Component.from_jcal <icalendar.cal.component.Component.from_jcal>` whether a
         ``VALUE`` parameter has to be restored from the jCal type field.
 
         Parameters:
