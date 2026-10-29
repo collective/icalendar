@@ -407,7 +407,7 @@ class Timezone(Component):
                 BEGIN:VTIMEZONE
                 TZID:Europe/Berlin
 
-        Note:
+        .. note::
             This can take some time. Please cache the results.
         """
         tz = tzp.timezone(tzid)
