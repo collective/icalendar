@@ -6,6 +6,7 @@ import re
 from typing import TYPE_CHECKING, Any
 
 from icalendar.caselessdict import CaselessDict
+from icalendar.parser.string import validate_token
 
 if TYPE_CHECKING:
     from icalendar import Component
@@ -87,9 +88,14 @@ class ComponentFactory(CaselessDict):
 
         Returns:
             The registered component class.
+
+        Raises:
+            ~icalendar.error.InvalidToken: If the name is not a valid iCalendar
+                token.
         """
         component_class = self.get(name)
         if component_class is None:
+            validate_token(name)
             from icalendar.cal.component import Component
 
             component_class = type(

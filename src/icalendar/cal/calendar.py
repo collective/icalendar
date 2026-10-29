@@ -48,6 +48,7 @@ if TYPE_CHECKING:
 
 
 DEFAULT_PRODID = f"-//collective//icalendar//{__version__}//EN"
+"""The value for :attr:`~icalendar.cal.calendar.Calendar.prodid` when it's not provided."""
 
 
 class Calendar(Component):
@@ -65,6 +66,17 @@ class Calendar(Component):
             >>> print(calendar.calendar_name)
             My Calendar
 
+        Get the example Calendar:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Calendar
+            >>> calendar = Calendar.example()
+            >>> print(calendar.calendar_name)
+            Holidays
+            >>> len(calendar.events)
+            3
+
     """
 
     name = "VCALENDAR"
@@ -73,6 +85,7 @@ class Calendar(Component):
         "PRODID",
         "CALSCALE",
         "METHOD",
+        "URL",
         "DESCRIPTION",
         "X-WR-CALDESC",
         "NAME",
@@ -223,7 +236,7 @@ class Calendar(Component):
 
     @property
     def availabilities(self) -> list[Availability]:
-        """All :class:`Availability` components in the calendar.
+        """All :class:`~icalendar.cal.availability.Availability` components in the calendar.
 
         This is a shortcut to get all availabilities.
         Modifications do not change the calendar.
@@ -635,7 +648,7 @@ Example:
             :class:`Calendar`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~icalendar.error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -677,7 +690,7 @@ Example:
         This method can be called explicitly to validate a calendar before output.
 
         Raises:
-            ~error.IncompleteComponent: If the calendar lacks required properties or
+            ~icalendar.error.IncompleteComponent: If the calendar lacks required properties or
                 components.
         """
         if not self.get("PRODID"):

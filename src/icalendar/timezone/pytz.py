@@ -8,6 +8,8 @@ from typing import TYPE_CHECKING
 import pytz
 from pytz.tzinfo import DstTzInfo
 
+from icalendar.tools import normalize_pytz
+
 from .provider import TZProvider
 
 if TYPE_CHECKING:
@@ -31,7 +33,9 @@ class PYTZ(TZProvider):
 
     def localize(self, dt: datetime, tz: tzinfo) -> datetime:
         """Localize a datetime to a timezone."""
-        return tz.localize(dt)
+        if hasattr(tz, "localize"):
+            return tz.localize(dt)
+        return normalize_pytz(dt.replace(tzinfo=tz))
 
     def knows_timezone_id(self, tzid: str) -> bool:
         """Whether the timezone is already cached by the implementation."""
