@@ -1,0 +1,1 @@
+Added a list of predicates to decide which exceptions the fuzzer can ignore. The current check by exception type and message is now the first predicate. I used AI to help with this change. @arrudagba

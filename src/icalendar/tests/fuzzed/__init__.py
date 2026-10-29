@@ -5,7 +5,41 @@ These test cases reproduce the failure.
 Some more tests can be added to make sure that the behavior works properly.
 """
 
+from __future__ import annotations
+
 import inspect
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from icalendar.compatibility import Self
+
+
+class Predicate:
+    """Check if an exception is expected during fuzzing.
+
+    Predicates can be combined with ``&``, ``|`` and ``~``.
+
+    Parameters:
+        func: Returns ``True`` if the exception is expected.
+    """
+
+    def __init__(self, func: Callable[[BaseException], bool]) -> None:
+        self.func: Callable[[BaseException], bool] = func
+
+    def __call__(self, exception: BaseException) -> bool:
+        return self.func(exception)
+
+    def __and__(self, other: Callable[[BaseException], bool]) -> Self:
+        return self.__class__(lambda ex: self(ex) and other(ex))
+
+    def __or__(self, other: Callable[[BaseException], bool]) -> Self:
+        return self.__class__(lambda ex: self(ex) or other(ex))
+
+    def __invert__(self) -> Self:
+        return self.__class__(lambda ex: not self(ex))
+
 
 _value_error_matches = [
     "component",
@@ -39,6 +73,32 @@ _value_error_matches = [
     "not enough values to unpack",  # dateutil rejects a malformed VTIMEZONE content line
     "Content line can not contain unescaped new line characters.",  # Contentline after #1559
 ]
+
+# The current check: a ValueError or TypeError with one of the substrings above.
+# See https://github.com/collective/icalendar/issues/1759
+_value_error_message = Predicate(
+    lambda e: (
+        isinstance(e, (ValueError, TypeError))
+        and any(m in str(e) for m in _value_error_matches)
+    )
+)
+
+# An exception is ignored during fuzzing if any of these predicates matches.
+_expected_exceptions: list[Predicate] = [
+    _value_error_message,
+]
+
+
+def is_expected_exception(exception: BaseException) -> bool:
+    """Check if the fuzzer can ignore this exception.
+
+    Parameters:
+        exception: The exception raised for a fuzzed input.
+
+    Returns:
+        ``True`` if any predicate in the list of expected exceptions matches.
+    """
+    return any(predicate(exception) for predicate in _expected_exceptions)
 
 
 def format_fuzz_log(
@@ -93,7 +153,7 @@ def fuzz_v1_calendar(
                     event.to_ical()
             else:
                 c.to_ical()
-    except (ValueError, TypeError) as e:
-        if any(m in str(e) for m in _value_error_matches):
+    except Exception as e:
+        if is_expected_exception(e):
             return -1
         raise
