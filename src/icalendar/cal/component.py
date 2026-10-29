@@ -1291,10 +1291,19 @@ class Component(CaselessDict):
         if len(self) > 0:
             e_properties = SubElement(e_component, "properties")
             for key, prop_list in self.sorted_items():
-                for prop in prop_list if isinstance(prop_list, list) else [prop_list]:
-                    prop: VPROPERTY
+                if key.lower() in ("resources", "freebusy") and isinstance(
+                    prop_list, list
+                ):
                     e_property = SubElement(e_properties, key.lower())
-                    prop.to_xcal(e_property)
+                    for prop in prop_list:
+                        prop.to_xcal(e_property)
+                else:
+                    for prop in (
+                        prop_list if isinstance(prop_list, list) else [prop_list]
+                    ):
+                        prop: VPROPERTY
+                        e_property = SubElement(e_properties, key.lower())
+                        prop.to_xcal(e_property)
         if self.subcomponents:
             e_components = SubElement(e_component, "components")
             for subcomponent in self.subcomponents:
