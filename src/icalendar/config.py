@@ -17,6 +17,17 @@ fully trusted input.
 .. versionadded:: 7.2.1
 """
 
+MAX_TIMEZONE_TRANSITIONS_PER_YEAR: int = 100
+"""Cap on transitions a ``VTIMEZONE`` ``RRULE`` may produce within a year.
+
+A ``STANDARD`` or ``DAYLIGHT`` component of a ``VTIMEZONE`` usually repeats yearly.
+Timezones created from a ``VTIMEZONE`` expand its ``RRULE`` from ``DTSTART``, so
+an ``RRULE`` such as ``FREQ=SECONDLY`` can exhaust memory or CPU when a date
+in this timezone is used.
+A ``VTIMEZONE`` whose ``RRULE`` produces more transitions within a year is invalid.
+Set to ``-1`` to disable the cap, which should be done only for fully trusted input.
+"""
+
 
 def _clamp_repeat(n: int) -> int:
     """Return *n* clamped to ``[0, MAX_ALARM_REPEAT]``.
@@ -62,5 +73,6 @@ def parse_xml(source) -> ElementTree[Element[str]]:
 
 __all__ = [
     "MAX_ALARM_REPEAT",
+    "MAX_TIMEZONE_TRANSITIONS_PER_YEAR",
     "parse_xml",
 ]
