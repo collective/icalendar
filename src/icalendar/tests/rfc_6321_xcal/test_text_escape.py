@@ -17,6 +17,7 @@ from xml.etree.ElementTree import Element, ElementTree, ParseError
 import pytest
 
 from icalendar.config import parse_xml
+from icalendar.prop.cal_address import vCalAddress
 from icalendar.prop.text import vText
 from icalendar.prop.uid import vUid
 from icalendar.prop.unknown import vUnknown
@@ -39,8 +40,9 @@ def round_trip(xml: Element) -> Element:
 
 # #x9 | #xA | #xD | [#x20-#xD7FF]
 VALID_CHARACTERS_BELOW_SPACE = "\x09\x0a\x0d"
-INVALID_CHARACTERS = "".join(
-    chr(i) for i in range(0x20) if chr(i) not in VALID_CHARACTERS_BELOW_SPACE
+INVALID_CHARACTERS = (
+    "".join(chr(i) for i in range(0x20) if chr(i) not in VALID_CHARACTERS_BELOW_SPACE)
+    + "\ufffe\uffff"
 )
 
 VALID_CHARACTERS = "".join(
@@ -107,6 +109,9 @@ def test_xml_round_trips(text):
     assert round_tripped.text == newline_escape(text)
 
 
+@pytest.mark.parametrize(
+    "xcal_text_type", [vText, vUnknown, vUid, vUri, vXmlReference, vCalAddress]
+)
 @pytest.mark.parametrize("text", INVALID_CHARACTERS)
 @pytest.mark.parametrize("wrap", ["", "asdasdasdasd"])
 def test_invalid_xml_characters_are_replaced(xcal_text_type, text, wrap):
