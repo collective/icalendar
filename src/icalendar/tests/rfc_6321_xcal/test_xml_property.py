@@ -20,6 +20,7 @@ https://github.com/collective/icalendar/pull/1958#discussion_r4324499271
 
 import base64
 import re
+import time
 import xml.etree.ElementTree as ET
 from io import BytesIO
 from xml.etree.ElementTree import Element, ParseError, fromstring, tostring
@@ -285,6 +286,25 @@ def test_xml_property_to_xcal_ignores_the_declared_encoding(declaration):
     event.add("XML", f'{declaration}<a xmlns="urn:x">café €</a>')
     assert event["XML"].element.text == "café €"
     assert Event.from_xcal(event.to_xcal())[0]["XML"].element.text == "café €"
+
+
+@pytest.mark.parametrize("whitespace", [" ", "\t", "\n"])
+def test_xml_property_to_xcal_with_long_whitespace_in_the_declaration(whitespace):
+    """A long run of whitespace in the XML declaration is parsed in linear time.
+
+    The regex that removes the declared encoding used to retry the whitespace
+    before ``encoding`` from every position, so this took minutes.
+    The bound is generous enough to never flake on slow CI.
+    """
+    event = Event()
+    event.add(
+        "XML",
+        '<?xml version="1.0"' + whitespace * 200_000 + '?><a xmlns="urn:x">text</a>',
+    )
+    start = time.perf_counter()
+    xcal = event.to_xcal()
+    assert time.perf_counter() - start < 5
+    assert Event.from_xcal(xcal)[0]["XML"].element.text == "text"
 
 
 # icalendar objects -> iCal/jCal
