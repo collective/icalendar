@@ -5,7 +5,7 @@ from datetime import time
 import pytest
 
 from icalendar import Calendar
-from icalendar.error import ICalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError
 from icalendar.prop.dt.time import vTime
 
 
@@ -129,5 +129,5 @@ def test_parse_jcal_value_accepts_leap_second():
 
 def test_parse_jcal_value_still_rejects_out_of_range():
     """A second beyond the RFC's 00-60 range is rejected."""
-    with pytest.raises(Exception):
+    with pytest.raises(JCalParsingError):
         vTime.parse_jcal_value("23:59:61")
