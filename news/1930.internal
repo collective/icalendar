@@ -1,1 +1,3 @@
+AI Disclosure: Claude Opus 5.5 was used to locate functions missing type-hints.
+
 Added type hints to vRecur class.
