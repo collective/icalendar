@@ -102,7 +102,7 @@ class vMonth(int):
         """Parse a jCal value for vMonth.
 
         Raises:
-            ~error.JCalParsingError: If the value is not a valid month.
+            ~icalendar.error.JCalParsingError: If the value is not a valid month.
         """
         JCalParsingError.validate_value_type(value, (str, int), cls)
         try:

@@ -34,6 +34,7 @@ docs
 funding.json
 news
 pyproject.toml
+scripts
 src"
 
 if [ "$ROOT_ENTRIES" != "$EXPECTED_ROOT_ENTRIES" ]; then
@@ -58,6 +59,12 @@ fi
 if ! echo "$FILES" | grep -q '/funding.json$'; then
   echo "ERROR: Funding files need to be included in the release files."
   echo "       See https://github.com/collective/icalendar/issues/1493"
+  exit 1
+fi
+
+if ! echo "$FILES" | grep -q '^/scripts/generate_windows_to_olson_mapping\.py$'; then
+  echo "ERROR: The Windows to Olson generator is not included in the release."
+  echo "       Source distribution tests require it; see https://github.com/collective/icalendar/pull/1770"
   exit 1
 fi
 
