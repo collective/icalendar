@@ -1,0 +1,1 @@
+Added an ``EMAIL`` parameter accessor to :class:`~icalendar.prop.cal_address.vCalAddress`, distinct from the calendar address's ``email`` property. I used OpenAI Codex to assist with this change. @bohuis686-creator

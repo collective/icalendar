@@ -42,6 +42,7 @@ from icalendar.error import (
     IncompleteAlarmInformation,
     IncompleteComponent,
     InvalidCalendar,
+    InvalidToken,
     JCalParsingError,
     LocalTimezoneMissing,
     XCalParsingError,
@@ -89,6 +90,7 @@ from icalendar.prop import (
     vUri,
     vUTCOffset,
     vWeekday,
+    vXml,
     vXmlReference,
 )
 from icalendar.prop.conference import Conference
@@ -136,6 +138,7 @@ __all__ = [
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",
+    "InvalidToken",
     "JCalParsingError",
     "Journal",
     "LazyCalendar",
@@ -184,6 +187,7 @@ __all__ = [
     "vUnknown",
     "vUri",
     "vWeekday",
+    "vXml",
     "vXmlReference",
     "version",
     "version_tuple",
