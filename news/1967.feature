@@ -1,0 +1,1 @@
+Add generic typing, converter support, and the ``for_text()`` factory to :class:`~icalendar.attr.property_list.PropertyListView`, provide :class:`~icalendar.attr.property_list.PropertyListViewProperty` descriptor, and wire the ``COMMENT`` property across components to use it. I used Claude 3.5 Sonnet to assist with this change under my direction. @apurva1094
