@@ -237,14 +237,14 @@ class vRecur(CaselessDict):
         return b";".join(result)
 
     @classmethod
-    def parse_type(cls, key, values):
+    def parse_type(cls, key: str, values: str) -> list[Any]:
         # integers
         key = cls._normalize_key(key)
         parser = cls.types.get(key, vText)
         return [parser.from_ical(v) for v in values.split(",")]
 
     @classmethod
-    def from_ical(cls, ical: str):
+    def from_ical(cls, ical: str) -> Self:
         if isinstance(ical, cls):
             return ical
         try:
@@ -271,7 +271,7 @@ class vRecur(CaselessDict):
 
     from icalendar.param import VALUE
 
-    def to_jcal(self, name: str) -> list:
+    def to_jcal(self, name: str) -> list[Any]:
         """The jCal representation of this property according to :rfc:`7265`."""
         recur = {}
         for k, v in self._normalized().sorted_items():
