@@ -4,7 +4,7 @@
 Parse any calendar format
 =========================
 
-This chapter describes how to parse calendar data when you do not know in advance whether it is iCalendar, jCal, or xCal.
+This chapter describes how to parse calendar data when you do not know in advance whether it is :term:`iCalendar`, :term:`jCal`, or :term:`xCal`.
 
 icalendar supports three calendar formats, each with its own parser:
 
@@ -28,11 +28,13 @@ Pass the data as :class:`bytes`.
     >>> calendar["PRODID"]
     vText(b'example')
 
-The format is detected from the first character, ignoring whitespace and a UTF-8 byte order mark:
+The format is detected from the first character, ignoring whitespace and a byte order mark:
 
 -   ``B`` or ``b``, as in ``BEGIN:VCALENDAR``, means iCalendar.
 -   ``[`` means jCal.
 -   ``<`` means xCal.
+
+The data is passed to the parser unchanged, so :func:`~icalendar.cal.calendar.parse` accepts what the matching parser accepts.
 
 If the format cannot be detected, :func:`~icalendar.cal.calendar.parse` raises :class:`~icalendar.error.UnknownCalendarFormat`.
 
@@ -41,7 +43,7 @@ If the format cannot be detected, :func:`~icalendar.cal.calendar.parse` raises :
     >>> parse(b"not a calendar")
     Traceback (most recent call last):
       ...
-    icalendar.error.UnknownCalendarFormat: Could not detect the calendar format: expected iCal, jCal or xCal data, but the data starts with b'n'.
+    icalendar.error.UnknownCalendarFormat: Could not detect the calendar format: expected iCal, jCal or xCal data, but the data starts with b'not a cale'.
 
 
 Parse a file
@@ -80,6 +82,10 @@ If the data contains more than one calendar, returning only one of them would lo
 If the data contains no calendars, it raises :class:`~icalendar.error.NoCalendarsFound`.
 
 To get all calendars as a list, pass ``multiple=True``.
+
+The example below demonstrates the iCalendar stream.
+The ``ical`` variable contains only one calendar.
+``ical + ical`` parses into two calendars.
 
 .. code-block:: pycon
 

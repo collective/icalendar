@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import uuid
 from datetime import timedelta
 from pathlib import Path
@@ -703,6 +704,9 @@ Example:
             )
 
 
+FORMAT_START = re.compile(rb"(?:\xef\xbb\xbf|\xff\xfe|\xfe\xff)?[\s\x00]*([Bb\[<])")
+
+
 @overload
 def parse(
     source: bytes | Path | BinaryIO, multiple: Literal[False] = False
@@ -719,8 +723,9 @@ def parse(
     r"""Parse iCalendar, jCal, or xCal data into calendars.
 
     The format is detected from the first character of the data, ignoring
-    whitespace and a UTF-8 byte order mark: ``B`` or ``b`` for iCalendar
+    whitespace and a byte order mark: ``B`` or ``b`` for iCalendar
     (:rfc:`5545`), ``[`` for jCal (:rfc:`7265`), and ``<`` for xCal (:rfc:`6321`).
+    The data is passed to the parser unchanged.
     See :ref:`how-to-parse` for more examples.
 
     Parameters:
@@ -735,10 +740,10 @@ def parse(
     Raises:
         TypeError: If the data is not :class:`bytes`, for example, because
             a file was opened in text mode.
-        ~error.UnknownCalendarFormat: If the format cannot be detected.
-        ~error.NoCalendarsFound: If ``multiple`` is ``False`` and the data
+        ~icalendar.error.UnknownCalendarFormat: If the format cannot be detected.
+        ~icalendar.error.NoCalendarsFound: If ``multiple`` is ``False`` and the data
             contains no calendars.
-        ~error.CalendarInformationLost: If ``multiple`` is ``False`` and the
+        ~icalendar.error.CalendarInformationLost: If ``multiple`` is ``False`` and the
             data contains more than one calendar.
 
     Example:
@@ -774,18 +779,18 @@ def parse(
             f"Expected bytes, but got {type(data).__name__}. "
             'Open files in binary mode with "rb".'
         )
-    data = data.removeprefix(b"\xef\xbb\xbf").lstrip()
-    first = data[:1]
+    match = FORMAT_START.match(data)
+    first = b"" if match is None else match.group(1)
     if first.upper() == b"B":
         calendars = Calendar.from_ical(data, multiple=True)
     elif first == b"[":
-        calendars = [cast("Calendar", Calendar.from_jcal(data.decode("utf-8")))]
+        calendars = [cast("Calendar", Calendar.from_jcal(data.decode("utf-8-sig")))]
     elif first == b"<":
         calendars = Calendar.from_xcal(data)
     else:
         raise UnknownCalendarFormat(
             f"Could not detect the calendar format: expected iCal, jCal or xCal data, "
-            f"but the data starts with {first!r}."
+            f"but the data starts with {data[:10]!r}."
         )
     if multiple:
         return calendars

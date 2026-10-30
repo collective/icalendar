@@ -3,6 +3,8 @@
 See https://github.com/collective/icalendar/issues/1917
 """
 
+from xml.etree.ElementTree import ParseError
+
 import pytest
 
 from icalendar import (
@@ -69,14 +71,35 @@ def test_parse_multiple_returns_list(data):
     assert calendars[0]["PRODID"] == "test"
 
 
-def test_leading_whitespace_is_ignored(data):
-    """Whitespace before the data does not affect format detection."""
-    assert parse(b"  \n" + data)["PRODID"] == "test"
+def test_leading_whitespace_in_jcal_is_ignored():
+    """The jCal parser accepts whitespace before the data."""
+    assert parse(b"  \n" + JCAL)["PRODID"] == "test"
+
+
+@pytest.mark.parametrize(
+    ("data", "error"),
+    [(ICAL, ValueError), (XCAL, ParseError)],
+    ids=["ical", "xcal"],
+)
+def test_data_is_passed_to_the_parser_unchanged(data, error):
+    """Whitespace is not removed, so parsers that reject it raise their error."""
+    with pytest.raises(error):
+        parse(b"  \n" + data)
 
 
 def test_utf8_bom_is_ignored(data):
     """A UTF-8 byte order mark before the data does not affect format detection."""
     assert parse(b"\xef\xbb\xbf" + data)["PRODID"] == "test"
+
+
+@pytest.mark.parametrize(
+    ("bom", "encoding"),
+    [(b"\xff\xfe", "utf-16-le"), (b"\xfe\xff", "utf-16-be")],
+    ids=["little-endian", "big-endian"],
+)
+def test_utf16_xcal(bom, encoding):
+    """UTF-16 xCal in either byte order is detected and parsed."""
+    assert parse(bom + XCAL.decode().encode(encoding))["PRODID"] == "test"
 
 
 def test_lowercase_ical_is_detected():
