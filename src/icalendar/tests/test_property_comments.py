@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from icalendar import Component, Event
-from icalendar.attr import PropertyListView
+from icalendar.attr import PropertyListView, PropertyListViewProperty
 from icalendar.prop import vText
 
 
@@ -169,3 +169,34 @@ def test_property_list_view_dict_and_fallback_converter():
     view3 = PropertyListView(comp3, "X-OTHER-CONV", converter="not-callable-or-dict")
     view3.append("fallback-val")
     assert view3[0] == "fallback-val"
+
+
+def test_property_list_view_property_descriptor_on_class():
+    """Accessing descriptor on the class returns the descriptor instance."""
+    assert isinstance(Event.comments, PropertyListViewProperty)
+    assert "Specifies a comment" in Event.comments.__doc__
+
+
+def test_custom_property_list_view_property_descriptor():
+    """Custom descriptor instantiation and operations."""
+
+    class CustomComponent(Component):
+        tags = PropertyListViewProperty[vText, str | vText](
+            "X-TAG",
+            "Custom tags",
+            converter=lambda v: v if isinstance(v, vText) else vText(v),
+        )
+
+    obj = CustomComponent()
+    assert obj.tags == []
+    obj.tags.append("alpha")
+    assert obj.tags == ["alpha"]
+    assert isinstance(obj.tags[0], vText)
+    assert "X-TAG" in obj
+
+    obj.tags = ["beta", "gamma"]
+    assert obj.tags == ["beta", "gamma"]
+
+    del obj.tags
+    assert obj.tags == []
+    assert "X-TAG" not in obj

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import contextlib
 from collections.abc import Callable, Iterator, MutableSequence, Sequence
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
 
 from icalendar.prop import vText
 
@@ -186,4 +186,71 @@ class PropertyListView(MutableSequence[ValueT], Generic[ValueT, ArgT]):
         return list(self)
 
 
-__all__ = ["PropertyListView"]
+class PropertyListViewProperty(Generic[ValueT, ArgT]):
+    """A descriptor for PropertyListView component properties.
+
+    This descriptor manages getting, setting, and deleting list properties on
+    calendar components, providing static type hints and automatic synchronization.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        doc: str = "",
+        converter: Callable[[ArgT], ValueT] | dict[type, type] | None = None,
+    ) -> None:
+        """Initialize the property list view descriptor.
+
+        Parameters:
+            name: The RFC property name (e.g. 'COMMENT', 'REFID').
+            doc: Documentation string for the property.
+            converter: An optional conversion function or mapping from types to
+                conversion classes used when inserting or modifying values.
+        """
+        self._name = name
+        self.__doc__ = doc
+        self._converter = converter
+
+    @classmethod
+    def for_text(
+        cls, name: str, doc: str = ""
+    ) -> PropertyListViewProperty[vText, str | vText]:
+        """Create a descriptor for text properties converting strings to vText."""
+        return cls(
+            name,
+            doc=doc,
+            converter=lambda v: v if isinstance(v, vText) else vText(v),
+        )
+
+    @overload
+    def __get__(
+        self, instance: None, owner: Any = None
+    ) -> PropertyListViewProperty[ValueT, ArgT]: ...
+
+    @overload
+    def __get__(
+        self, instance: Component, owner: Any = None
+    ) -> PropertyListView[ValueT, ArgT]: ...
+
+    def __get__(
+        self, instance: Component | None, owner: Any = None
+    ) -> PropertyListView[ValueT, ArgT] | PropertyListViewProperty[ValueT, ArgT]:
+        """Return the PropertyListView for the component instance."""
+        if instance is None:
+            return self
+        return PropertyListView[ValueT, ArgT](instance, self._name, self._converter)
+
+    def __set__(
+        self, instance: Component, values: Sequence[ArgT] | ArgT | None
+    ) -> None:
+        """Replace all values in the property."""
+        PropertyListView[ValueT, ArgT](
+            instance, self._name, self._converter
+        ).replace_with(values)
+
+    def __delete__(self, instance: Component) -> None:
+        """Remove all values and the property from the component."""
+        PropertyListView[ValueT, ArgT](instance, self._name, self._converter).clear()
+
+
+__all__ = ["PropertyListView", "PropertyListViewProperty"]
