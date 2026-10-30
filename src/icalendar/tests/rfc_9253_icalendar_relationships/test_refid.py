@@ -144,3 +144,43 @@ def test_views_compare_equal_and_not_equal_to_non_iterables(component: Component
 def test_repr_of_view(component: Component):
     component.refids = ["a"]
     assert repr(component.refids).startswith("PropertyListView(")
+
+
+def test_addition_with_sequences(component: Component):
+    """PropertyListView supports concatenation with sequences."""
+    component.refids = ["a"]
+    component.related_to = ["b"]
+    assert component.refids + component.related_to == ["a", "b"]
+    assert component.refids + ["c"] == ["a", "c"]
+    assert ["x"] + component.refids == ["x", "a"]
+    with pytest.raises(TypeError):
+        _ = component.refids + 1
+    with pytest.raises(TypeError):
+        _ = component.refids + "abc"
+    assert component.refids.__add__(1) is NotImplemented
+    assert component.refids.__add__("abc") is NotImplemented
+    assert component.refids.__radd__(1) is NotImplemented
+    assert component.refids.__radd__("abc") is NotImplemented
+
+
+def test_multiplication_of_view(component: Component):
+    """PropertyListView supports integer multiplication to return a repeated list."""
+    component.refids = ["a"]
+    assert component.refids * 3 == ["a", "a", "a"]
+    assert 2 * component.refids == ["a", "a"]
+    with pytest.raises(TypeError):
+        _ = component.refids * "2"
+    with pytest.raises(TypeError):
+        _ = "2" * component.refids
+    assert component.refids.__mul__("2") is NotImplemented
+    assert component.refids.__rmul__("2") is NotImplemented
+
+
+def test_copy_of_view(component: Component):
+    """PropertyListView.copy() returns an independent shallow list copy."""
+    component.refids = ["a", "b"]
+    copied = component.refids.copy()
+    assert copied == ["a", "b"]
+    assert isinstance(copied, list)
+    copied.append("c")
+    assert component.refids == ["a", "b"]
