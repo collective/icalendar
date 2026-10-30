@@ -321,7 +321,7 @@ def test_unescape_char():
     ],
 )
 def test_unescape_char_keeps_backslash_before_n(value, expected):
-    r""""unescaped backslashes are consumed as pairs, never combined with a later escape."""
+    r""" "unescaped backslashes are consumed as pairs, never combined with a later escape."""
     assert _unescape_char(value) == expected
     assert _unescape_char(value.encode()) == expected.encode()
 
