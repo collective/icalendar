@@ -1,0 +1,1 @@
+Fixed three broken cross-references to :meth:`Component.add <icalendar.cal.component.Component.add>`. I used Claude Code (Auto mode) to assist with the changes, and verified the result. @Mayeen4536

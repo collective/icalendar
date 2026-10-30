@@ -49,7 +49,7 @@ clean:  ## Clean docs build directory
 
 .PHONY: clean-python
 clean-python: clean
-	rm -rf .venv/
+	rm -rf .venv/ uv.lock
 # /environment management
 
 
@@ -137,12 +137,21 @@ doctest: .venv  ## Test snippets and docstrings in the documentation
 	@echo;
 	@pytest src/icalendar/tests/test_with_doctest.py
 
+.PHONY: docstring
+docstring: .venv  ## Test docstrings are formatted properly
+	@echo;
+	@pytest -rx src/icalendar/tests/test_docstrings.py
+
 .PHONY: docs-all
-docs-all: .venv clean vale doctest html linkcheckbroken  ## Clean docs build, then run vale, doctest, html, and linkcheckbroken
+docs-all: .venv clean vale doctest docstring html linkcheckbroken  ## Clean docs build, then run vale, doctest, html, and linkcheckbroken
 
 .PHONY: test
 test: .venv  ## Run code tests and coverage
 	@uv run tox
+
+.PHONY: test-dist
+test-dist:  ## Build and test the distribution files
+	@src/icalendar/tests/test_create_release.sh
 # /test
 
 
@@ -171,7 +180,7 @@ rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
 # release
 .PHONY: wo
 wo: .venv
-	@uv run generate_windows_to_olson_mapping.py
+	@uv run scripts/generate_windows_to_olson_mapping.py
 	$(RUFFPATH) format
 
 .PHONY: changes-check
@@ -187,4 +196,11 @@ changes-draft: dev
 changes: dev
 	@test -n "$(VERSION)" || (echo "VERSION is not set. Run 'export VERSION=x.y.z' first." && exit 1)
 	$(TOWNCRIERPATH) build --version ${VERSION} --yes
+
+.PHONY: new-version
+new-version: dev ## Get the new version to use for a release
+	@CURRENT_VERSION=`git tag | sort -V | tail -n 1 | grep -o '[0-9].*'`; \
+	if ls news | grep -q '.breaking'; then OPTION=M; elif ls news | grep -q '.feature'; then OPTION=m; else OPTION=p; fi; \
+	VERSION=`./scripts/semver -$${OPTION} $$CURRENT_VERSION`; \
+	echo "export VERSION=$$VERSION";
 # /release

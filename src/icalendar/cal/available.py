@@ -126,25 +126,25 @@ class Available(Component):
 
         Parameters:
             categories: The :attr:`categories` of the Available component.
-            comments: The :attr:`~icalendar.Component.comments` of the Available
+            comments: The :attr:`~icalendar.cal.component.Component.comments` of the Available
                 component.
-            concepts: The :attr:`~icalendar.Component.concepts` of the Available
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the Available
                 component.
             contacts: The :attr:`contacts` of the Available component.
-            created: The :attr:`~icalendar.Component.created` of the Available
+            created: The :attr:`~icalendar.cal.component.Component.created` of the Available
                 component.
             description: The :attr:`description` of the Available component.
             end: The :attr:`end` of the Available component.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of the
+            last_modified: The :attr:`~icalendar.cal.component.Component.last_modified` of the
                 Available component.
-            links: The :attr:`~icalendar.Component.links` of the Available component.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the Available component.
             location: The :attr:`location` of the Available component.
             recurrence_id: The :attr:`RECURRENCE_ID` of the Available component.
-            refids: :attr:`~icalendar.Component.refids` of the Available component.
-            related_to: :attr:`~icalendar.Component.related_to` of the Available
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the Available component.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the Available
                 component.
             sequence: The :attr:`sequence` of the Available component.
-            stamp: The :attr:`~icalendar.Component.stamp` of the Available component.
+            stamp: The :attr:`~icalendar.cal.component.Component.stamp` of the Available component.
                 If None, this is set to the current time.
             start: The :attr:`start` of the Available component.
             summary: The :attr:`summary` of the Available component.
@@ -155,7 +155,7 @@ class Available(Component):
             :class:`Available`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            ~icalendar.error.InvalidCalendar: If the content is not valid
                 according to :rfc:`7953`.
 
         .. warning:: As time progresses, we will be stricter with the validation.

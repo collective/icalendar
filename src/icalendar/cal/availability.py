@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from datetime import date
 
-    from icalendar.cal.available import Available
+    from icalendar.cal import Available
     from icalendar.compatibility import Self
     from icalendar.enums import BUSYTYPE, CLASS
     from icalendar.prop import vCalAddress
@@ -299,7 +299,7 @@ class Availability(Component):
             :class:`Availability`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            ~icalendar.error.InvalidCalendar: If the content is not valid
                 according to :rfc:`7953`.
 
         .. warning:: As time progresses, we will be stricter with the validation.

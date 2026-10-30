@@ -7,6 +7,7 @@ from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, TypeAlias
 
+from icalendar.attr.property_list import PropertyListView
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
@@ -32,6 +33,8 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from icalendar.cal import Component
+    from icalendar.cal.event import Event
+    from icalendar.cal.todo import Todo
 
 
 def _get_rdates(
@@ -107,8 +110,8 @@ def _get_rdates(
     .. note::
 
         Modifying the returned list does not change the RDATE value. Assign to
-        :attr:`rdates` or use :func:`icalendar.cal.Component.add` instead.
-
+        ``rdates`` for the relevant component or use
+        :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
@@ -214,8 +217,8 @@ def _get_exdates(self: Component) -> list[date | datetime]:
     .. note::
 
         Modifying the returned list does not change the EXDATE value. Assign to
-        :attr:`exdates` or use :func:`icalendar.cal.Component.add` instead.
-
+        ``exdates`` for the relevant component or use
+        :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
@@ -349,7 +352,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
     .. note::
 
         You cannot modify the RRULE value by modifying the result.
-        Use :func:`icalendar.cal.Component.add` to add values.
+        Use :meth:`Component.add <icalendar.cal.component.Component.add>` to add values.
 
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
@@ -452,13 +455,6 @@ def single_utc_property(name: str, docs: str) -> property:
         name: name of the property
         docs: documentation string
     """
-    docs = (
-        f"""The {name} property with all values converted to a
-    :class:`~datetime.datetime` in UTC.
-
-    """
-        + docs
-    )
 
     def fget(self: Component) -> datetime | None:
         """Get the value."""
@@ -1059,10 +1055,18 @@ def create_single_property(
 
 
 X_MOZ_SNOOZE_TIME_property = single_utc_property(
-    "X-MOZ-SNOOZE-TIME", "Thunderbird: Alarms before this time are snoozed."
+    "X-MOZ-SNOOZE-TIME",
+    """The ``X-MOZ-SNOOZE-TIME`` property as a :class:`~datetime.datetime` in UTC.
+
+    Thunderbird: Alarms before this time are snoozed.
+""",
 )
 X_MOZ_LASTACK_property = single_utc_property(
-    "X-MOZ-LASTACK", "Thunderbird: Alarms before this time are acknowledged."
+    "X-MOZ-LASTACK",
+    """The ``X-MOZ-LASTACK`` property as a :class:`~datetime.datetime` in UTC.
+
+    Thunderbird: Alarms before this time are acknowledged.
+""",
 )
 
 
@@ -1652,7 +1656,7 @@ def _timezone_datetime_property(name: str, docs: str):
 
 rfc_7953_dtstart_property = _timezone_datetime_property(
     "DTSTART",
-    """Start of the component.
+    """Start of the component as a :class:`~datetime.datetime` in UTC.
 
     This is almost the same as
     :attr:`Event.DTSTART <icalendar.cal.event.Event.DTSTART>` with one exception:
@@ -1669,7 +1673,7 @@ rfc_7953_dtstart_property = _timezone_datetime_property(
 
 rfc_7953_dtend_property = _timezone_datetime_property(
     "DTEND",
-    """Start of the component.
+    """End of the component as a :class:`~datetime.datetime` in UTC.
 
     This is almost the same as
     :attr:`Event.DTEND <icalendar.cal.event.Event.DTEND>` with one exception:
@@ -1741,10 +1745,10 @@ def rfc_7953_end_property(self):
 
 
 def get_start_end_duration_with_validation(
-    component: Component,
-    start_property: str,
-    end_property: str,
-    component_name: str,
+    component: Event | Todo,
+    start_property: Literal["DTSTART"],
+    end_property: Literal["DTEND", "DUE"],
+    component_name: Literal["VEVENT", "VTODO"],
 ) -> tuple[date | datetime | None, date | datetime | None, timedelta | None]:
     """
     Validate the component and return start, end, and duration.
@@ -1764,7 +1768,8 @@ def get_start_end_duration_with_validation(
         tuple: (start, end, duration) values from the component.
 
     Raises:
-        ~error.InvalidCalendar: If the component violates RFC 5545 constraints.
+        ~icalendar.error.InvalidCalendar: If the component violates
+            RFC 5545 constraints.
 
     """
     start = getattr(component, start_property, None)
@@ -1801,7 +1806,7 @@ def get_start_end_duration_with_validation(
     return start, end, duration
 
 
-def get_start_property(component: Component) -> date | datetime:
+def get_start_property(component: Event | Todo) -> date | datetime:
     """
     Get the start property with validation.
 
@@ -1812,7 +1817,7 @@ def get_start_property(component: Component) -> date | datetime:
         The ``DTSTART`` value.
 
     Raises:
-        ~error.IncompleteComponent: If no ``DTSTART`` is present.
+        ~icalendar.error.IncompleteComponent: If no ``DTSTART`` is present.
 
     """
     # Trigger validation by calling _get_start_end_duration
@@ -1823,7 +1828,9 @@ def get_start_property(component: Component) -> date | datetime:
     return start
 
 
-def get_end_property(component: Component, end_property: str) -> date | datetime:
+def get_end_property(
+    component: Event | Todo, end_property: Literal["DTEND", "DUE"]
+) -> date | datetime:
     """
     Get the end property with fallback logic for ``Event`` and ``Todo`` components.
 
@@ -1836,7 +1843,7 @@ def get_end_property(component: Component, end_property: str) -> date | datetime
         The computed end value.
 
     Raises:
-        ~error.IncompleteComponent: If the provided information is incomplete
+        ~icalendar.error.IncompleteComponent: If the provided information is incomplete
             to compute the end property.
 
     """
@@ -1868,7 +1875,7 @@ def get_end_property(component: Component, end_property: str) -> date | datetime
     return end
 
 
-def get_duration_property(component: Component) -> timedelta:
+def get_duration_property(component: Event | Todo) -> timedelta:
     """
     Get the duration property with fallback calculation from start and end.
 
@@ -1888,10 +1895,10 @@ def get_duration_property(component: Component) -> timedelta:
 
 
 def set_duration_with_locking(
-    component: Component,
+    component: Event | Todo,
     duration: timedelta | None,
     locked: Literal["start", "end"],
-    end_property: str,
+    end_property: Literal["DTEND", "DUE"],
 ) -> None:
     """
     Set the duration with explicit locking behavior for ``Event`` and ``Todo``.
@@ -1941,10 +1948,10 @@ def set_duration_with_locking(
 
 
 def set_start_with_locking(
-    component: Component,
+    component: Event | Todo,
     start: date | datetime,
     locked: Literal["duration", "end"] | None,
-    end_property: str,
+    end_property: Literal["DTEND", "DUE"],
 ) -> None:
     """
     Set the start with explicit locking behavior for ``Event`` and ``Todo`` components.
@@ -1991,10 +1998,10 @@ def set_start_with_locking(
 
 
 def set_end_with_locking(
-    component: Component,
+    component: Event | Todo,
     end: date | datetime,
     locked: Literal["start", "duration"],
-    end_property: str,
+    end_property: Literal["DTEND", "DUE"],
 ) -> None:
     """
     Set the end with explicit locking behavior for Event and Todo components.
@@ -2279,7 +2286,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
 
 
 LINKS_TYPE_SETTER: TypeAlias = (
-    str | vUri | vUid | vXmlReference | None | list[str | vUri | vUid | vXmlReference]
+    str | vUri | vUid | vXmlReference | list[str | vUri | vUid | vXmlReference] | None
 )
 
 
@@ -2304,7 +2311,7 @@ def _del_links(self: Component) -> None:
 links_property = property(_get_links, _set_links, _del_links)
 
 RELATED_TO_TYPE_SETTER: TypeAlias = (
-    None | str | vText | vUri | vUid | list[str | vText | vUri | vUid]
+    str | vText | vUri | vUid | list[str | vText | vUri | vUid] | None
 )
 
 
@@ -2433,26 +2440,17 @@ def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
     See also :class:`icalendar.enums.RELTYPE`.
 
     """
-    result = self.get("RELATED-TO", [])
-    if not isinstance(result, list):
-        return [result]
-    return result
+    return PropertyListView(self, "RELATED-TO")
 
 
 def _set_related_to(self: Component, values: RELATED_TO_TYPE_SETTER) -> None:
     """Set the RELATED-TO properties."""
-    _del_related_to(self)
-    if values is None:
-        return
-    if not isinstance(values, list):
-        values = [values]
-    for value in values:
-        self.add("RELATED-TO", value)
+    PropertyListView(self, "RELATED-TO").replace_with(values)
 
 
 def _del_related_to(self: Component):
     """Delete the RELATED-TO properties."""
-    self.pop("RELATED-TO", None)
+    PropertyListView(self, "RELATED-TO").clear()
 
 
 related_to_property = property(_get_related_to, _set_related_to, _del_related_to)
@@ -2496,10 +2494,7 @@ def _get_concepts(self: Component) -> list[vUri]:
 
         :attr:`icalendar.prop.categories.vCategory`
     """
-    concepts = self.get("CONCEPT", [])
-    if not isinstance(concepts, list):
-        concepts = [concepts]
-    return concepts
+    return PropertyListView(self, "CONCEPT")
 
 
 CONCEPTS_TYPE_SETTER: TypeAlias = list[vUri | str] | str | vUri | None
@@ -2507,18 +2502,12 @@ CONCEPTS_TYPE_SETTER: TypeAlias = list[vUri | str] | str | vUri | None
 
 def _set_concepts(self: Component, concepts: CONCEPTS_TYPE_SETTER):
     """Set the concepts."""
-    _del_concepts(self)
-    if concepts is None:
-        return
-    if not isinstance(concepts, list):
-        concepts = [concepts]
-    for value in concepts:
-        self.add("CONCEPT", value)
+    PropertyListView(self, "CONCEPT").replace_with(concepts)
 
 
 def _del_concepts(self: Component):
     """Delete the concepts."""
-    self.pop("CONCEPT", None)
+    PropertyListView(self, "CONCEPT").clear()
 
 
 concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
@@ -2527,26 +2516,17 @@ concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
 def multi_string_property(name: str, doc: str):
     """A property for an iCalendar Property that can occur multiple times."""
 
-    def fget(self: Component) -> list[str]:
+    def fget(self: Component) -> PropertyListView:
         """Get the values of a multi-string property."""
-        value = self.get(name, [])
-        if not isinstance(value, list):
-            value = [value]
-        return value
+        return PropertyListView(self, name)
 
     def fset(self: Component, value: list[str] | str | None) -> None:
         """Set the values of a multi-string property."""
-        fdel(self)
-        if value is None:
-            return
-        if not isinstance(value, list):
-            value = [value]
-        for value in value:
-            self.add(name, value)
+        PropertyListView(self, name).replace_with(value)
 
     def fdel(self: Component):
         """Delete the values of a multi-string property."""
-        self.pop(name, None)
+        PropertyListView(self, name).clear()
 
     return property(fget, fset, fdel, doc=doc)
 
@@ -2595,7 +2575,13 @@ Examples:
 
 .. note::
 
-    List modifications do not modify the component.
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
 """,
 )
 
@@ -2603,25 +2589,38 @@ REQUEST_STATUS_property = multi_string_property(
     "REQUEST-STATUS",
     """This property defines the status code returned for a scheduling request.
 
-Setting this property replaces all existing REQUEST-STATUS values. A :class:`str`
-is stored as-is. Setting ``None`` or an empty list removes all
-REQUEST-STATUS values, as does deleting the property.
+You can assign a single string, a list of strings, or ``None`` to this
+property. The property stores a :class:`str` as-is. Assigning ``None`` or
+an empty list removes all REQUEST-STATUS values, as does deleting the
+property.
 
-The value consists of a short return status component, a longer
+The value consists of a short return status code component, a longer
 return status description component, and optionally a status-specific
 data component, separated by semicolons (statcode;statdesc[;extdata]).
 The return status components are defined in :rfc:`5545#section-3.8.8.3`.
 
+The REQUEST-STATUS property can be specified in the following
+icalendar components as ``REQUEST_STATUS``.
+
+-   :attr:`Event.REQUEST_STATUS <icalendar.cal.event.Event.REQUEST_STATUS>`
+-   :attr:`FreeBusy.REQUEST_STATUS <icalendar.cal.free_busy.FreeBusy.REQUEST_STATUS>`
+-   :attr:`Journal.REQUEST_STATUS <icalendar.cal.journal.Journal.REQUEST_STATUS>`
+-   :attr:`Todo.REQUEST_STATUS <icalendar.cal.todo.Todo.REQUEST_STATUS>`
+
 Note:
-    List modifications do not modify the component. Methods such as
-    ``append()``, ``extend()``, and ``remove()``, as well as item
-    assignment, act on a copy. Assign the list back to the property, or
-    use :meth:`Component.add <icalendar.cal.component.Component.add>`
-    with a typed value instead.
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
 
 Parameters:
     request_status(str | list[str] | None):
-        A single status string, or a list of status strings to set.
+        Either a single status string, a list of status strings, or
+        ``None`` to set the component's status code returned for a
+        scheduling request.
 
 Example:
     Add a request status to an event:
@@ -2632,12 +2631,112 @@ Example:
         >>> event = Event.new(request_status="2.0;Success")
         >>> event.REQUEST_STATUS == ["2.0;Success"]
         True
+
+    :class:`~icalendar.prop.request_status.vRequestStatus` defines
+    properties for ease of use:
+
+    .. code-block:: pycon
+
+        >>> request_status = event.REQUEST_STATUS[0]
+        >>> request_status.code
+        (2, 0)
+        >>> request_status.description
+        'Success'
+
+""",
+)
+
+RESOURCES_property = multi_string_property(
+    "RESOURCES",
+    """This property defines resources for a calendar component.
+
+You can assign a single string, a list of strings, or ``None`` to this
+property. The property stores a :class:`str` as-is. Assigning ``None`` or
+an empty list removes all RESOURCES values, as does deleting the property.
+
+The value is a comma-separated list of resources, such as equipment,
+facilities, or other things that the component needs. Each item of the
+list becomes its own RESOURCES property value. See
+:rfc:`5545#section-3.8.1.10` for the specification.
+
+The RESOURCES property can be specified in the following
+icalendar components as ``resources`` using the component's
+``new()`` constructor.
+
+-   :attr:`Event.RESOURCES <icalendar.cal.event.Event.RESOURCES>`
+-   :attr:`Todo.RESOURCES <icalendar.cal.todo.Todo.RESOURCES>`
+
+Parameters:
+    resources(str | list[str] | None):
+        Either a single resource string, a list of resource strings,
+        or ``None`` to set the component's resources.
+
+Note:
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
+
+Example:
+    Add resources to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event.new(resources=["EASEL", "PROJECTOR", "VCR"])
+        >>> event.RESOURCES == ["EASEL", "PROJECTOR", "VCR"]
+        True
+""",
+)
+
+XML_property = multi_string_property(
+    "XML",
+    """This property embeds XML elements into a component.
+
+You can assign XML text, an :class:`~xml.etree.ElementTree.Element`,
+an :class:`~icalendar.parser.xcal.adapter.ElementAdapter`,
+a list of these, or ``None`` to this property.
+The values become :class:`~icalendar.prop.xml.vXml` values.
+A :class:`~icalendar.prop.text.vText` value is not converted,
+so it is written as text in xCal.
+XML with the value type BINARY is a :class:`~icalendar.prop.binary.vBinary`.
+Assigning ``None`` or an empty list removes all XML values,
+as does deleting the property.
+
+The XML property is defined in :rfc:`6321#section-4.2`.
+It can be specified multiple times in any component.
+Its value is an XML element in a namespace other than the iCalendar namespace.
+In xCal, the element is part of the properties of the component,
+see :rfc:`6321#section-4.1`.
+
+.. note::
+
+    To change the values, assign a new list or use ``add()``.
+    Changing the returned list does not always change the component.
+
+Example:
+    Add XML to an event and get the XML elements:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.XML = '<a xmlns="http://example.com/ns">text</a>'
+        >>> print(event.to_ical().decode())
+        BEGIN:VEVENT
+        XML:<a xmlns="http://example.com/ns">text</a>
+        END:VEVENT
+        >>> [xml.element.tag for xml in event.XML]
+        ['{http://example.com/ns}a']
 """,
 )
 
 
 ATTACHMENTS_TYPE_SETTER: TypeAlias = (
-    str | bytes | vUri | vBinary | None | list[str | bytes | vUri | vBinary]
+    str | bytes | vUri | vBinary | list[str | bytes | vUri | vBinary] | None
 )
 
 
@@ -2751,7 +2850,10 @@ __all__ = [
     "LINKS_TYPE_SETTER",
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
+    "PropertyListView",
     "REQUEST_STATUS_property",
+    "RESOURCES_property",
+    "XML_property",
     "attachments_property",
     "attendees_property",
     "busy_type_property",

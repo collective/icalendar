@@ -35,6 +35,11 @@ def _line(component: Component, name: str) -> str:
     raise AssertionError(f"{name} not serialized in {component.to_ical()!r}")
 
 
+def test_vunknown_repr():
+    repr_str = repr(vUnknown("a;b"))
+    assert repr_str == "vUnknown(b'a;b')"
+
+
 # Value text exactly as it appears in the content line after the colon. Each is
 # an unknown value (X-MYSTERY) that must survive untouched. Mix of bare and
 # escaped specials, both newline spellings, and a date-time-looking value.

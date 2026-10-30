@@ -13,6 +13,7 @@ from icalendar.attr import (
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     REQUEST_STATUS_property,
+    RESOURCES_property,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     attachments_property,
@@ -202,7 +203,17 @@ class Todo(Component):
 
     @start.setter
     def start(self, start: date | datetime | None):
-        """Set the start."""
+        """Set the start of the VTODO.
+
+        Sets the ``DTSTART`` property. Pass ``None`` to remove it.
+
+        Parameters:
+            start: Required. The start as :class:`datetime.date` or
+                :class:`datetime.datetime`, or ``None`` to remove ``DTSTART``.
+
+        See also:
+            :attr:`end`, :attr:`duration`
+        """
         self.DTSTART = start
 
     @property
@@ -216,7 +227,17 @@ class Todo(Component):
 
     @end.setter
     def end(self, end: date | datetime | None):
-        """Set the end."""
+        """Set the end of the VTODO.
+
+        Sets the ``DUE`` property. Pass ``None`` to remove it.
+
+        Parameters:
+            end: Required. The end as :class:`datetime.date` or
+                :class:`datetime.datetime`, or ``None`` to remove ``DUE``.
+
+        See also:
+            :attr:`start`, :attr:`duration`
+        """
         self.DUE = end
 
     @property
@@ -234,6 +255,8 @@ class Todo(Component):
         3.  Remove any existing DUE property
         4.  Set the DURATION property
         """
+        if "DURATION" not in self and "DUE" in self and "DTSTART" not in self:
+            return timedelta(0)
         return get_duration_property(self)
 
     @duration.setter
@@ -306,6 +329,7 @@ class Todo(Component):
     exdates = exdates_property
     rrules = rrules_property
     REQUEST_STATUS = REQUEST_STATUS_property
+    RESOURCES = RESOURCES_property
     uid = uid_property
     summary = summary_property
     description = description_property
@@ -347,6 +371,7 @@ class Todo(Component):
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         request_status: list[str] | str | None = None,
+        resources: list[str] | str | None = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -366,23 +391,24 @@ class Todo(Component):
             categories: The :attr:`categories` of the todo.
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
-            comments: The :attr:`~icalendar.Component.comments` of the todo.
-            concepts: The :attr:`~icalendar.Component.concepts` of the todo.
+            comments: The :attr:`~icalendar.cal.component.Component.comments` of the todo.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the todo.
             contacts: The :attr:`contacts` of the todo.
             conferences: The :attr:`conferences` of the todo.
-            created: The :attr:`~icalendar.Component.created` of the todo.
+            created: The :attr:`~icalendar.cal.component.Component.created` of the todo.
             description: The :attr:`description` of the todo.
             end: The :attr:`end` of the todo.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of the todo.
-            links: The :attr:`~icalendar.Component.links` of the todo.
+            last_modified: The :attr:`~icalendar.cal.component.Component.last_modified` of the todo.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
             recurrence_id: The :attr:`RECURRENCE_ID` of the todo.
-            refids: :attr:`~icalendar.Component.refids` of the todo.
-            related_to: :attr:`~icalendar.Component.related_to` of the todo.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the todo.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the todo.
             request_status: The :attr:`REQUEST_STATUS` of the todo.
+            resources: The :attr:`RESOURCES` of the todo.
             sequence: The :attr:`sequence` of the todo.
-            stamp: The :attr:`~icalendar.Component.DTSTAMP` of the todo.
+            stamp: The :attr:`~icalendar.cal.component.Component.DTSTAMP` of the todo.
                 If None, this is set to the current time.
             start: The :attr:`start` of the todo.
             status: The :attr:`status` of the todo.
@@ -396,7 +422,7 @@ class Todo(Component):
             :class:`Todo`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            ~icalendar.error.InvalidCalendar: If the content is not valid
                 according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
@@ -429,6 +455,7 @@ class Todo(Component):
         todo.contacts = contacts
         todo.status = status
         todo.REQUEST_STATUS = request_status
+        todo.RESOURCES = resources
         todo.attendees = attendees
         todo.conferences = conferences
         todo.RECURRENCE_ID = recurrence_id

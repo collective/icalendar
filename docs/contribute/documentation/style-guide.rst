@@ -280,7 +280,7 @@ Supported section headers enhance formatting, such as structuring method paramet
 
 All items should terminate with a period.
 
-The following docstrings items are the most frequently used in icalendar, although they may be others.
+The following docstrings items are the most frequently used in icalendar, although there may be others.
 
 .. important::
 
@@ -366,6 +366,18 @@ Description
 .. seealso::
 
     :ref:`sphinx:Sections`
+
+
+.. _test-docstring-structure-label:
+
+Test docstring structure
+------------------------
+
+To test whether docstring structure is valid, run the following command.
+
+```shell
+make docstring
+```
 
 
 Escape docstrings

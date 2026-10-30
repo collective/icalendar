@@ -1,10 +1,13 @@
 """CAL-ADDRESS values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 
@@ -91,6 +94,22 @@ class vCalAddress(str):
         return str(self)
 
     @property
+    def uri(self) -> str:
+        """The calendar user address as a URI, usually the ``mailto:`` link.
+
+        This provides the same interface as :attr:`vUri.uri
+        <icalendar.prop.uri.vUri.uri>`.
+        Use :attr:`email` to get the address without ``mailto:``.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vCalAddress
+            >>> vCalAddress("mailto:jane_doe@example.com").uri
+            'mailto:jane_doe@example.com'
+        """
+        return self.ical_value
+
+    @property
     def email(self) -> str:
         """The email address without ``mailto:`` at the start."""
         if self.lower().startswith("mailto:"):
@@ -103,13 +122,49 @@ class vCalAddress(str):
         DELEGATED_FROM,
         DELEGATED_TO,
         DIR,
+        EMAIL,
         LANGUAGE,
+        MEMBER,
         PARTSTAT,
         ROLE,
         RSVP,
         SENT_BY,
         VALUE,
     )
+
+    DELEGATED_FROM = DELEGATED_FROM
+    """Specify the calendar users that delegated their participation.
+
+    This parameter can be specified on properties with a
+    CAL-ADDRESS value type.  This parameter specifies those calendar
+    users that have delegated their participation in a group-scheduled
+    event or to-do to the calendar user specified by the property.
+    The individual calendar address parameter values MUST each be
+    specified in a quoted-string.
+    """
+
+    DELEGATED_TO = DELEGATED_TO
+    """Specify the calendar users to whom participation was delegated.
+
+    This parameter can be specified on properties with a
+    CAL-ADDRESS value type.  This parameter specifies those calendar
+    users to whom participation in a group-scheduled event or to-do was
+    delegated by the calendar user specified by the property.
+    The individual calendar address parameter values MUST each be
+    specified in a quoted-string.
+    """
+
+    MEMBER = MEMBER
+    """Specify the group or list membership of a calendar user.
+
+    This parameter can be specified on properties with a
+    CAL-ADDRESS value type.  The parameter identifies the groups or
+    list membership for the calendar user specified by the property.
+    The parameter value is either a single calendar address in a
+    quoted-string or a COMMA-separated list of calendar addresses,
+    each in a quoted-string.  The individual calendar address
+    parameter values MUST each be specified in a quoted-string.
+    """
 
     name = CN
 
@@ -235,7 +290,7 @@ class vCalAddress(str):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
@@ -243,6 +298,26 @@ class vCalAddress(str):
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        return cls(element.get_xsd_token(), params=params)
+
+    def to_xcal(self, element: Element) -> None:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        element = SubElement(element, "cal-address")
+        element.text = self.ical_value
 
 
 __all__ = ["vCalAddress"]

@@ -24,6 +24,25 @@ if ! [ -f "$archive" ]; then
 fi
 
 FILES="`tar -tf \"$archive\" | grep -o '/.*'`"
+ROOT_ENTRIES="`printf '%s\n' "$FILES" | sed 's#^/##; s#/.*##; /^$/d' | LC_ALL=C sort -u`"
+EXPECTED_ROOT_ENTRIES=".gitignore
+LICENSE.rst
+Makefile
+PKG-INFO
+README.rst
+docs
+funding.json
+news
+pyproject.toml
+scripts
+src"
+
+if [ "$ROOT_ENTRIES" != "$EXPECTED_ROOT_ENTRIES" ]; then
+  echo "ERROR: Source distribution root entries differ from the reviewed allowlist."
+  echo "       See https://github.com/collective/icalendar/issues/1695"
+  diff -u <(printf '%s\n' "$EXPECTED_ROOT_ENTRIES") <(printf '%s\n' "$ROOT_ENTRIES") || true
+  exit 1
+fi
 
 if echo "$FILES" | grep -q '^/src/icalendar/fuzzing'; then
   echo "ERROR: Fuzzing files are included in the release."
@@ -40,6 +59,12 @@ fi
 if ! echo "$FILES" | grep -q '/funding.json$'; then
   echo "ERROR: Funding files need to be included in the release files."
   echo "       See https://github.com/collective/icalendar/issues/1493"
+  exit 1
+fi
+
+if ! echo "$FILES" | grep -q '^/scripts/generate_windows_to_olson_mapping\.py$'; then
+  echo "ERROR: The Windows to Olson generator is not included in the release."
+  echo "       Source distribution tests require it; see https://github.com/collective/icalendar/pull/1770"
   exit 1
 fi
 
