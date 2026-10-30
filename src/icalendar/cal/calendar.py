@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import re
 import uuid
 from datetime import timedelta
+from pathlib import Path
 from typing import TYPE_CHECKING, Literal, cast, overload
 
 from icalendar.attr import (
@@ -21,14 +23,19 @@ from icalendar.attr import (
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 from icalendar.cal.timezone import Timezone
-from icalendar.error import IncompleteComponent
+from icalendar.error import (
+    CalendarInformationLost,
+    IncompleteComponent,
+    NoCalendarsFound,
+    UnknownCalendarFormat,
+)
 from icalendar.parser.ical.calendar import CalendarIcalParser
 from icalendar.version import __version__
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from datetime import date, datetime
-    from pathlib import Path
+    from typing import BinaryIO
 
     from icalendar.cal import (
         Availability,
@@ -697,4 +704,103 @@ Example:
             )
 
 
-__all__ = ["Calendar"]
+FORMAT_START = re.compile(rb"(?:\xef\xbb\xbf|\xff\xfe|\xfe\xff)?[\s\x00]*([Bb\[<])")
+
+
+@overload
+def parse(
+    source: bytes | Path | BinaryIO, multiple: Literal[False] = False
+) -> Calendar: ...
+@overload
+def parse(
+    source: bytes | Path | BinaryIO, multiple: Literal[True]
+) -> list[Calendar]: ...
+
+
+def parse(
+    source: bytes | Path | BinaryIO, multiple: bool = False
+) -> Calendar | list[Calendar]:
+    r"""Parse iCalendar, jCal, or xCal data into calendars.
+
+    The format is detected from the first character of the data, ignoring
+    whitespace and a byte order mark: ``B`` or ``b`` for iCalendar
+    (:rfc:`5545`), ``[`` for jCal (:rfc:`7265`), and ``<`` for xCal (:rfc:`6321`).
+    The data is passed to the parser unchanged.
+    See :ref:`how-to-parse` for more examples.
+
+    Parameters:
+        source: The data to parse, as :class:`bytes`, a :class:`~pathlib.Path`
+            to a file, or a file opened in binary mode.
+        multiple: If ``True``, returns a list of calendars.
+            If ``False``, returns a single calendar.
+
+    Returns:
+        A calendar, or a list of calendars if ``multiple`` is ``True``.
+
+    Raises:
+        TypeError: If the data is not :class:`bytes`, for example, because
+            a file was opened in text mode.
+        ~icalendar.error.UnknownCalendarFormat: If the format cannot be detected.
+        ~icalendar.error.NoCalendarsFound: If ``multiple`` is ``False`` and the data
+            contains no calendars.
+        ~icalendar.error.CalendarInformationLost: If ``multiple`` is ``False`` and the
+            data contains more than one calendar.
+
+    Example:
+
+        Parse iCalendar and jCal data with the same function.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import parse
+            >>> ical = b"BEGIN:VCALENDAR\r\nPRODID:example\r\nEND:VCALENDAR\r\n"
+            >>> parse(ical)["PRODID"]
+            vText(b'example')
+            >>> jcal = b'["vcalendar", [["prodid", {}, "text", "example"]], []]'
+            >>> parse(jcal)["PRODID"]
+            vText(b'example')
+
+        Use ``multiple=True`` to get a list of all calendars.
+
+        .. code-block:: pycon
+
+            >>> calendars = parse(ical + ical, multiple=True)
+            >>> len(calendars)
+            2
+    """
+    if isinstance(source, (bytes, str)):
+        data = source
+    elif isinstance(source, Path):
+        data = source.read_bytes()
+    else:
+        data = source.read()
+    if not isinstance(data, bytes):
+        raise TypeError(
+            f"Expected bytes, but got {type(data).__name__}. "
+            'Open files in binary mode with "rb".'
+        )
+    match = FORMAT_START.match(data)
+    first = b"" if match is None else match.group(1)
+    if first.upper() == b"B":
+        calendars = Calendar.from_ical(data, multiple=True)
+    elif first == b"[":
+        calendars = [cast("Calendar", Calendar.from_jcal(data.decode("utf-8-sig")))]
+    elif first == b"<":
+        calendars = Calendar.from_xcal(data)
+    else:
+        raise UnknownCalendarFormat(
+            f"Could not detect the calendar format: expected iCal, jCal or xCal data, "
+            f"but the data starts with {data[:10]!r}."
+        )
+    if multiple:
+        return calendars
+    if len(calendars) > 1:
+        raise CalendarInformationLost(
+            "There are multiple calendars, please use multiple=True."
+        )
+    if len(calendars) == 0:
+        raise NoCalendarsFound("No calendars found.")
+    return calendars[0]
+
+
+__all__ = ["Calendar", "parse"]

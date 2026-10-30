@@ -65,6 +65,25 @@ class BrokenCalendarProperty(InvalidCalendar):
     """
 
 
+class UnknownCalendarFormat(InvalidCalendar):
+    """The data is not in a calendar format that icalendar can detect.
+
+    The supported formats are iCalendar, jCal and xCal.
+    """
+
+
+class NoCalendarsFound(InvalidCalendar):
+    """The data was parsed, but it contains no calendars."""
+
+
+class CalendarInformationLost(ValueError):
+    """The data contains several calendars, but only one was requested.
+
+    Returning one of them would lose the others.
+    Use ``multiple=True`` to get all calendars as a list.
+    """
+
+
 class IncompleteComponent(ValueError):
     """The component is missing attributes.
 
@@ -399,6 +418,7 @@ class XCalParsingError(InvalidCalendar):
 
 __all__ = [
     "BrokenCalendarProperty",
+    "CalendarInformationLost",
     "ComponentEndMissing",
     "ComponentStartMissing",
     "FeatureWillBeRemovedInFutureVersion",
@@ -409,5 +429,7 @@ __all__ = [
     "InvalidToken",
     "JCalParsingError",
     "LocalTimezoneMissing",
+    "NoCalendarsFound",
+    "UnknownCalendarFormat",
     "XCalParsingError",
 ]
