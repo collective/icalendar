@@ -253,16 +253,19 @@ class vTime(TimeBase):
         match = TIME_JCAL_REGEX.match(jcal)
         if match is None:
             raise JCalParsingError("Cannot parse time.", cls, value=jcal)
-        hour = int(match.group("hour"))
-        minute = int(match.group("minute"))
-        second = int(match.group("second"))
-        if second == 60:
-            # RFC 5545 permits time-second = 00-60 to account for positive
-            # leap seconds. This is wrong but we have no way to represent
-            # this, so we clamp it like the xCal path does.
-            second = 59
-        utc = bool(match.group("utc"))
-        return time(hour, minute, second, tzinfo=timezone.utc if utc else None)
+        try:
+            hour = int(match.group("hour"))
+            minute = int(match.group("minute"))
+            second = int(match.group("second"))
+            if second == 60:
+                # RFC 5545 permits time-second = 00-60 to account for positive
+                # leap seconds. This is wrong but we have no way to represent
+                # this, so we clamp it like the xCal path does.
+                second = 59
+            utc = bool(match.group("utc"))
+            return time(hour, minute, second, tzinfo=timezone.utc if utc else None)
+        except ValueError as e:
+            raise JCalParsingError("Cannot parse time.", cls, value=jcal) from e
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
