@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from xml.etree.ElementTree import Element, ElementTree, parse
+from xml.etree.ElementTree import Element, ElementTree, XMLParser, parse
 
 MAX_ALARM_REPEAT: int = 10_000
 """Cap on additional triggers expanded from a ``VALARM`` ``REPEAT`` property.
@@ -45,7 +45,9 @@ def parse_xml(source) -> ElementTree[Element[str]]:
         :ref:`safe-xml-parsing`
 
     Parameters:
-        source: A file-like object to with a ``read`` method.
+        source: A text or binary file-like object with a ``read`` method.
+            Text is already decoded, so its XML encoding declaration is ignored.
+            Binary input retains XML encoding detection.
 
     Returns:
         The parsed XML tree.
@@ -56,8 +58,10 @@ def parse_xml(source) -> ElementTree[Element[str]]:
     """
     if not hasattr(source, "read"):
         raise TypeError("Expected source.read() method.")
+    # Text is already decoded; its encoding declaration describes the original bytes.
+    parser = XMLParser(encoding="utf-8") if isinstance(source.read(0), str) else None  # noqa: S314
     # S314 Using `xml` to parse untrusted data is known to be vulnerable to XML attacks
-    return parse(source)  # noqa: S314
+    return parse(source, parser=parser)  # noqa: S314
 
 
 __all__ = [
