@@ -1,6 +1,7 @@
 """Test getting elements from an xCal element."""
 
-from xml.etree.ElementTree import Element, ParseError
+import sys
+from xml.etree.ElementTree import Element, ParseError, SubElement
 
 import pytest
 
@@ -93,3 +94,26 @@ def test_invalid_xml_input_raises_error(xml):
 def test_empty_xcal_is_ok(xml):
     """An empty input should be considered."""
     assert Component.from_xcal(xml) == []
+
+
+def test_from_xcal_handles_deeply_nested_components():
+    depth = sys.getrecursionlimit() + 50
+
+    root = Element("icalendar")
+    parent = SubElement(root, "vcalendar")
+
+    # Build the XML iteratively.
+    for _ in range(depth):
+        components = SubElement(parent, "components")
+        parent = SubElement(components, "vevent")
+
+    calendar = Component.from_xcal(root)[0]
+
+    # Check the result iteratively too.
+    component = calendar
+    parsed_depth = 0
+    while component.subcomponents:
+        component = component.subcomponents[0]
+        parsed_depth += 1
+
+    assert parsed_depth == depth

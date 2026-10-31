@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from icalendar import XCalParsingError
+from icalendar.parser import validate_token
 from icalendar.parser.xcal.adapter import ElementAdapter
 from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.property import XCalPropertiesParser
@@ -103,34 +105,53 @@ class XCalComponentParser(XCalParser):
         return component
 
     def parse_component_from_child(self) -> Component:
-        """Parse a component from a child element.
+        """Parse a component and all its nested components without recursion."""
 
-        Returns:
-            The parsed component.
+        def create_component(element: ElementAdapter) -> Component:
+            try:
+                validate_token(element.tag)
+            except ValueError as error:
+                raise XCalParsingError(
+                    "The component name must be a valid iCalendar token",
+                    element.tag,
+                    element,
+                ) from error
 
-        Raises:
-            ~icalendar.error.XCalParsingError: If there is an error in the child.
-            ~icalendar.parser.xcal.base.InvalidParserState:
-                If all components have been parsed or a property value type did not
-                parse anything.
+            component_class = self._component_factory.get_component_class(element.tag)
+            component = component_class()
 
-        """
-        component_class = self._component_factory.get_component_class(self.child.tag)
-        component = component_class()
-        properties = self.child.get_child_with_tag("properties")
-        if properties is not None:
-            properties_parser = XCalPropertiesParser(
-                properties, component, self._types_factory
-            )
-            properties_parser.parse_properties()
-        components = self.child.get_child_with_tag("components")
-        if components is not None:
-            components_parser = XCalComponentParser(
-                components, self._component_factory, self._types_factory
-            )
-            while not components_parser.is_finished():
-                component.add_component(components_parser.parse_component())
-        return component
+            component = component_class()
+            properties = element.get_child_with_tag("properties")
+            if properties is not None:
+                XCalPropertiesParser(
+                    properties, component, self._types_factory
+                ).parse_properties()
+            return component
+
+        root_element = self.child
+        root_component = create_component(root_element)
+
+        components = root_element.get_child_with_tag("components")
+        children = iter(components.children if components is not None else ())
+        stack = [(root_element, root_component, children)]
+
+        while stack:
+            _, parent_component, children = stack[-1]
+
+            try:
+                child_element = next(children)
+            except StopIteration:
+                stack.pop()
+                continue
+
+            child_component = create_component(child_element)
+            parent_component.add_component(child_component)
+
+            components = child_element.get_child_with_tag("components")
+            children = iter(components.children if components is not None else ())
+            stack.append((child_element, child_component, children))
+
+        return root_component
 
 
 __all__ = ["XCalComponentParser"]
