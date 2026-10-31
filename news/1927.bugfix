@@ -1,0 +1,1 @@
+Parsing xCal data with deeply nested components no longer exceeds Python's recursion limit. I used GitHub Copilot to assist with this change. @Mikey1332
