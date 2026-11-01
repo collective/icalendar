@@ -1,0 +1,309 @@
+""":rfc:`5545` VJOURNAL component."""
+
+from __future__ import annotations
+
+import uuid
+from datetime import date, datetime, timedelta
+from typing import TYPE_CHECKING
+
+from icalendar.attr import (
+    ATTACHMENTS_TYPE_SETTER,
+    ATTENDEE_TYPE_SETTER,
+    CONCEPTS_TYPE_SETTER,
+    LINKS_TYPE_SETTER,
+    RELATED_TO_TYPE_SETTER,
+    REQUEST_STATUS_property,
+    attachments_property,
+    attendees_property,
+    categories_property,
+    class_property,
+    color_property,
+    contacts_property,
+    create_single_property,
+    descriptions_property,
+    exdates_property,
+    images_property,
+    organizer_property,
+    rdates_property,
+    rrules_property,
+    sequence_property,
+    status_property,
+    summary_property,
+    uid_property,
+    url_property,
+)
+from icalendar.cal.component import Component
+from icalendar.cal.examples import get_example
+from icalendar.error import IncompleteComponent
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from icalendar.compatibility import Self
+    from icalendar.enums import CLASS, STATUS
+    from icalendar.prop import vCalAddress
+
+
+class Journal(Component):
+    """A descriptive text at a certain time or associated with a component.
+
+        Description:
+            A "VJOURNAL" calendar component is a grouping of
+            component properties that represent one or more descriptive text
+            notes associated with a particular calendar date.  The "DTSTART"
+            property is used to specify the calendar date with which the
+            journal entry is associated.  Generally, it will have a DATE value
+            data type, but it can also be used to specify a DATE-TIME value
+            data type.  Examples of a journal entry include a daily record of
+            a legislative body or a journal entry of individual telephone
+            contacts for the day or an ordered list of accomplishments for the
+            day.
+
+    Examples:
+        Create a new Journal:
+
+            >>> from icalendar import Journal
+            >>> journal = Journal.new()
+            >>> print(journal.to_ical())
+            BEGIN:VJOURNAL
+            DTSTAMP:20250517T080612Z
+            UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+            END:VJOURNAL
+
+        Get the example Journal.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Journal
+            >>> journal = Journal.example()
+            >>> print(journal.to_ical().decode())
+            BEGIN:VJOURNAL
+            DESCRIPTION:Aurora project plans were reviewed.
+            DTSTAMP:19970901T130000Z
+            DTSTART;VALUE=DATE:19970317
+            SUMMARY:Staff meeting minutes
+            UID:19970901T130000Z-123405@example.com
+            END:VJOURNAL
+
+    """
+
+    name = "VJOURNAL"
+
+    required = (
+        "UID",
+        "DTSTAMP",
+    )
+    singletons = (
+        "CLASS",
+        "COLOR",
+        "CREATED",
+        "DTSTART",
+        "DTSTAMP",
+        "LAST-MODIFIED",
+        "ORGANIZER",
+        "RECURRENCE-ID",
+        "SEQUENCE",
+        "STATUS",
+        "SUMMARY",
+        "UID",
+        "URL",
+    )
+    multiple = (
+        "ATTACH",
+        "ATTENDEE",
+        "CATEGORIES",
+        "COMMENT",
+        "CONTACT",
+        "EXDATE",
+        "RELATED",
+        "RDATE",
+        "RRULE",
+        "REQUEST-STATUS",
+        "DESCRIPTION",
+    )
+
+    DTSTART = create_single_property(
+        "DTSTART",
+        "dt",
+        (datetime, date),
+        date,
+        'The "DTSTART" property for a "VJOURNAL" that specifies the exact date at which the journal entry was made.',
+    )
+
+    @property
+    def start(self) -> date:
+        """The start of the Journal.
+
+        The "DTSTART"
+        property is used to specify the calendar date with which the
+        journal entry is associated.
+        """
+        start = self.DTSTART
+        if start is None:
+            raise IncompleteComponent("No DTSTART given.")
+        return start
+
+    @start.setter
+    def start(self, value: datetime | date) -> None:
+        """Set the start of the journal."""
+        self.DTSTART = value
+
+    end = start
+
+    @property
+    def duration(self) -> timedelta:
+        """The journal has no duration: timedelta(0)."""
+        return timedelta(0)
+
+    color = color_property
+    sequence = sequence_property
+    categories = categories_property
+    rdates = rdates_property
+    exdates = exdates_property
+    rrules = rrules_property
+    REQUEST_STATUS = REQUEST_STATUS_property
+    uid = uid_property
+
+    summary = summary_property
+    descriptions = descriptions_property
+    classification = class_property
+    url = url_property
+    organizer = organizer_property
+    contacts = contacts_property
+    status = status_property
+    attendees = attendees_property
+    attachments = attachments_property
+    from icalendar.attr import RECURRENCE_ID
+
+    @property
+    def description(self) -> str:
+        """The concatenated descriptions of the journal.
+
+        A Journal can have several descriptions.
+        This is a compatibility method.
+        """
+        descriptions = self.descriptions
+        if not descriptions:
+            return None
+        return "\r\n\r\n".join(descriptions)
+
+    @description.setter
+    def description(self, description: str | None):
+        """Set the description"""
+        self.descriptions = description
+
+    @description.deleter
+    def description(self):
+        """Delete all descriptions."""
+        del self.descriptions
+
+    images = images_property
+
+    @classmethod
+    def new(
+        cls,
+        /,
+        attachments: ATTACHMENTS_TYPE_SETTER = None,
+        attendees: ATTENDEE_TYPE_SETTER = None,
+        categories: Sequence[str] = (),
+        classification: CLASS | None = None,
+        color: str | None = None,
+        comments: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
+        contacts: list[str] | str | None = None,
+        created: date | None = None,
+        description: str | Sequence[str] | None = None,
+        last_modified: date | None = None,
+        links: LINKS_TYPE_SETTER = None,
+        organizer: vCalAddress | str | None = None,
+        recurrence_id: date | datetime | None = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
+        request_status: list[str] | str | None = None,
+        sequence: int | None = None,
+        stamp: date | None = None,
+        start: date | datetime | None = None,
+        status: STATUS | None = None,
+        summary: str | None = None,
+        uid: str | uuid.UUID | None = None,
+        url: str | None = None,
+    ) -> Self:
+        """Create a new journal entry with all required properties.
+
+        This creates a new Journal in accordance with :rfc:`5545`.
+
+        Parameters:
+            attachments: The :attr:`attachments` of the journal.
+            attendees: The :attr:`attendees` of the journal.
+            categories: The :attr:`categories` of the journal.
+            classification: The :attr:`classification` of the journal.
+            color: The :attr:`color` of the journal.
+            comments: The :attr:`~icalendar.cal.component.Component.comments` of the journal.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the journal.
+            contacts: The :attr:`contacts` of the journal.
+            created: The :attr:`~icalendar.cal.component.Component.created` of the journal.
+            description: The :attr:`description` of the journal.
+            last_modified: The :attr:`~icalendar.cal.component.Component.last_modified` of
+                the journal.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the journal.
+            organizer: The :attr:`organizer` of the journal.
+            recurrence_id: The :attr:`RECURRENCE_ID` of the journal.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the journal.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the journal.
+            request_status: The :attr:`REQUEST_STATUS` of the journal.
+            sequence: The :attr:`sequence` of the journal.
+            stamp: The :attr:`~icalendar.cal.component.Component.stamp` of the journal.
+                If None, this is set to the current time.
+            start: The :attr:`start` of the journal.
+            status: The :attr:`status` of the journal.
+            summary: The :attr:`summary` of the journal.
+            uid: The :attr:`uid` of the journal.
+                If None, this is set to a new :func:`uuid.uuid4`.
+            url: The :attr:`url` of the journal.
+
+        Returns:
+            :class:`Journal`
+
+        Raises:
+            ~icalendar.error.InvalidCalendar: If the content is not valid
+                according to :rfc:`5545`.
+
+        .. warning:: As time progresses, we will be stricter with the validation.
+        """
+        journal: Self = super().new(
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            created=created,
+            last_modified=last_modified,
+            comments=comments,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
+        )
+        journal.summary = summary
+        journal.descriptions = description
+        journal.uid = uid if uid is not None else uuid.uuid4()
+        journal.start = start
+        journal.color = color
+        journal.categories = categories
+        journal.sequence = sequence
+        journal.classification = classification
+        journal.url = url
+        journal.organizer = organizer
+        journal.attachments = attachments
+        journal.contacts = contacts
+        journal.start = start
+        journal.status = status
+        journal.REQUEST_STATUS = request_status
+        journal.attendees = attendees
+        journal.RECURRENCE_ID = recurrence_id
+
+        return journal
+
+    @classmethod
+    def example(cls, name: str = "example") -> Journal:
+        """Return the journal example with the given name."""
+        return cls.from_ical(get_example("journals", name))
+
+
+__all__ = ["Journal"]

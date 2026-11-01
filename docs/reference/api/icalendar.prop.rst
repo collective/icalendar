@@ -1,0 +1,49 @@
+icalendar.prop package
+======================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   icalendar.prop.dt
+   icalendar.prop.recur
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   icalendar.prop.adr
+   icalendar.prop.binary
+   icalendar.prop.boolean
+   icalendar.prop.broken
+   icalendar.prop.cal_address
+   icalendar.prop.categories
+   icalendar.prop.conference
+   icalendar.prop.empty
+   icalendar.prop.factory
+   icalendar.prop.float
+   icalendar.prop.geo
+   icalendar.prop.image
+   icalendar.prop.inline
+   icalendar.prop.integer
+   icalendar.prop.n
+   icalendar.prop.org
+   icalendar.prop.request_status
+   icalendar.prop.text
+   icalendar.prop.uid
+   icalendar.prop.unknown
+   icalendar.prop.uri
+   icalendar.prop.xml
+   icalendar.prop.xml_reference
+
+Module contents
+---------------
+
+.. automodule:: icalendar.prop
+   :members:
+   :show-inheritance:
+   :undoc-members:

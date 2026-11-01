@@ -1,0 +1,41 @@
+# CODEOWNERS file for automatic PR review assignment
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners
+* @niccokunzmann @stevepiercy
+
+# Documentation, except docstrings in `src`
+*.md @stevepiercy
+*.rst @stevepiercy
+/.readthedocs.yml @stevepiercy @niccokunzmann
+/.vale.ini @stevepiercy
+/CONTRIBUTING.md @niccokunzmann @stevepiercy
+/docs/ @stevepiercy
+/docs/tutorials/ @stevepiercy @peskypotato
+/Makefile @stevepiercy
+/styles @stevepiercy
+
+# Core calendar logic
+/src/ @niccokunzmann @stevepiercy @angatha
+
+# Tests
+/src/icalendar/tests/ @niccokunzmann
+
+# Fuzzing
+/src/icalendar/fuzzing/ @ennamarie19 @niccokunzmann
+
+# CI and infrastructure
+/.coveragerc @niccokunzmann
+/.github/ @niccokunzmann @stevepiercy
+/.pre-commit-config.yaml @niccokunzmann @stevepiercy
+/bootstrap.py @niccokunzmann @stevepiercy
+/buildout.cfg @niccokunzmann @stevepiercy
+/pyproject.toml @niccokunzmann @stevepiercy
+/tox.ini @niccokunzmann @stevepiercy
+
+# Security
+/SECURITY.md @niccokunzmann @stevepiercy @angatha
+
+# Release stuff
+/CHANGES.rst @niccokunzmann @stevepiercy
+/MANIFEST.in @niccokunzmann

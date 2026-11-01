@@ -1,0 +1,258 @@
+"""Test vBinary"""
+
+import base64
+from urllib.parse import urlparse
+
+import pytest
+
+from icalendar import Calendar, vBinary
+from icalendar.parser import Parameters
+
+
+def test_text():
+    txt = b"This is gibberish"
+    txt_ical = b"VGhpcyBpcyBnaWJiZXJpc2g="
+    assert vBinary(txt).to_ical() == txt_ical
+    assert vBinary.from_ical(txt_ical) == txt
+
+
+def test_binary():
+    txt = b"Binary data \x13 \x56"
+    txt_ical = b"QmluYXJ5IGRhdGEgEyBW"
+    assert vBinary(txt).to_ical() == txt_ical
+    assert vBinary.from_ical(txt_ical) == txt
+
+
+def test_param():
+    assert isinstance(vBinary("txt").params, Parameters)
+    assert vBinary("txt").params == {"VALUE": "BINARY", "ENCODING": "BASE64"}
+
+
+def test_long_data():
+    """Long data should not have line breaks, as that would interfere"""
+    txt = b"a" * 99
+    txt_ical = b"YWFh" * 33
+    assert vBinary(txt).to_ical() == txt_ical
+    assert vBinary.from_ical(txt_ical) == txt
+
+
+def test_repr():
+    instance = vBinary("value")
+    assert repr(instance) == "vBinary(b'dmFsdWU=')"
+
+
+def test_from_ical():
+    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
+        vBinary.from_ical("value")
+    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
+        vBinary.from_ical("áèਮ")
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "!!!!dGV4dA==@@@@",
+        "dG V4dA==",
+        "dGV4dA==#",
+    ],
+)
+def test_from_ical_rejects_non_base64_characters(value):
+    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
+        vBinary.from_ical(value)
+
+
+def test_ical_value():
+    """ical_value property returns the binary value."""
+    raw_data = b"magic string"
+    assert vBinary(raw_data).ical_value == raw_data
+
+
+def test_ical_value_returns_raw_bytes_not_decoded():
+    """Test that ``ical_value`` returns the raw stored bytes.
+
+    With the release of icalendar 7.1.0, and previous to PR #1356,
+    ``ical_value`` Base64-decoded the raw stored bytes. For example,
+    ``vBinary("SGVsbG8=").ical_value`` was decoded to ``b"Hello"``
+    and raised ``ValueError`` for non-Base64 input.
+    """
+    assert vBinary(b"SGVsbG8=").ical_value == b"SGVsbG8="
+    # Non-base64 input no longer raises; it is just stored and returned as-is.
+    assert vBinary(b"!!!!dGV4dA==@@@@").ical_value == b"!!!!dGV4dA==@@@@"
+
+
+def test_bytes_holds_raw_lossless_data():
+    """The .bytes attribute exposes the raw value, including non-UTF-8 data.
+
+    See PR #1356.
+    """
+    raw = bytes(range(256))
+    binary = vBinary(raw)
+    assert binary.bytes == raw
+    # round-trips losslessly through the wire format
+    assert vBinary.from_ical(binary.to_ical()) == raw
+
+
+def test_hash():
+    obj = vBinary(b"hashed text")
+    assert hash(obj) == hash(b"hashed text")
+
+
+def test_base64data_getter():
+    """base64data returns the same string as to_ical(), decoded to str."""
+    obj = vBinary(b"This is gibberish")
+    assert obj.base64data == "VGhpcyBpcyBnaWJiZXJpc2g="
+    assert obj.base64data == obj.to_ical().decode("ascii")
+
+
+def test_base64data_getter_empty():
+    """base64data of an empty value is an empty string."""
+    assert vBinary(b"").base64data == ""
+
+
+def test_base64data_setter():
+    """Setting base64data updates the underlying value."""
+    obj = vBinary(b"initial value")
+    obj.base64data = "QmluYXJ5IGRhdGEgEyBW"
+    assert obj.to_ical() == b"QmluYXJ5IGRhdGEgEyBW"
+    assert obj.from_ical(obj.to_ical()) == b"Binary data \x13 \x56"
+
+
+def test_base64data_roundtrip():
+    """Reading base64data after setting it returns the same string."""
+    obj = vBinary(b"initial value")
+    obj.base64data = "QmluYXJ5IGRhdGEgEyBW"
+    assert obj.base64data == "QmluYXJ5IGRhdGEgEyBW"
+
+
+@pytest.mark.parametrize("parameter_name", ["FMTTYPE", "fmttype"])
+def test_uri_for_text_is_an_rfc2397_data_uri(parameter_name):
+    """uri returns a base64 data URI using the current FMTTYPE."""
+    assert vBinary(b"hello", params={parameter_name: "text/plain"}).uri == (
+        "data:text/plain;base64,aGVsbG8="
+    )
+
+
+@pytest.mark.parametrize(
+    ("raw", "params", "media_type"),
+    [
+        (b"\x00\xff\x80", {}, "application/octet-stream"),
+        (b"", {"FMTTYPE": ""}, "application/octet-stream"),
+    ],
+)
+def test_uri_roundtrips_binary_and_empty_values(raw, params, media_type):
+    """The generated URI decodes to the same bytes and advertises its type."""
+    binary = vBinary(raw, params=params)
+    parsed = urlparse(binary.uri)
+    metadata, encoded = parsed.path.split(",", maxsplit=1)
+
+    assert parsed.scheme == "data"
+    assert metadata == f"{media_type};base64"
+    assert base64.b64decode(encoded) == raw
+
+
+def test_uri_reflects_current_bytes_and_fmttype():
+    """uri reads current bytes and parameters each time it is accessed."""
+    binary = vBinary(b"old", params={"FMTTYPE": "text/plain"})
+    assert binary.uri == "data:text/plain;base64,b2xk"
+
+    binary.bytes = b"new"
+    binary.params["FMTTYPE"] = "application/json"
+    assert binary.uri == "data:application/json;base64,bmV3"
+
+
+@pytest.mark.parametrize(
+    ("media_type", "quoted_media_type"),
+    [
+        (
+            "text/plain;charset=utf-8;name=attachment#1.bin",
+            "text/plain;charset=utf-8;name=attachment%231.bin",
+        ),
+        ("text/plain\n;charset=utf-8", "text/plain%0A;charset=utf-8"),
+    ],
+)
+def test_uri_quotes_url_unsafe_media_type_characters(media_type, quoted_media_type):
+    """uri quotes unsafe media type characters while preserving basic parameters."""
+    binary = vBinary(b"hello", params={"FMTTYPE": media_type})
+    assert binary.uri == f"data:{quoted_media_type};base64,aGVsbG8="
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "value",
+        "áèਮ",
+        "!!!!dGV4dA==@@@@",
+        "dG V4dA==",
+        "dGV4dA==#",
+    ],
+)
+def test_base64data_setter_rejects_invalid_base64(value):
+    """The setter raises ValueError, matching from_ical's error, for bad input."""
+    obj = vBinary(b"unchanged")
+    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
+        obj.base64data = value
+    # a rejected assignment must not mutate the existing value
+    assert obj.to_ical() == vBinary(b"unchanged").to_ical()
+
+
+def test_base64data_setter_rejects_non_str():
+    """Non-str input raises TypeError, matching base64.b64decode's behaviour."""
+    obj = vBinary(b"unchanged")
+    with pytest.raises(TypeError):
+        obj.base64data = 12345
+
+
+def test_base64data_setter_stores_raw_bytes():
+    """The setter writes the decoded bytes to .bytes, so non-UTF-8 data round-trips.
+
+    See PR #1356.
+    """
+    raw = bytes(range(256))
+    encoded = base64.b64encode(raw).decode("ascii")
+    obj = vBinary(b"")
+    obj.base64data = encoded
+    assert obj.bytes == raw
+    assert obj.base64data == encoded
+
+
+def test_attach_example_preserves_binary_data(calendars):
+    """The example calendar's PNG attachment round-trips without corruption.
+
+    Regression test for the corruption fixed in #1356. See #1549.
+    """
+    calendar = calendars.issue_1549_binary_attachment
+    (event,) = calendar.events
+    data = event.decoded("ATTACH")
+
+    # the whole payload survives, not just the leading magic number
+    assert data[:8] == b"\x89PNG\r\n\x1a\n"
+    assert data[-8:] == b"IEND\xaeB`\x82"
+    assert len(data) == 128
+
+
+def test_attach_example_uri_preserves_png_data(calendars):
+    """The parsed PNG attachment exposes its media type and original bytes as a URI."""
+    calendar = calendars.issue_1549_binary_attachment
+    (event,) = calendar.events
+    attachment = event["ATTACH"]
+    parsed = urlparse(attachment.uri)
+    metadata, encoded = parsed.path.split(",", maxsplit=1)
+
+    assert attachment.params["FMTTYPE"] == "image/png"
+    assert parsed.scheme == "data"
+    assert metadata == "image/png;base64"
+    assert base64.b64decode(encoded) == event.decoded("ATTACH")
+    assert len(event.decoded("ATTACH")) == 128
+
+
+def test_attach_example_survives_reserialization(calendars):
+    """The PNG attachment is byte-identical after to_ical()/from_ical().
+
+    See #1549.
+    """
+    calendar = calendars.issue_1549_binary_attachment
+    reparsed = Calendar.from_ical(calendar.to_ical())
+
+    (original,) = calendar.events
+    (roundtripped,) = reparsed.events
+    assert roundtripped.decoded("ATTACH") == original.decoded("ATTACH")

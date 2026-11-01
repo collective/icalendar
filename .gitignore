@@ -1,0 +1,15 @@
+__pycache__
+/_build/
+/.coverage
+/.hypothesis/
+/.prompts/
+/.tox/
+/.venv/
+/build/
+/coverage.xml
+/dist/
+/docs/styles/Microsoft/
+/example.ics
+/htmlcov/
+/src/icalendar/_version.py
+/uv.lock

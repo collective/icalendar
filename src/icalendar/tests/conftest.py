@@ -1,0 +1,592 @@
+"""Test configuration"""
+
+import functools
+import itertools
+import sys
+import uuid
+import xml.etree.ElementTree as ET
+import zoneinfo
+from collections.abc import Generator
+from datetime import datetime, timezone
+from pathlib import Path
+from unittest.mock import Mock
+from zoneinfo import ZoneInfo
+
+import pytest
+from dateutil import tz
+
+from icalendar import (
+    Alarm,
+    Availability,
+    Calendar,
+    Component,
+    ComponentFactory,
+    Event,
+    FreeBusy,
+    Journal,
+    LazyCalendar,
+    Timezone,
+    Todo,
+    TypesFactory,
+    prop,
+    vUTCOffset,
+)
+from icalendar.tests.data import PROPERTY_NAMES
+from icalendar.timezone import TZP
+from icalendar.timezone import tzp as _tzp
+
+from . import timezone_ids
+
+try:
+    import pytz
+except ImportError:
+    pytz = None
+
+HAS_PYTZ = pytz is not None
+if HAS_PYTZ:
+    PYTZ_UTC = [
+        pytz.utc,
+        pytz.timezone("UTC"),
+    ]
+    PYTZ_IN_TIMEZONE = [
+        lambda dt, tzname: pytz.timezone(tzname).localize(dt),
+    ]
+    PYTZ_TZP = ["pytz"]
+else:
+    PYTZ_UTC = []
+    PYTZ_IN_TIMEZONE = []
+    PYTZ_TZP = []
+
+
+class DataSource:
+    """A collection of parsed ICS elements (e.g calendars, timezones, events)"""
+
+    extensions = [".ics", ".jcal", ".xml"]
+
+    def __init__(
+        self, data_source_folder: Path, parser: type[Component], multiple: bool = False
+    ) -> None:
+        self._parser = parser
+        self._data_source_folder = data_source_folder
+        self._multiple = multiple
+
+    def keys(self):
+        """Return all the files that could be used."""
+        return [
+            p.stem
+            for p in self._data_source_folder.iterdir()
+            if p.suffix.lower() in self.extensions
+        ]
+
+    def __getitem__(self, attribute):
+        """Parse a file and return the result stored in the attribute."""
+        # parse the file ending
+        extensions = self.extensions
+        if "." in attribute:
+            # we have a file ending
+            attribute, extension = attribute.rsplit(".", 1)
+            extensions = ["." + extension]
+        for extension in extensions:
+            source_file = attribute + extension
+            source_path = self._data_source_folder / source_file
+            if source_path.is_file():
+                break
+        if not source_path.is_file():
+            # usually only raised if the test is wrong
+            raise AttributeError(
+                f"{attribute} does not exist with these extensions: {', '.join(extensions)}."
+            )
+        # check different source types
+        raw_bytes: bytes | None = None
+        raw_string: str | None = None
+        if extension == ".jcal":
+            raw_string = source_path.read_text()
+            is_ical = False
+        else:
+            raw_bytes = source_path.read_bytes()
+            is_ical = not raw_bytes.startswith(b"<")
+
+        def get_parsed(self):
+            if raw_bytes is None:
+                source = self._parser.from_jcal(raw_string)
+            elif not is_ical:
+                source = self._parser.from_xcal(raw_bytes)[0]
+            else:
+                source = self._parser.from_ical(raw_bytes, multiple=self._multiple)
+            if self._multiple:
+                return source
+            source.raw_ics = raw_bytes if is_ical else None
+            source.raw_xcal = raw_bytes if not is_ical else None
+            source.raw_jcal = raw_string
+            source.source_file = source_file
+            source.source_path = source_path
+            return source
+
+        setattr(self.__class__, attribute, property(get_parsed))
+        return get_parsed(self)
+
+    def __contains__(self, key):
+        """key in self.keys()"""
+        key = key.rsplit(".", 1)[0]
+        return key in self.keys()
+
+    def __getattr__(self, key):
+        return self[key]
+
+    def __repr__(self):
+        return repr(self.__dict__)
+
+    @property
+    def multiple(self):
+        """Return a list of all components parsed."""
+        return self.__class__(self._data_source_folder, self._parser, multiple=True)
+
+    @classmethod
+    @functools.cache
+    def from_folder(cls, data_source_folder: Path, parser: type[Component]):
+        """Parse all files in a folder and return a DataSource with the results."""
+        new_cls = type(f"DataSource{parser.name}", (cls,), {})
+        return new_cls(data_source_folder, parser)
+
+
+HERE = Path(__file__).parent
+REPOSITORY_ROOT = HERE.parent.parent.parent
+CALENDARS_FOLDER = HERE / "calendars"
+TIMEZONES_FOLDER = HERE / "timezones"
+EVENTS_FOLDER = HERE / "events"
+ALARMS_FOLDER = HERE / "alarms"
+AVAILABILITIES_FOLDER = HERE / "availabilities"
+TODOS_FOLDER = HERE / "todos"
+JOURNALS_FOLDER = HERE / "journals"
+FREEBUSY_FOLDER = HERE / "freebusy"
+
+
+@pytest.fixture(scope="module", params=[Calendar, LazyCalendar])
+def calendars(tzp, request):
+    """Return the data source for calendar files.
+
+    We have two ways of parsing those:
+    - Immediately
+    - Lazily with LazyCalendar
+    """
+    return DataSource.from_folder(CALENDARS_FOLDER, request.param)
+
+
+@pytest.fixture
+def lazy_calendars(tzp):
+    """Return the data source for calendar files."""
+    return DataSource.from_folder(CALENDARS_FOLDER, LazyCalendar)
+
+
+@pytest.fixture(scope="module")
+def timezones(tzp):
+    return DataSource.from_folder(TIMEZONES_FOLDER, Timezone)
+
+
+@pytest.fixture(scope="module")
+def events(tzp):
+    return DataSource.from_folder(EVENTS_FOLDER, Event)
+
+
+@pytest.fixture(scope="module")
+def alarms(tzp):
+    return DataSource.from_folder(ALARMS_FOLDER, Alarm)
+
+
+@pytest.fixture(scope="module")
+def availabilities(tzp):
+    return DataSource.from_folder(AVAILABILITIES_FOLDER, Availability)
+
+
+@pytest.fixture(scope="module")
+def todos(tzp):
+    return DataSource.from_folder(TODOS_FOLDER, Todo)
+
+
+@pytest.fixture(scope="module")
+def journals(tzp):
+    return DataSource.from_folder(JOURNALS_FOLDER, Journal)
+
+
+@pytest.fixture(scope="module")
+def freebusy(tzp):
+    return DataSource.from_folder(FREEBUSY_FOLDER, FreeBusy)
+
+
+@pytest.fixture(
+    params=PYTZ_UTC + [ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC"), timezone.utc]
+)
+def utc(request, tzp):
+    return request.param
+
+
+@pytest.fixture(
+    params=PYTZ_IN_TIMEZONE
+    + [
+        lambda dt, tzname: dt.replace(tzinfo=tz.gettz(tzname)),
+        lambda dt, tzname: dt.replace(tzinfo=ZoneInfo(tzname)),
+    ]
+)
+def in_timezone(request, tzp):
+    return request.param
+
+
+FUZZ_TESTCASES_BROKEN_CALENDARS = "fuzz_testcase"
+
+# exclude broken calendars here
+BROKEN_SOURCE_FILES = (
+    "big_bad_calendar.ics",
+    "issue_104_broken_calendar.ics",
+    "issue_1050_multiple_calendars.ics",
+    "small_bad_calendar.ics",
+    "multiple_calendar_components.ics",
+    "pr_480_summary_with_colon.ics",
+    "parsing_error_in_UTC_offset.ics",
+    "parsing_error.ics",
+)
+
+
+def get_files_with_extension(extension: str):
+    """Return a list of source file names with the extension."""
+    return [
+        file.name
+        for file in itertools.chain(
+            CALENDARS_FOLDER.iterdir(),
+            TIMEZONES_FOLDER.iterdir(),
+            EVENTS_FOLDER.iterdir(),
+        )
+        if file.name not in BROKEN_SOURCE_FILES
+        and file.suffix == extension
+        and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
+    ]
+
+
+ICS_FILES = get_files_with_extension(".ics")
+
+JCAL_FILES = get_files_with_extension(".jcal")
+
+XCAL_FILES = get_files_with_extension(".xml")
+SOURCE_FILES = ICS_FILES + JCAL_FILES + XCAL_FILES
+
+
+def get_source_file(calendars, timezones, events, request) -> Component:
+    source_file = request.param
+    for data in calendars, timezones, events:
+        if source_file in data:
+            result = data[source_file]
+            print("example file:", result.source_path.relative_to(REPOSITORY_ROOT))
+            return result
+    raise ValueError(f"Could not find file {source_file}.")
+
+
+@pytest.fixture(params=SOURCE_FILES)
+def source_file(tzp, calendars, timezones, events, request) -> Component:
+    """An example file.
+
+    source_file.raw_ics - bytes if .ics file
+    source_file.raw_jcal - str if .jcal file
+
+    """
+    return get_source_file(calendars, timezones, events, request)
+
+
+@pytest.fixture(params=ICS_FILES)
+def ics_file(tzp, calendars, timezones, events, request) -> Component:
+    """An example .ica file.
+
+    source_file.raw_ics - bytes
+    source_file.raw_jcal - None
+    """
+    return get_source_file(calendars, timezones, events, request)
+
+
+@pytest.fixture(params=JCAL_FILES)
+def jcal_file(tzp, calendars, timezones, events, request) -> Component:
+    """An example .jcal file.
+
+    source_file.raw_ics - None
+    source_file.raw_jcal - str
+    """
+    return get_source_file(calendars, timezones, events, request)
+
+
+FUZZ_V1 = [
+    key
+    for key in CALENDARS_FOLDER.iterdir()
+    if FUZZ_TESTCASES_BROKEN_CALENDARS in str(key)
+]
+
+
+@pytest.fixture(params=FUZZ_V1)
+def fuzz_v1_calendar_path(request):
+    """Clusterfuzz calendars."""
+    return request.param
+
+
+@pytest.fixture
+def types_factory():
+    """Return a new types factory."""
+    return TypesFactory()
+
+
+@pytest.fixture
+def component_factory():
+    """Return a new types factory."""
+    return ComponentFactory()
+
+
+COMPONENTS = list(ComponentFactory().values())
+COMPONENTS.append(ComponentFactory().get_component_class("X-CUSTOM"))
+
+
+@pytest.fixture(params=COMPONENTS)
+def component(request) -> Component:
+    """Return one of the defined components."""
+    return request.param()
+
+
+@pytest.fixture
+def x_sometime(types_factory):
+    """Map x_sometime to time"""
+    types_factory.types_map["X-SOMETIME"] = "time"
+    yield
+    types_factory.types_map.pop("X-SOMETIME")
+
+
+@pytest.fixture
+def factory():
+    """Return a new component factory."""
+    return ComponentFactory()
+
+
+@pytest.fixture
+def vUTCOffset_ignore_exceptions():
+    vUTCOffset.ignore_exceptions = True
+    yield
+    vUTCOffset.ignore_exceptions = False
+
+
+@pytest.fixture
+def event_component(tzp):
+    """Return an event component."""
+    c = Component()
+    c.name = "VEVENT"
+    return c
+
+
+class TestComponent(Component):
+    """A component for testing."""
+
+    name = "VTEST"
+
+
+@pytest.fixture
+def c(tzp):
+    """Return an empty component."""
+    return TestComponent()
+
+
+comp = c
+
+
+@pytest.fixture
+def calendar_component(tzp):
+    """Return an empty component."""
+    c = Component()
+    c.name = "VCALENDAR"
+    return c
+
+
+@pytest.fixture
+def dont_validate_new():
+    """Remove validation for new() of components."""
+    value = Component._validate_new
+    Component._validate_new = False
+    yield
+    Component._validate_new = value
+
+
+@pytest.fixture
+def filled_event_component(c, calendar_component):
+    """Return an event with some values and add it to calendar_component."""
+    e = Component(summary="A brief history of time")
+    e.name = "VEVENT"
+    e.add("dtend", "20000102T000000", encode=0)
+    e.add("dtstart", "20000101T000000", encode=0)
+    calendar_component.add_component(e)
+    return e
+
+
+@pytest.fixture
+def calendar_with_resources(tzp):
+    c = Calendar()
+    c["resources"] = 'Chair, Table, "Room: 42"'
+    return c
+
+
+@pytest.fixture(scope="module")
+def tzp(tzp_name) -> Generator[TZP, None, None]:
+    """The timezone provider."""
+    _tzp.use(tzp_name)
+    yield _tzp
+    _tzp.use_default()
+
+
+@pytest.fixture(params=PYTZ_TZP + ["zoneinfo"])
+def other_tzp(request, tzp):
+    """This is annother timezone provider.
+
+    The purpose here is to cross test: pytz <-> zoneinfo.
+    tzp as parameter makes sure we test the cross product.
+    """
+    return TZP(request.param)
+
+
+@pytest.fixture
+def pytz_only(tzp, tzp_name) -> str:
+    """Skip tests that are not running under pytz."""
+    assert tzp.uses_pytz()
+    return tzp_name
+
+
+@pytest.fixture
+def zoneinfo_only(tzp, request, tzp_name) -> str:
+    """Skip tests that are not running under zoneinfo."""
+    assert tzp.uses_zoneinfo()
+    return tzp_name
+
+
+@pytest.fixture
+def no_pytz(tzp_name) -> str:
+    """Do not run tests with pytz."""
+    assert tzp_name != "pytz"
+    return tzp_name
+
+
+@pytest.fixture
+def no_zoneinfo(tzp_name) -> str:
+    """Do not run tests with zoneinfo."""
+    assert tzp_name != "zoneinfo"
+    return tzp_name
+
+
+def pytest_generate_tests(metafunc):
+    """Parametrize without skipping:
+
+    tzp_name will be parametrized according to the use of
+    - pytz_only
+    - zoneinfo_only
+    - no_pytz
+    - no_zoneinfo
+
+    See https://docs.pytest.org/en/6.2.x/example/parametrize.html#deferring-the-setup-of-parametrized-resources
+    """
+    if "tzp_name" in metafunc.fixturenames:
+        tzp_names = PYTZ_TZP + ["zoneinfo"]
+        if "zoneinfo_only" in metafunc.fixturenames:
+            tzp_names = ["zoneinfo"]
+        if "pytz_only" in metafunc.fixturenames:
+            tzp_names = PYTZ_TZP
+        assert not (
+            "zoneinfo_only" in metafunc.fixturenames
+            and "pytz_only" in metafunc.fixturenames
+        ), "Use pytz_only or zoneinfo_only but not both!"
+        for name in ["pytz", "zoneinfo"]:
+            if f"no_{name}" in metafunc.fixturenames and name in tzp_names:
+                tzp_names.remove(name)
+        metafunc.parametrize("tzp_name", tzp_names, scope="module")
+
+
+class DoctestZoneInfo(ZoneInfo):
+    """Constent ZoneInfo representation for tests."""
+
+    def __repr__(self):
+        return f"ZoneInfo(key={self.key!r})"
+
+
+def doctest_print(*args):
+    """doctest print"""
+    args = [arg.decode("UTF-8") if isinstance(arg, bytes) else arg for arg in args]
+    print(*(str(arg).strip().replace("\r\n", "\n").replace("\r", "\n") for arg in args))
+
+
+def doctest_import(name, *args, **kw):
+    """Replace the import mechanism to skip the whole doctest if we import pytz."""
+    if name == "pytz":
+        return pytz
+    return __import__(name, *args, **kw)
+
+
+NOW = datetime(2025, 5, 17, 8, 6, 12)
+NOW_UTC = NOW.replace(tzinfo=timezone.utc)
+UID_DEFAULT = "d755cef5-2311-46ed-a0e1-6733c9e15c63"
+DEFAULT_PRODID = "-//collective//icalendar//7.0.0//EN"
+
+
+@pytest.fixture
+def test_uid() -> str:
+    """The UID that tests always create."""
+    return UID_DEFAULT
+
+
+@pytest.fixture(autouse=True)
+def fixed_env(monkeypatch):
+    """Create a fixed test environment for the functions that are time and randomness dependent."""
+    # uuid is fixed for all tests
+    uid = uuid.UUID(UID_DEFAULT, version=4)
+    monkeypatch.setattr(uuid, "uuid4", lambda: uid)
+    # now is fixed
+    monkeypatch.setattr(Component, "_utc_now", staticmethod(lambda: NOW_UTC))
+
+
+@pytest.fixture
+def env_for_doctest(monkeypatch):
+    """Modify the environment to make doctests run."""
+    monkeypatch.setitem(sys.modules, "zoneinfo", zoneinfo)
+    monkeypatch.setattr(zoneinfo, "ZoneInfo", DoctestZoneInfo)
+    from icalendar.timezone.zoneinfo import ZONEINFO
+
+    monkeypatch.setattr(ZONEINFO, "utc", zoneinfo.ZoneInfo("UTC"))
+
+    from icalendar.cal import calendar
+
+    monkeypatch.setattr(calendar, "DEFAULT_PRODID", DEFAULT_PRODID)
+    return {"print": doctest_print}
+
+
+@pytest.fixture(params=timezone_ids.TZIDS)
+def tzid(request: pytest.FixtureRequest) -> str:
+    """Return a timezone id to be used with pytz or zoneinfo.
+
+    This goes through all the different timezones possible.
+    """
+    return request.param
+
+
+@pytest.fixture(params=PROPERTY_NAMES)
+def v_prop_name(request):
+    """Names of property types that occur as a property of a component."""
+    return request.param
+
+
+@pytest.fixture
+def v_prop(v_prop_name):
+    """Property types that occur as a property of a component."""
+    return getattr(prop, v_prop_name)
+
+
+@pytest.fixture
+def v_prop_example(v_prop) -> prop.VPROPERTY:
+    return v_prop.examples()[0]
+
+
+@pytest.fixture
+def mock():
+    """A mock."""
+    return Mock()
+
+
+@pytest.fixture
+def xcal() -> ET.Element:
+    """Shortcut to create an XML Element"""
+    return ET.Element("vcalendar")

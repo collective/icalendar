@@ -1,0 +1,194 @@
+"""BINARY values from :rfc:`5545`."""
+
+import base64
+import binascii
+from typing import ClassVar
+from urllib.parse import quote
+from xml.etree.ElementTree import Element, SubElement
+
+from icalendar.compatibility import Self
+from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar.parser import Parameters
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
+
+
+class vBinary:
+    """Binary property values are Base64 encoded.
+
+    ..  versionremoved:: 8.0.0
+        Removed ``obj`` attribute, use :attr:`bytes` to access the binary content.
+
+        .. seealso:: :ref:`vbinary-obj-removed`.
+    """
+
+    default_value: ClassVar[str] = "BINARY"
+    params: Parameters
+    bytes: bytes
+    """The raw binary value of the BINARY property.
+
+    This is the authoritative storage method, which round-trips losslessly, including
+    for non-UTF-8 data.
+    """
+
+    def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
+        if isinstance(obj, str):
+            self.bytes = obj.encode("utf-8")
+        else:
+            self.bytes = obj
+        self.params = Parameters(encoding="BASE64", value="BINARY")
+        if params:
+            self.params.update(params)
+
+    def __repr__(self) -> str:
+        return f"vBinary({self.to_ical()})"
+
+    def to_ical(self) -> bytes:
+        return base64.b64encode(self.bytes)
+
+    @staticmethod
+    def from_ical(ical: str | bytes) -> bytes:
+        try:
+            return base64.b64decode(ical, validate=True)
+        except (binascii.Error, ValueError) as e:
+            raise ValueError("Not valid base 64 encoding.") from e
+
+    @property
+    def base64data(self) -> str:
+        """The Base64-encoded string view of this value.
+
+        This is the same string that :meth:`to_ical` produces, exposed as
+        a plain :class:`str` instead of :class:`bytes` so you don't need to
+        call :func:`base64.b64encode` yourself. See :issue:`1550`.
+
+        Returns:
+            The Base64-encoded representation of the stored value.
+        """
+        return self.to_ical().decode("ascii")
+
+    @base64data.setter
+    def base64data(self, value: str) -> None:
+        """Set this value from a Base64-encoded string.
+
+        The decoded raw bytes are stored in :attr:`bytes`, so non-UTF-8
+        payloads round-trip losslessly.
+
+        Parameters:
+            value: A Base64-encoded string.
+
+        Raises:
+            ValueError: If ``value`` isn't valid Base64.
+        """
+        self.bytes = self.from_ical(value)
+
+    @property
+    def uri(self) -> str:
+        """Return this value as an RFC 2397 base64 data URI.
+
+        The media type comes from the current ``FMTTYPE`` parameter, or
+        defaults to ``application/octet-stream`` when it is not set. See
+        :rfc:`2397` for the data URI scheme.
+
+        Examples:
+            >>> from icalendar import vBinary
+            >>> vBinary(b"hello", params={"FMTTYPE": "text/plain"}).uri
+            'data:text/plain;base64,aGVsbG8='
+        """
+        media_type = self.params.get("FMTTYPE") or "application/octet-stream"
+        return f"data:{quote(media_type, safe='/;=')};base64,{self.base64data}"
+
+    def __eq__(self, other: object) -> bool:
+        """self == other"""
+        return isinstance(other, vBinary) and self.bytes == other.bytes
+
+    def __hash__(self) -> int:
+        """Hash of the vBinary object."""
+        return hash(self.bytes)
+
+    @classmethod
+    def examples(cls) -> list[Self]:
+        """Examples of vBinary."""
+        return [cls("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4")]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        params = self.params.to_jcal()
+        if params.get("encoding") == "BASE64":
+            # BASE64 is the only allowed encoding
+            del params["encoding"]
+        return [name, params, self.VALUE.lower(), self.base64data]
+
+    @property
+    def ical_value(self) -> bytes:
+        """The raw ``bytes`` value of the BINARY property.
+
+        .. versionadded:: 7.1.0
+
+        .. versionchanged:: 7.1.3
+            Returns the raw stored bytes. Previously the stored value was
+            Base64-decoded, which raised :class:`ValueError` for non-Base64
+            input. See :pr:`1356`.
+        """
+        return self.bytes
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265` to a vBinary.
+
+        Parameters:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
+        return cls(
+            cls.from_ical(jcal_property[3]),
+            params=Parameters.from_jcal_property(jcal_property),
+        )
+
+    def to_xcal(self, element: Element):
+        """The xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        xml = SubElement(element, self.default_value.lower())
+        xml.text = self.base64data
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        text = element.get_text_without_whitespace()
+        try:
+            binary = base64.b64decode(text, validate=True)
+        except binascii.Error as e:
+            raise XCalParsingError(
+                "Expected base64 encoded data",
+                None,  # do not print potentially huge chunks of data
+                element,
+            ) from e
+        # ``validate=True`` only rejects characters outside the base64 alphabet.
+        # It still accepts a misplaced or oversized ``=`` padding (e.g. "MTIz="
+        # on CPython >= 3.12), while xsd:base64Binary requires the canonical
+        # form of RFC 4648. Re-encoding the decoded bytes and comparing with the
+        # input rejects that, including encodings with non-zero trailing bits.
+        if base64.b64encode(binary).decode("ascii") != text:
+            raise XCalParsingError(
+                "Expected base64 encoded data",
+                None,  # do not print potentially huge chunks of data
+                element,
+            )
+        return cls(binary, params=params)
+
+
+__all__ = ["vBinary"]

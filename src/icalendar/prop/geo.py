@@ -1,0 +1,198 @@
+"""GEO property values from :rfc:`5545`."""
+
+from __future__ import annotations
+
+import math
+from typing import TYPE_CHECKING, Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
+
+from icalendar.error import JCalParsingError
+from icalendar.parser import Parameters
+from icalendar.parser.xcal.string import xsd_float_to_string
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
+
+
+class vGeo:
+    """Geographic Position
+
+    Property Name:
+        GEO
+
+    Purpose:
+        This property specifies information related to the global
+        position for the activity specified by a calendar component.
+
+    Value Type:
+        FLOAT.  The value MUST be two SEMICOLON-separated FLOAT values.
+
+    Property Parameters:
+        IANA and non-standard property parameters can be specified on
+        this property.
+
+    Conformance:
+        This property can be specified in "VEVENT" or "VTODO"
+        calendar components.
+
+    Description:
+        This property value specifies latitude and longitude,
+        in that order (i.e., "LAT LON" ordering).  The longitude
+        represents the location east or west of the prime meridian as a
+        positive or negative real number, respectively.  The longitude and
+        latitude values MAY be specified up to six decimal places, which
+        will allow for accuracy to within one meter of geographical
+        position.  Receiving applications MUST accept values of this
+        precision and MAY truncate values of greater precision.
+
+        Example:
+
+        .. code-block:: ics
+
+            GEO:37.386013;-122.082932
+
+        Parse vGeo:
+
+        .. code-block:: pycon
+
+            >>> from icalendar.prop import vGeo
+            >>> geo = vGeo.from_ical('37.386013;-122.082932')
+            >>> geo
+            (37.386013, -122.082932)
+
+        Add a geo location to an event:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> latitude = 37.386013
+            >>> longitude = -122.082932
+            >>> event.add('GEO', (latitude, longitude))
+            >>> event['GEO']
+            vGeo((37.386013, -122.082932))
+    """
+
+    default_value: ClassVar[str] = "FLOAT"
+    params: Parameters
+
+    latitude: float
+    """The latitude of the geo position."""
+
+    longitude: float
+    """The longitude of the geo position."""
+
+    def __init__(
+        self,
+        geo: tuple[float | str | int, float | str | int],
+        /,
+        params: dict[str, Any] | None = None,
+    ) -> None:
+        """Create a new vGeo from a tuple of (latitude, longitude).
+
+        Raises:
+            ValueError: if geo is not a tuple of (latitude, longitude)
+        """
+        try:
+            latitude, longitude = (geo[0], geo[1])
+            latitude = float(latitude)
+            longitude = float(longitude)
+        except Exception as e:
+            raise ValueError(
+                "Input must be (float, float) for latitude and longitude"
+            ) from e
+        self.latitude = latitude
+        self.longitude = longitude
+        self.params = Parameters(params)
+
+    def to_ical(self) -> str:
+        return f"{self.latitude};{self.longitude}"
+
+    @property
+    def ical_value(self) -> tuple[float, float]:
+        """Geographic position as a tuple of (latitude, longitude) according to :rfc:`5545#section-3.8.1.6`."""
+        return (self.latitude, self.longitude)
+
+    @staticmethod
+    def from_ical(ical: str) -> tuple[float, float]:
+        try:
+            latitude, longitude = ical.split(";")
+            latitude, longitude = float(latitude), float(longitude)
+        except Exception as e:
+            raise ValueError(f"Expected 'float;float' , got: {ical}") from e
+        if not (math.isfinite(latitude) and math.isfinite(longitude)):
+            raise ValueError(f"Expected finite 'float;float', got: {ical}")
+        return (latitude, longitude)
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, vGeo) and self.to_ical() == other.to_ical()
+
+    def __hash__(self) -> int:
+        """Hash of the vGeo object."""
+        return hash((self.latitude, self.longitude))
+
+    def __repr__(self) -> str:
+        """repr(self)"""
+        return f"{self.__class__.__name__}(({self.latitude}, {self.longitude}))"
+
+    def to_jcal(self, name: str) -> list:
+        """Convert to jCal object."""
+        return [
+            name,
+            self.params.to_jcal(),
+            self.VALUE.lower(),
+            [self.latitude, self.longitude],
+        ]
+
+    @classmethod
+    def examples(cls) -> list[Self]:
+        """Examples of vGeo."""
+        return [cls((37.386013, -122.082932))]
+
+    from icalendar.param import VALUE
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Parameters:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        return cls(
+            jcal_property[3],
+            Parameters.from_jcal_property(jcal_property),
+        )
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        geo = SubElement(element, "geo")
+        latitude = SubElement(geo, "latitude")
+        latitude.text = xsd_float_to_string(self.latitude)
+        longitude = SubElement(geo, "longitude")
+        longitude.text = xsd_float_to_string(self.longitude)
+        self.params.to_xcal(element)
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        geo = parser.parse_tag("geo")
+        latitude = geo.parse_tag("latitude").get_xsd_float()
+        longitude = geo.parse_tag("longitude").get_xsd_float()
+        return cls((latitude, longitude), params=params)
+
+
+__all__ = ["vGeo"]

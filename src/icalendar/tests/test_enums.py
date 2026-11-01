@@ -1,0 +1,115 @@
+"""Test the enums for values."""
+
+import pickle
+
+import pytest
+
+import icalendar
+from icalendar import enums
+
+ENUMS = [
+    name
+    for name in dir(enums)
+    if name.isupper()
+    and isinstance(getattr(enums, name), type)
+    and issubclass(getattr(enums, name), enums.Enum)
+]
+
+
+@pytest.fixture(params=ENUMS)
+def enum_name(request):
+    """The name of an enum"""
+    return request.param
+
+
+@pytest.fixture
+def enum(enum_name):
+    """An enum."""
+    return getattr(enums, enum_name)
+
+
+def test_all_enums_are_exported(enum_name):
+    """All enums should be exported."""
+    assert enum_name in enums.__all__
+
+
+def test_all_enums_are_public(enum_name):
+    """All enums should be exported."""
+    assert enum_name in icalendar.__all__, f"icalendar.__all__ is missing {enum_name}"
+
+
+def test_enum_has_description(enum):
+    """We should have a docstring."""
+    assert "Description:" in enum.__doc__
+
+
+def test_enum_can_be_pickled(enum):
+    """Every enum member retains their identity after a pickle round trip."""
+    for member in enum:
+        assert pickle.loads(pickle.dumps(member)) is member  # noqa: S301
+
+
+def test_value_enum_includes_binary():
+    """BINARY is an RFC 5545 (section 3.2.20) value type and must be present."""
+    assert enums.VALUE.BINARY == "BINARY"
+
+
+def test_value_enum_matches_rfc_5545_value_types():
+    """VALUE lists every value type defined in RFC 5545, section 3.2.20."""
+    rfc_5545_value_types = {
+        "BINARY",
+        "BOOLEAN",
+        "CAL-ADDRESS",
+        "DATE",
+        "DATE-TIME",
+        "DURATION",
+        "FLOAT",
+        "INTEGER",
+        "PERIOD",
+        "RECUR",
+        "TEXT",
+        "TIME",
+        "URI",
+        "UTC-OFFSET",
+    }
+    assert {member.value for member in enums.VALUE} == rfc_5545_value_types
+
+
+def test_vbinary_default_value_is_a_value_enum_member():
+    """vBinary serializes as VALUE=BINARY, so BINARY must exist in VALUE."""
+    from icalendar.prop import vBinary
+
+    assert vBinary.default_value in {member.value for member in enums.VALUE}
+
+
+def test_get_returns_member_for_valid_value():
+    """get() returns the enum member when a member has the given value."""
+    assert enums.PARTSTAT.get("ACCEPTED") is enums.PARTSTAT.ACCEPTED
+
+
+def test_get_is_case_insensitive():
+    """get() returns the enum member when a member has the given value even if it is in lowercase."""
+    assert enums.STATUS.get("confirmed") is enums.STATUS.CONFIRMED
+
+
+def test_get_returns_none_for_invalid_value():
+    """get() returns None when no member has the given value."""
+    assert enums.PARTSTAT.get("invalid-value") is None
+
+
+def test_get_returns_default_value_for_invalid_value():
+    """get() returns the default value when no member has the given value."""
+    default = "No value"
+    assert enums.PARTSTAT.get("invalid-value", default) == default
+
+
+def test_get_ignores_default_value_for_valid_value():
+    """get() ignores the default value when a member has the given value."""
+    default = "No value"
+    assert enums.PARTSTAT.get("ACCEPTED", default) is enums.PARTSTAT.ACCEPTED
+
+
+def test_constructor_still_raises_for_invalid_value():
+    """Calling the enum directly still raises ValueError for an unknown value."""
+    with pytest.raises(ValueError):
+        enums.PARTSTAT("no-value")

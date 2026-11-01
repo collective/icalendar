@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "id": "ai-prompt-auto-commit",
+            "type": "command",
+            "command": "f=\"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/record-prompt.py\"; [ -f \"$f\" ] && python3 \"$f\"; exit 0",
+            "version": "0.0.10"
+          }
+        ]
+      }
+    ]
+  }
+}

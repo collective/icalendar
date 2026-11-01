@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//collective//icalendar//issue 313//EN
+BEGIN:VEVENT
+UID:libical-evolution@issue-313
+SUMMARY:libical / Evolution globally unique TZID
+DTSTART;TZID=/freeassociation.sourceforge.net/Europe/Berlin:20200426T140000
+DTEND;TZID=/freeassociation.sourceforge.net/Europe/Berlin:20200426T150000
+END:VEVENT
+BEGIN:VEVENT
+UID:mozilla-lightning@issue-313
+SUMMARY:Mozilla Lightning globally unique TZID
+DTSTART;TZID=/mozilla.org/20070129_1/America/New_York:20200426T140000
+DTEND;TZID=/mozilla.org/20070129_1/America/New_York:20200426T150000
+END:VEVENT
+BEGIN:VEVENT
+UID:multipart-olson@issue-313
+SUMMARY:vendor prefix in front of a multi-part Olson name
+DTSTART;TZID=/freeassociation.sourceforge.net/Tzfile/America/Argentina/Buenos_Aires:20200426T140000
+DTEND;TZID=/freeassociation.sourceforge.net/Tzfile/America/Argentina/Buenos_Aires:20200426T150000
+END:VEVENT
+END:VCALENDAR

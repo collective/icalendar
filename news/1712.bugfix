@@ -1,0 +1,1 @@
+TEXT property values now reject :rfc:`5545` control characters such as NUL on parse instead of passing them through to serialized output. Invalid lines are collected in ``errors`` or raise, like invalid parameter values. @abhijeet117

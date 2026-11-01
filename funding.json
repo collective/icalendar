@@ -1,0 +1,113 @@
+{
+    "$schema": "https://fundingjson.org/schema/v1.1.0.json",
+    "version": "v1.1.0",
+    "entity": {
+        "type": "group",
+        "role": "maintainer",
+        "name": "icalendar developer community",
+        "email": "icalendar-coc@googlegroups.com",
+        "description": "We support the development of the icalendar library for Python, an RFC 5545 compatible parser and generator of iCalendar files.",
+        "webpageUrl": {
+            "url": "https://github.com/collective/icalendar/",
+            "wellKnown": "https://github.com/collective/icalendar/raw/main/.well-known/funding-manifest-urls"
+        }
+    },
+    "projects": [
+        {
+            "guid": "python-icalendar",
+            "name": "icalendar",
+            "description": "The icalendar package is an RFC 5545 compatible parser and generator of iCalendar files.",
+            "webpageUrl": {
+                "url": "https://github.com/collective/icalendar/",
+                "wellKnown": "https://github.com/collective/icalendar/raw/main/.well-known/funding-manifest-urls"
+            },
+            "repositoryUrl": {
+                "url": "https://github.com/collective/icalendar/",
+                "wellKnown": "https://github.com/collective/icalendar/raw/main/.well-known/funding-manifest-urls"
+            },
+            "licenses": [
+                "spdx:BSD-2-Clause"
+            ],
+            "tags": [
+                "icalendar",
+                "rfc5545",
+                "parser",
+                "generator",
+                "programming",
+                "python"
+            ]
+        }
+    ],
+    "funding": {
+        "channels": [
+            {
+                "guid": "icalendar-open-source-collective",
+                "type": "payment-provider",
+                "address": "https://opencollective.com/python-icalendar",
+                "description": "Through Open Collective, icalendar accepts payment via credit card, Google Pay, or US bank ACH transfer."
+            }
+        ],
+        "plans": [
+            {
+                "guid": "fund-once-any-amount-usd",
+                "status": "active",
+                "name": "One-time donation",
+                "description": "Choose any amount to give to icalendar.",
+                "amount": 0,
+                "currency": "USD",
+                "frequency": "one-time",
+                "channels": [
+                    "icalendar-open-source-collective"
+                ]
+            },
+            {
+                "guid": "fund-monthly-any-amount-usd",
+                "status": "active",
+                "name": "Monthly donation",
+                "description": "Choose any amount to give to icalendar.",
+                "amount": 0,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": [
+                    "icalendar-open-source-collective"
+                ]
+            },
+            {
+                "guid": "fund-monthly-5-usd",
+                "status": "active",
+                "name": "Backer",
+                "description": "Support icalendar with a monthly donation of $5 USD.",
+                "amount": 5,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": [
+                    "icalendar-open-source-collective"
+                ]
+            },
+            {
+                "guid": "fund-monthly-100-usd",
+                "status": "active",
+                "name": "Sponsor",
+                "description": "Support icalendar with a monthly donation of $100 USD.",
+                "amount": 100,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": [
+                    "icalendar-open-source-collective"
+                ]
+            }
+        ],
+        "history": [
+            {
+                "year": 2024,
+                "income": 202,
+                "currency": "USD"
+            },
+            {
+                "year": 2025,
+                "income": 12,
+                "currency": "USD"
+            }
+        ]
+    }
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+ <vcalendar>
+  <properties>
+   <calscale>
+     <text>GREGORIAN</text>
+   </calscale>
+   <prodid>
+    <text>-//Example Inc.//Example Calendar//EN</text>
+   </prodid>
+   <version>
+     <text>2.0</text>
+   </version>
+  </properties>
+  <components>
+   <vevent>
+    <properties>
+     <dtstamp>
+       <date-time>2008-02-05T19:12:24Z</date-time>
+     </dtstamp>
+     <dtstart>
+       <date>2008-10-06</date>
+     </dtstart>
+     <summary>
+      <text>Planning meeting</text>
+     </summary>
+     <uid>
+      <text>4088E990AD89CB3DBB484909</text>
+     </uid>
+    </properties>
+   </vevent>
+  </components>
+ </vcalendar>
+</icalendar>

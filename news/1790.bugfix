@@ -1,0 +1,1 @@
+Preserved ``Self`` return annotations at runtime so API documentation no longer renders them as ``None``, and fixed runtime resolution of ``TypeGuard`` and ``TypeIs`` return annotations in datetime helpers. AI assistance was used to diagnose the missing annotations and draft the fixes and regression tests. @kudala-bharani

@@ -1,0 +1,349 @@
+"""Test the equality and inequality of components."""
+
+import contextlib
+import copy
+
+try:
+    from pytz import UnknownTimeZoneError
+except ImportError:
+
+    class UnknownTimeZoneError(Exception):
+        pass
+
+
+from datetime import date, datetime, time, timedelta
+from time import time as time_time
+
+import pytest
+
+from icalendar import (
+    Calendar,
+    Component,
+    Event,
+    vBinary,
+    vBoolean,
+    vCategory,
+    vDate,
+    vDatetime,
+    vDDDLists,
+    vDDDTypes,
+    vDuration,
+    vGeo,
+    vPeriod,
+    vRecur,
+    vText,
+    vTime,
+)
+
+
+def assert_equal(actual_value, expected_value, path=None):
+    """Make sure both values are equal"""
+    if path is None:
+        path = []
+    if isinstance(actual_value, Component):
+        # recurse to make it more readable
+        keys1 = set(actual_value.keys())
+        keys2 = set(expected_value.keys())
+        assert keys1 == keys2, (
+            f"Keys are not equal at {'.'.join(path)}: {keys1} != {keys2}"
+        )
+        for key in keys1:
+            assert_equal(actual_value[key], expected_value[key], path + [repr(key)])
+        assert len(actual_value.subcomponents) == len(expected_value.subcomponents), (
+            f"Subcomponents are not equal at {'.'.join(path)}: {len(actual_value.subcomponents)} != {len(expected_value.subcomponents)}"
+        )
+        for i, (sub1, sub2) in enumerate(
+            zip(actual_value.subcomponents, expected_value.subcomponents, strict=True)
+        ):
+            assert_equal(sub1, sub2, path + [f"subcomponents[{i}]"])
+    message = f"Values are not equal at {'.'.join(path)}: Expected {expected_value!r} != Actual {actual_value!r}"
+    assert actual_value == expected_value, message
+    assert expected_value == actual_value, message
+
+
+def assert_not_equal(actual_value, expected_value):
+    """Make sure both values are not equal"""
+    assert actual_value != expected_value
+    assert expected_value != actual_value
+
+
+def test_parsed_calendars_are_equal_if_parsed_again(source_file, tzp):
+    """Ensure that a calendar equals the same calendar.
+
+    source -> calendar -> ics -> same calendar
+    """
+    copy_of_calendar = source_file.__class__.from_ical(source_file.to_ical())
+    assert_equal(copy_of_calendar, source_file)
+
+
+def test_parsed_calendars_are_equal_if_parsed_again_jcal(source_file, tzp):
+    """Ensure that a calendar equals the same calendar.
+
+    source -> calendar -> jcal -> same calendar
+    """
+    copy_of_calendar = Component.from_jcal(source_file.to_jcal())
+    assert_equal(copy_of_calendar, source_file)
+
+
+def test_parsed_calendars_are_equal_if_parsed_again_xcal(source_file, tzp):
+    """Ensure that a calendar equals the same calendar.
+
+    source -> calendar -> xcal -> same calendar
+    """
+    xml = source_file.to_xcal(indent=1)
+    print(xml)
+    copy_of_calendar = Calendar.from_xcal(xml)[0]
+    assert_equal(copy_of_calendar, source_file)
+
+
+def test_parsed_calendars_are_equal_if_from_same_source(ics_file, tzp):
+    """Ensure that a calendar equals the same calendar.
+
+    ics -> calendar
+    ics -> same calendar
+    """
+    cal1 = ics_file.__class__.from_ical(ics_file.raw_ics)
+    cal2 = ics_file.__class__.from_ical(ics_file.raw_ics)
+    assert_equal(cal1, cal2)
+
+
+def test_parsed_calendars_are_equal_if_from_same_source_jcal(jcal_file, tzp):
+    """Ensure that a calendar equals the same calendar.
+
+    jcal -> calendar
+    jcal -> same calendar
+    """
+    cal1 = Component.from_jcal(jcal_file.raw_jcal)
+    cal2 = Component.from_jcal(jcal_file.raw_jcal)
+    assert_equal(cal1, cal2)
+
+
+def test_copies_are_equal(source_file, tzp):
+    """Ensure that copies are equal."""
+    copy1 = source_file.copy()
+    copy1.subcomponents = source_file.subcomponents
+    copy2 = source_file.copy()
+    copy2.subcomponents = source_file.subcomponents[:]
+    assert_equal(copy1, copy2)
+    assert_equal(copy1, source_file)
+    assert_equal(copy2, source_file)
+
+
+def test_calendar_equality_order():
+    """Ensure inequality of calendars when subcomponents are strict subset, regardless of order."""
+    calendar1 = Calendar()
+    calendar2 = Calendar()
+    event1 = Event.new(start=datetime(2021, 1, 1, 12, 30, 0))
+    event2 = Event()
+    calendar1.subcomponents = [event1, event2]
+    calendar2.subcomponents = [event1, event1]
+    assert_not_equal(calendar1, calendar2)
+
+
+def test_component_equality_order():
+    """Ensure inequality of components when subcomponents are strict subset, regardless of order."""
+    component1 = Component()
+    component2 = Component()
+    event1 = Event.new(start=datetime(2021, 1, 1, 12, 30, 0))
+    event2 = Event()
+    component1.subcomponents = [event1, event2]
+    component2.subcomponents = [event1, event1]
+    assert_not_equal(component1, component2)
+
+
+def _nested_component(depth: int) -> Event:
+    """Build a component nested depth subcomponents deep."""
+    root = node = Event()
+    for _ in range(depth):
+        child = Event()
+        node.add_component(child)
+        node = child
+    return root
+
+
+def test_deeply_nested_equality_at_depth_50():
+    """Regression test for GHSA-cv84-9p8j-fj68.
+
+    Comparing deeply nested components used to recurse and re-compare both
+    directions at every level, which is exponential in the nesting depth: a
+    depth-30 structure took minutes. The fix walks an explicit stack and
+    compares each pair of nested components exactly once, which is linear.
+
+    We try at a few depths and fail when the first one takes too long.
+    We could try just one large depth, but if there really is a regression,
+    the tests could take ten or a hundred times as long.
+    At depth 20 the comparison already takes 2.85 seconds on my fast laptop
+    when using the original implementation.
+    We give each depth more time.  The main thing is that this should not be
+    exponential.
+    """
+    for seconds in range(1, 6):
+        depth = 10 * seconds
+        # equality and its commutative counterpart, see #1224
+        t1 = time_time()
+        assert_equal(_nested_component(depth), _nested_component(depth))
+        t2 = time_time()
+        total = t2 - t1
+        assert total < seconds, (
+            f"equal nested {depth=} takes too long: {total} > {seconds}"
+        )
+
+        # A difference at the deepest end gets detected
+        left = _nested_component(depth)
+        right = _nested_component(depth)
+        deepest = right
+        while deepest.subcomponents:
+            deepest = deepest.subcomponents[0]
+        deepest.add("summary", "different")
+        t3 = time_time()
+        assert_not_equal(left, right)
+        t4 = time_time()
+        total = t4 - t3
+        assert total < seconds, (
+            f"unequal nested {depth=} takes too long: {total} > {seconds}"
+        )
+
+
+def test_copy_does_not_copy_subcomponents(calendars, tzp):
+    """If we copy the subcomponents, assumptions around copies will be broken."""
+    assert calendars.timezoned.subcomponents
+    assert not calendars.timezoned.copy().subcomponents
+
+
+def test_deep_copies_are_equal(source_file, tzp):
+    """Ensure that deep copies are equal.
+
+    Ignore errors when a custom time zone is used.
+    This is still covered by the parsing test.
+    """
+    if (
+        source_file.source_file == "issue_722_timezone_transition_ambiguity.ics"
+        and tzp.uses_zoneinfo()
+    ):
+        pytest.skip("This test fails for now.")
+    with contextlib.suppress(UnknownTimeZoneError):
+        assert_equal(copy.deepcopy(source_file), copy.deepcopy(source_file))
+    with contextlib.suppress(UnknownTimeZoneError):
+        assert_equal(copy.deepcopy(source_file), source_file)
+
+
+def test_vGeo():
+    """Check the equality of vGeo."""
+    assert_equal(vGeo(("100", "12.33")), vGeo(("100.00", "12.330")))
+    assert_not_equal(vGeo(("100", "12.331")), vGeo(("100.00", "12.330")))
+    assert_not_equal(vGeo(("10", "12.33")), vGeo(("100.00", "12.330")))
+
+
+def test_vBinary():
+    assert_equal(vBinary("asd"), vBinary("asd"))
+    assert_not_equal(vBinary("asdf"), vBinary("asd"))
+
+
+def test_vBoolean():
+    assert_equal(vBoolean.from_ical("TRUE"), vBoolean.from_ical("TRUE"))
+    assert_equal(vBoolean.from_ical("FALSE"), vBoolean.from_ical("FALSE"))
+    assert_not_equal(vBoolean.from_ical("TRUE"), vBoolean.from_ical("FALSE"))
+
+
+def test_vCategory():
+    assert_equal(vCategory("HELLO"), vCategory("HELLO"))
+    assert_equal(vCategory(["a", "b"]), vCategory(["a", "b"]))
+    assert_not_equal(vCategory(["a", "b"]), vCategory(["a", "b", "c"]))
+
+
+def test_vText():
+    assert_equal(vText("HELLO"), vText("HELLO"))
+    assert_not_equal(vText("HELLO1"), vText("HELLO"))
+
+
+@pytest.mark.parametrize(
+    ("v_type", "v1", "v2"),
+    [
+        (vDatetime, datetime(2023, 11, 1, 10, 11), datetime(2023, 11, 1, 10, 10)),
+        (vDate, date(2023, 11, 1), date(2023, 10, 31)),
+        (vDuration, timedelta(3, 11, 1), timedelta(23, 10, 31)),
+        (
+            vPeriod,
+            (datetime(2023, 11, 1, 10, 11), timedelta(3, 11, 1)),
+            (datetime(2023, 11, 1, 10, 11), timedelta(23, 10, 31)),
+        ),
+        (
+            vPeriod,
+            (datetime(2023, 11, 1, 10, 1), timedelta(3, 11, 1)),
+            (datetime(2023, 11, 1, 10, 11), timedelta(3, 11, 1)),
+        ),
+        (
+            vPeriod,
+            (datetime(2023, 11, 1, 10, 1), datetime(2023, 11, 1, 10, 3)),
+            (datetime(2023, 11, 1, 10, 1), datetime(2023, 11, 1, 10, 2)),
+        ),
+        (vTime, time(10, 10, 10), time(10, 10, 11)),
+    ],
+)
+@pytest.mark.parametrize("eq", ["==", "!="])
+@pytest.mark.parametrize("cls1", [0, 1])
+@pytest.mark.parametrize("cls2", [0, 1])
+@pytest.mark.parametrize("hash", [lambda x: x, hash])
+def test_vDDDTypes_and_others(v_type, v1, v2, cls1, cls2, eq, hash):  # noqa: A002
+    """Check equality and inequality."""
+    t1 = (v_type, vDDDTypes)[cls1]
+    t2 = (v_type, vDDDTypes)[cls2]
+    if eq == "==":
+        assert hash(v1) == hash(v1)
+        assert hash(t1(v1)) == hash(t2(v1))
+        assert hash(t1(v1)) == hash(t2(v1))
+    else:
+        assert hash(v1) != hash(v2)
+        assert hash(t1(v1)) != hash(t2(v2))
+
+
+def test_repr_vDDDTypes():
+    assert "vDDDTypes" in repr(vDDDTypes(timedelta(3, 11, 1)))
+
+
+vDDDLists_examples = [  # noqa: N816
+    vDDDLists([]),
+    vDDDLists([datetime(2023, 11, 1, 10, 1)]),
+    vDDDLists([datetime(2023, 11, 1, 10, 1), date(2023, 11, 1)]),
+]
+
+
+@pytest.mark.parametrize("l1", vDDDLists_examples)
+@pytest.mark.parametrize("l2", vDDDLists_examples)
+def test_vDDDLists(l1, l2):
+    """Check the equality functions of vDDDLists."""
+    equal = l1 is l2
+    l2 = copy.deepcopy(l2)
+    assert equal == (l1 == l2)
+    assert equal != (l1 != l2)
+
+
+@pytest.mark.parametrize("index", [1, 2])
+def test_rfc_7265_equivalence_of_example_from_appendix(calendars, index):
+    """jcal and ical should be the same"""
+    ical = calendars[f"rfc_7265_appendix_example_{index}_ical"]
+    jcal = calendars[f"rfc_7265_appendix_example_{index}_jcal"]
+    assert_equal(ical.to_jcal(), jcal.to_jcal())
+    assert_equal(ical, jcal)
+
+
+@pytest.mark.parametrize(
+    ("v1", "v2", "equal"),
+    [
+        ({}, {}, True),
+        ({"BYDAY": "1SU"}, {}, False),
+        ({"BYDAY": "1SU"}, {"BYDAY": "1SU"}, True),
+        ({"BYDAY": "1SU"}, {"BYDAY": ["1SU"]}, True),
+        ({"byday": "1SU"}, {"BYDAY": "1SU"}, True),
+        ({"byday": "1SU", "count": 1}, {"BYDAY": "1SU"}, False),
+        ({"count": 1}, {"BYDAY": "1SU"}, False),
+    ],
+)
+def test_v_recur_equal(v1, v2, equal):
+    """Check the equality functions of vRecur."""
+    recur1 = vRecur(v1)
+    recur2 = vRecur(v2)
+    if equal:
+        assert_equal(recur1, recur2)
+    else:
+        assert_not_equal(recur1, recur2)

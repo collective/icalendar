@@ -1,0 +1,40 @@
+icalendar package
+=================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   icalendar.cal
+   icalendar.parser
+   icalendar.prop
+   icalendar.timezone
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   icalendar.alarms
+   icalendar.attr
+   icalendar.caselessdict
+   icalendar.cli
+   icalendar.compatibility
+   icalendar.config
+   icalendar.enums
+   icalendar.error
+   icalendar.param
+   icalendar.parser_tools
+   icalendar.tools
+   icalendar.version
+
+Module contents
+---------------
+
+.. automodule:: icalendar
+   :members:
+   :show-inheritance:
+   :undoc-members:
