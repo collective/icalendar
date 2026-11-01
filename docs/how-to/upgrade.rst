@@ -52,6 +52,8 @@ The following example parses an existing calendar fixture containing a malformed
 Enable tolerant behavior on older versions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Only users of icalendar versions before 8.0.0 need this snippet, because 8.0.0 ignores parsing exceptions by default.
+
 Set ``Component.ignore_exceptions = True`` before parsing to record errors instead of raising them.
 Inspect ``errors`` on the component that contains the malformed content.
 

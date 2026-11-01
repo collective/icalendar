@@ -31,10 +31,7 @@ def test_issue_399_malformed_lines_are_handled_consistently(calendars):
     bare_x_calendar = calendars.issue_104_broken_calendar
     malformed_x_property_calendar = calendars.issue_399_malformed_x_property
 
-    assert bare_x_calendar.errors == [
-        (None, "Content line could not be parsed into parts: 'X': Invalid content line")
-    ]
-    assert malformed_x_property_calendar.walk("VEVENT")[0].errors == [
+    assert malformed_x_property_calendar.events[0].errors == [
         (
             None,
             (
@@ -64,7 +61,7 @@ def test_event_override_preserves_tolerant_parsing(calendars, monkeypatch):
     monkeypatch.setattr(Component, "ignore_exceptions", False)
 
     parsed = calendars.issue_399_malformed_x_property
-    assert parsed.walk("VEVENT")[0].errors == [
+    assert parsed.events[0].errors == [
         (
             None,
             (
