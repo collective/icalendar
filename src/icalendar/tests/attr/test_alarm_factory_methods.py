@@ -27,9 +27,30 @@ def _email(**kw) -> Alarm:
     return Alarm.new_email("Subject", "Body", _TRIGGER, [_ATTENDEE], **kw)
 
 
+def _new(**kw) -> Alarm:
+    return Alarm.new(action="DISPLAY", trigger=_TRIGGER, **kw)
+
+
 _ALL_FACTORIES = pytest.mark.parametrize(
     "factory", [_display, _audio, _email], ids=["new_display", "new_audio", "new_email"]
 )
+
+
+def test_new_sets_required_action_and_trigger():
+    alarm = Alarm.new(action="DISPLAY", trigger=_TRIGGER)
+
+    assert alarm.ACTION == "DISPLAY"
+    assert alarm.TRIGGER == _TRIGGER
+
+
+def test_new_requires_action():
+    with pytest.raises(InvalidCalendar, match="ACTION"):
+        Alarm.new(trigger=_TRIGGER)
+
+
+def test_new_requires_trigger():
+    with pytest.raises(InvalidCalendar, match="TRIGGER"):
+        Alarm.new(action="DISPLAY")
 
 
 def test_new_display_sets_action():
@@ -348,63 +369,63 @@ def test_factory_concepts_none_is_empty(factory):
 
 
 def test_alarm_new_uid_is_set():
-    alarm = Alarm.new(uid="test-alarm-uid-001")
+    alarm = _new(uid="test-alarm-uid-001")
     assert alarm.uid == "test-alarm-uid-001"
     assert "UID" in alarm
 
 
 def test_alarm_new_uid_none_omits_property():
-    alarm = Alarm.new(uid=None)
+    alarm = _new(uid=None)
     assert "UID" not in alarm
 
 
 def test_alarm_new_links_single():
     link = vUri("https://example.com/event")
-    alarm = Alarm.new(links=[link])
+    alarm = _new(links=[link])
     assert alarm.links == [link]
 
 
 def test_alarm_new_links_string_is_converted():
-    alarm = Alarm.new(links=["https://example.com/event"])
+    alarm = _new(links=["https://example.com/event"])
     assert alarm.links == [vUri("https://example.com/event")]
 
 
 def test_alarm_new_links_none_is_empty():
-    alarm = Alarm.new(links=None)
+    alarm = _new(links=None)
     assert alarm.links == []
     assert "LINK" not in alarm
 
 
 def test_alarm_new_related_to_single():
     rel = vText("some-uid-ref")
-    alarm = Alarm.new(related_to=[rel])
+    alarm = _new(related_to=[rel])
     assert alarm.related_to == [rel]
 
 
 def test_alarm_new_related_to_string_is_converted():
-    alarm = Alarm.new(related_to=["some-uid-ref"])
+    alarm = _new(related_to=["some-uid-ref"])
     assert alarm.related_to == [vText("some-uid-ref")]
 
 
 def test_alarm_new_related_to_none_is_empty():
-    alarm = Alarm.new(related_to=None)
+    alarm = _new(related_to=None)
     assert alarm.related_to == []
     assert "RELATED-TO" not in alarm
 
 
 def test_alarm_new_concepts_single():
     concept = vUri("https://example.com/concept")
-    alarm = Alarm.new(concepts=[concept])
+    alarm = _new(concepts=[concept])
     assert alarm.concepts == [concept]
 
 
 def test_alarm_new_concepts_string_is_converted():
-    alarm = Alarm.new(concepts=["https://example.com/concept"])
+    alarm = _new(concepts=["https://example.com/concept"])
     assert alarm.concepts == [vUri("https://example.com/concept")]
 
 
 def test_alarm_new_concepts_none_is_empty():
-    alarm = Alarm.new(concepts=None)
+    alarm = _new(concepts=None)
     assert alarm.concepts == []
     assert "CONCEPT" not in alarm
 

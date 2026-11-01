@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Example Inc.//Example Calendar//EN
+BEGIN:VEVENT
+UID:rfc-6321-xml-property@example.com
+DTSTAMP:20261015T100000Z
+DTSTART:20261020T100000Z
+SUMMARY:Meeting with a location in KML
+XML:<kml xmlns="http://www.opengis.net/kml/2.2">\n
+   <Document>\n
+     <name>KML Sample</name>\n
+     <open>1</open>\n
+     <description>An incomplete example of a KML docum
+ ent - used as an example!</description>\n
+   </Document>\n
+ </kml>
+END:VEVENT
+END:VCALENDAR

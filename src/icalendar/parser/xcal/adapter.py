@@ -40,6 +40,26 @@ class ElementAdapter:
         return self._tag
 
     @property
+    def is_extension(self) -> bool:
+        """Whether the element is in a namespace other than the iCalendar namespace.
+
+        Elements without a namespace belong to iCalendar.
+        Extension elements directly in ``properties`` are XML properties.
+
+        See also:
+            :rfc:`6321#section-4.1`.
+
+        Returns:
+            ``True`` for an element outside the iCalendar namespace,
+            or ``False`` for an element either in the iCalendar namespace
+            or without a namespace.
+        """
+        tag = self._element.tag
+        return tag.startswith("{") and not tag.startswith(
+            "{urn:ietf:params:xml:ns:icalendar-2.0}"
+        )
+
+    @property
     def children(self) -> list[ChildElementAdapter]:
         """A list of child elements."""
         tags = defaultdict(int)

@@ -49,7 +49,7 @@ clean:  ## Clean docs build directory
 
 .PHONY: clean-python
 clean-python: clean
-	rm -rf .venv/
+	rm -rf .venv/ uv.lock
 # /environment management
 
 
@@ -180,7 +180,7 @@ rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
 # release
 .PHONY: wo
 wo: .venv
-	@uv run generate_windows_to_olson_mapping.py
+	@uv run scripts/generate_windows_to_olson_mapping.py
 	$(RUFFPATH) format
 
 .PHONY: changes-check

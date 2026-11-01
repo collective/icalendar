@@ -10,7 +10,7 @@ class HasToXcal(Protocol):
     def to_xcal(self, element: Element) -> None: ...
 
 
-def to_xcal(value: HasToXcal, wrap=False) -> Element:
+def to_xcal(value: HasToXcal, wrap=False, name: str = "TEST") -> Element:
     """Return the xCal of a component.
 
     Parameters:
@@ -20,7 +20,7 @@ def to_xcal(value: HasToXcal, wrap=False) -> Element:
     Returns:
         The serialized Element or a wrapper when the value created several elements.
     """
-    e = Element("TEST")
+    e = Element(name)
     value.to_xcal(e)
     assert wrap or len(e) != 0, (
         f"{value.__class__.__name__} did not generate xCal content."
@@ -74,9 +74,11 @@ def xml2list(element: Element[str]) -> list[str | list]:
     return [element.tag] + children
 
 
-def to_xcal_list(value: HasToXcal, wrap: bool = True) -> list[str | list]:
+def to_xcal_list(
+    value: HasToXcal, wrap: bool = True, name: str = "TEST"
+) -> list[str | list]:
     """Combine to_xcal and xml2list."""
-    return xml2list(to_xcal(value, wrap=wrap))
+    return xml2list(to_xcal(value, wrap=wrap, name=name))
 
 
 INVALID_DATES = [
