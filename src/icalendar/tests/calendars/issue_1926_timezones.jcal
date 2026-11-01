@@ -1,0 +1,72 @@
+["vcalendar",
+  [
+    ["version", {}, "text", "2.0"],
+    ["prodid", {}, "text", "-//icalendar//Issue 1926//EN"]
+  ],
+  [
+    ["vevent",
+      [
+        ["uid", {}, "text", "winter"],
+        ["dtstamp", {}, "date-time", "2025-01-01T00:00:00Z"],
+        ["dtstart", {"tzid": "Custom/Issue1926"}, "date-time", "2025-01-01T09:00:00"],
+        ["dtend", {"tzid": "Custom/Issue1926"}, "date-time", "2025-01-01T10:00:00"],
+        ["rdate", {"tzid": "Custom/Issue1926"}, "date-time", "2025-01-08T09:00:00", "2025-07-08T09:00:00"]
+      ],
+      []
+    ],
+    ["vevent",
+      [
+        ["uid", {}, "text", "summer"],
+        ["dtstamp", {}, "date-time", "2025-01-01T00:00:00Z"],
+        ["dtstart", {"tzid": "Custom/Issue1926"}, "date-time", "2025-07-01T09:00:00"],
+        ["dtend", {"tzid": "Custom/Issue1926"}, "date-time", "2025-07-01T10:00:00"]
+      ],
+      []
+    ],
+    ["vevent",
+      [
+        ["uid", {}, "text", "fixed"],
+        ["dtstamp", {}, "date-time", "2025-01-01T00:00:00Z"],
+        ["dtstart", {"tzid": "Custom/Issue1926Fixed"}, "date-time", "2025-07-01T09:00:00"],
+        ["dtend", {"tzid": "Custom/Issue1926Fixed"}, "date-time", "2025-07-01T10:00:00"]
+      ],
+      []
+    ],
+    ["vtimezone",
+      [["tzid", {}, "text", "Custom/Issue1926"]],
+      [
+        ["daylight",
+          [
+            ["dtstart", {}, "date-time", "2020-03-29T02:00:00"],
+            ["tzoffsetfrom", {}, "utc-offset", "+01:00"],
+            ["tzoffsetto", {}, "utc-offset", "+02:00"],
+            ["rrule", {}, "recur", {"freq": "YEARLY", "bymonth": 3, "byday": "-1SU"}]
+          ],
+          []
+        ],
+        ["standard",
+          [
+            ["dtstart", {}, "date-time", "2020-10-25T03:00:00"],
+            ["tzoffsetfrom", {}, "utc-offset", "+02:00"],
+            ["tzoffsetto", {}, "utc-offset", "+01:00"],
+            ["rrule", {}, "recur", {"freq": "YEARLY", "bymonth": 10, "byday": "-1SU"}]
+          ],
+          []
+        ]
+      ]
+    ],
+    ["vtimezone",
+      [["tzid", {}, "text", "Custom/Issue1926Fixed"]],
+      [
+        ["standard",
+          [
+            ["dtstart", {}, "date-time", "1970-01-01T00:00:00"],
+            ["tzoffsetfrom", {}, "utc-offset", "+05:45"],
+            ["tzoffsetto", {}, "utc-offset", "+05:45"]
+          ],
+          []
+        ]
+      ]
+    ]
+  ]
+]

@@ -144,9 +144,11 @@ class vDDDLists:
         while not parser.is_finished():
             dts.append(vDDDTypes.from_xcal(parser))
         if dts:
-            tz = getattr(dts[0].dt, "tzinfo", None)
+            # All values share the property's TZID, but pytz can use different
+            # tzinfo objects across daylight saving transitions.
+            floating = getattr(dts[0].dt, "tzinfo", None) is None
             for dt in dts[1:]:
-                if getattr(dt.dt, "tzinfo", None) != tz:
+                if (getattr(dt.dt, "tzinfo", None) is None) != floating:
                     raise XCalParsingError(
                         "Cannot mix floating with UTC", None, parser.element
                     )

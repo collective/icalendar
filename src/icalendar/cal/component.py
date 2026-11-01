@@ -44,7 +44,7 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Iterator
 
     from icalendar.compatibility import Self
 
@@ -1056,6 +1056,9 @@ class Component(CaselessDict):
     def from_jcal(cls, jcal: str | list) -> Component:
         """Create a component from a jCal list.
 
+        Timezones defined by ``VTIMEZONE`` components are resolved before parsing
+        events, regardless of their order in the calendar.
+
         Parameters:
             jcal: jCal list or JSON string according to :rfc:`7265`.
 
@@ -1100,26 +1103,33 @@ class Component(CaselessDict):
         """
         if isinstance(jcal, str):
             jcal = json.loads(jcal)
-        # Iterative tree build to avoid RecursionError on deeply nested jCal,
-        # mirroring the iterative iCal parser (GH #1370). ``_node_from_jcal``
-        # parses a single component (without its subcomponents); the stack walks
-        # the subcomponent tree, accumulating the jCal error path ([2, i] per
-        # nesting level) so error messages match the recursive implementation.
+        # Complete timezone subtrees before parsing their siblings, without
+        # recursing on deeply nested jCal (GH #1370). Keep the original indices
+        # for subcomponent order and error paths.
         root, root_subcomponents = _node_from_jcal(jcal, cls)
-        stack: list[tuple[Component, list, list]] = [(root, root_subcomponents, [])]
+        stack: list[
+            tuple[Component, Iterator[tuple[int, Any]], list[int], dict[int, Component]]
+        ] = [(root, _jcal_subcomponents(root_subcomponents), [], {})]
         while stack:
-            parent, subcomponents, prefix = stack.pop()
-            for i, subcomponent in enumerate(subcomponents):
-                child_prefix = [*prefix, 2, i]
-                # Prepend the full nesting path so errors match the recursive
-                # implementation. This also preserves the error value and
-                # traceback, like the nested context managers did before.
-                with JCalParsingError.reraise_with_path_added(*child_prefix):
-                    child, child_subcomponents = _node_from_jcal(
-                        subcomponent, type(parent)
-                    )
-                parent.subcomponents.append(child)
-                stack.append((child, child_subcomponents, child_prefix))
+            parent, subcomponents, prefix, parsed = stack[-1]
+            item = next(subcomponents, None)
+            if item is None:
+                # Append instead of assigning a new list so children added by
+                # custom constructors are kept.
+                for i in range(len(parsed)):
+                    parent.subcomponents.append(parsed[i])
+                if parent.name == "VTIMEZONE" and "TZID" in parent:
+                    tzp.cache_timezone_component(parent)
+                stack.pop()
+                continue
+            i, subcomponent = item
+            child_prefix = [*prefix, 2, i]
+            with JCalParsingError.reraise_with_path_added(*child_prefix):
+                child, child_subcomponents = _node_from_jcal(subcomponent, type(parent))
+            parsed[i] = child
+            stack.append(
+                (child, _jcal_subcomponents(child_subcomponents), child_prefix, {})
+            )
         return root
 
     def copy(self, recursive: bool = False) -> Self:
@@ -1304,6 +1314,9 @@ class Component(CaselessDict):
     def from_xcal(cls, xcal: Element | bytes | Path | BinaryIO) -> list[Self]:
         """Parse xCal according to :rfc:`6321`.
 
+        Timezones defined by ``VTIMEZONE`` components are resolved before parsing
+        events, regardless of their order in the calendar.
+
         Parameters:
             xcal: The xCal element or data to parse.
 
@@ -1361,6 +1374,18 @@ class Component(CaselessDict):
             component = parser.parse_component()
             components.append(component)
         return components
+
+
+def _jcal_subcomponents(subcomponents: list) -> Iterator[tuple[int, Any]]:
+    """Iterate over indexed subcomponents with timezones first."""
+    timezones = []
+    others = []
+    for index, component in enumerate(subcomponents):
+        if isinstance(component, list) and component and component[0] == "vtimezone":
+            timezones.append((index, component))
+        else:
+            others.append((index, component))
+    return iter(timezones + others)
 
 
 def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:
