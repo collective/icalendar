@@ -42,8 +42,10 @@ from icalendar.error import (
     IncompleteAlarmInformation,
     IncompleteComponent,
     InvalidCalendar,
+    InvalidToken,
     JCalParsingError,
     LocalTimezoneMissing,
+    XCalParsingError,
 )
 
 # Parameters and helper methods for splitting and joining string with escaped
@@ -79,6 +81,7 @@ from icalendar.prop import (
     vOrg,
     vPeriod,
     vRecur,
+    vRequestStatus,
     vSkip,
     vText,
     vTime,
@@ -87,6 +90,7 @@ from icalendar.prop import (
     vUri,
     vUTCOffset,
     vWeekday,
+    vXml,
     vXmlReference,
 )
 from icalendar.prop.conference import Conference
@@ -134,6 +138,7 @@ __all__ = [
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",
+    "InvalidToken",
     "JCalParsingError",
     "Journal",
     "LazyCalendar",
@@ -145,6 +150,7 @@ __all__ = [
     "TimezoneStandard",
     "Todo",
     "TypesFactory",
+    "XCalParsingError",
     "__version__",
     "__version_tuple__",
     "is_utc",
@@ -172,6 +178,7 @@ __all__ = [
     "vOrg",
     "vPeriod",
     "vRecur",
+    "vRequestStatus",
     "vSkip",
     "vText",
     "vTime",
@@ -180,6 +187,7 @@ __all__ = [
     "vUnknown",
     "vUri",
     "vWeekday",
+    "vXml",
     "vXmlReference",
     "version",
     "version_tuple",

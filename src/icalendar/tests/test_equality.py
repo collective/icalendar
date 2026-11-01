@@ -36,10 +36,29 @@ from icalendar import (
 )
 
 
-def assert_equal(actual_value, expected_value):
+def assert_equal(actual_value, expected_value, path=None):
     """Make sure both values are equal"""
-    assert actual_value == expected_value
-    assert expected_value == actual_value
+    if path is None:
+        path = []
+    if isinstance(actual_value, Component):
+        # recurse to make it more readable
+        keys1 = set(actual_value.keys())
+        keys2 = set(expected_value.keys())
+        assert keys1 == keys2, (
+            f"Keys are not equal at {'.'.join(path)}: {keys1} != {keys2}"
+        )
+        for key in keys1:
+            assert_equal(actual_value[key], expected_value[key], path + [repr(key)])
+        assert len(actual_value.subcomponents) == len(expected_value.subcomponents), (
+            f"Subcomponents are not equal at {'.'.join(path)}: {len(actual_value.subcomponents)} != {len(expected_value.subcomponents)}"
+        )
+        for i, (sub1, sub2) in enumerate(
+            zip(actual_value.subcomponents, expected_value.subcomponents, strict=True)
+        ):
+            assert_equal(sub1, sub2, path + [f"subcomponents[{i}]"])
+    message = f"Values are not equal at {'.'.join(path)}: Expected {expected_value!r} != Actual {actual_value!r}"
+    assert actual_value == expected_value, message
+    assert expected_value == actual_value, message
 
 
 def assert_not_equal(actual_value, expected_value):
@@ -63,6 +82,17 @@ def test_parsed_calendars_are_equal_if_parsed_again_jcal(source_file, tzp):
     source -> calendar -> jcal -> same calendar
     """
     copy_of_calendar = Component.from_jcal(source_file.to_jcal())
+    assert_equal(copy_of_calendar, source_file)
+
+
+def test_parsed_calendars_are_equal_if_parsed_again_xcal(source_file, tzp):
+    """Ensure that a calendar equals the same calendar.
+
+    source -> calendar -> xcal -> same calendar
+    """
+    xml = source_file.to_xcal(indent=1)
+    print(xml)
+    copy_of_calendar = Calendar.from_xcal(xml)[0]
     assert_equal(copy_of_calendar, source_file)
 
 

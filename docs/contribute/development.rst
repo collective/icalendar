@@ -78,13 +78,13 @@ Any issues that would be caught by pre-commit shall be caught by GitHub workflow
 This could delay merging of your pull request.
 
 However, you may opt out of using pre-commit.
-You can use the ``--no-validate`` flag for the ``git commit`` command.
+You can use the ``--no-verify`` flag for the ``git commit`` command.
 
 .. code-block:: shell
 
-    git commit -m "My commit message" --no-validate
+    git commit -m "My commit message" --no-verify
 
-Alternatively, configure your editor to use ``--no-validate`` for all commits.
+Alternatively, configure your editor to use ``--no-verify`` for all commits.
 The screenshot below shows how to configure PyCharm to disable pre-commit by searching for "git commit hooks" in its settings.
 
 .. card::

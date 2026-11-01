@@ -1,8 +1,38 @@
 """Tests for compatibility helpers."""
 
+import sys
+from datetime import datetime
+from typing import TypeGuard, get_type_hints
+
 import pytest
 
-from icalendar.compatibility import deprecate_for_version_8
+from icalendar import vBoolean
+from icalendar.compatibility import deprecate_for_version_9
+from icalendar.tools import is_datetime, is_pytz_dt
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+
+if sys.version_info >= (3, 13):
+    from typing import TypeIs
+else:
+    from typing_extensions import TypeIs
+
+
+@pytest.mark.parametrize(
+    ("function", "return_type"),
+    [
+        (vBoolean.examples, list[Self]),
+        (vBoolean.from_jcal, Self),
+        (is_datetime, TypeIs[datetime]),
+        (is_pytz_dt, TypeGuard[datetime]),
+    ],
+)
+def test_return_type_is_preserved(function, return_type):
+    """Runtime annotations should retain typing objects for API documentation."""
+    assert get_type_hints(function)["return"] == return_type
 
 
 def test_deprecate_for_version_8_warns_and_delegates() -> None:
@@ -11,11 +41,11 @@ def test_deprecate_for_version_8_warns_and_delegates() -> None:
     def _join_parts(left: str, right: str = "") -> str:
         return f"{left}-{right}"
 
-    deprecated = deprecate_for_version_8(_join_parts)
+    deprecated = deprecate_for_version_9(_join_parts)
 
     with pytest.warns(
         DeprecationWarning,
-        match="join_parts is deprecated and will be removed in icalendar 8",
+        match="join_parts is deprecated and will be removed in icalendar 9",
     ):
         assert deprecated("left", right="right") == "left-right"
 

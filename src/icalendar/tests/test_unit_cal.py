@@ -375,7 +375,7 @@ def repr_example(c):
 
 def test_repr_component(repr_example):
     """Test correct class representation."""
-    assert re.match(r"Component\({u?'KEY1': u?'value1'}\)", str(repr_example.component))
+    assert re.match(r"VTEST\({u?'KEY1': u?'value1'}\)", str(repr_example.component))
 
 
 def test_repr_calendar(repr_example):
@@ -392,7 +392,7 @@ def test_nested_components_2(repr_example):
     print(repr_example.nested)
     assert re.match(
         r"Component\({u?'KEY1': u?'VALUE1'}, "
-        r"Component\({u?'KEY1': u?'value1'}\), "
+        r"VTEST\({u?'KEY1': u?'value1'}\), "
         r"VCALENDAR\({u?'KEY1': u?'value1'}, "
         r"VEVENT\({u?'KEY1': u?'value1'}\)\)\)",
         str(repr_example.nested),

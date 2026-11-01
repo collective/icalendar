@@ -80,10 +80,10 @@ The following example shows how to access a custom component to display its name
 
     >>> from icalendar import Component
     >>> # Create custom component using factory
-    >>> MyComp = Component.get_component_class("MYCOMP")
+    >>> MyComp = Component.get_component_class("X-MYCOMP")
     >>> comp = MyComp()
     >>> comp.name
-    'MYCOMP'
+    'X-MYCOMP'
     >>>
     >>> # Add properties
     >>> comp.add("summary", "Test Summary")

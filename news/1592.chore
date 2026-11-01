@@ -1,0 +1,1 @@
+Added test cases for the shared parameters of the ``Alarm.new*`` factory methods, covering the single-value forms of ``links``. I used AI to assist me with this change. @zlZayn

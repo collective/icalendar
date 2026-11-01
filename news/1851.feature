@@ -1,0 +1,1 @@
+Added a ``count`` property accessor to :class:`~icalendar.prop.recur.recur.vRecur` for getting, setting, and deleting the ``COUNT`` part of a recurrence rule. I used Claude (Anthropic, Claude Sonnet 5) to help implement, test, and document this change. @kksingh000

@@ -1,0 +1,73 @@
+"""duration converison
+
+https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
+"""
+
+from datetime import timedelta
+from xml.etree import ElementTree as ET
+
+import pytest
+
+from icalendar.error import XCalParsingError
+from icalendar.prop.dt import vDDDLists, vDDDTypes, vDuration
+from icalendar.tests.prop.test_duration_overflow import OVERFLOWING_DURATIONS
+from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal
+
+
+@pytest.fixture(params=[vDuration, vDDDTypes, vDDDLists])
+def v_duration(request):
+    """Fixture for vDuration, vDDDTypes, and vDDDLists."""
+    return request.param
+
+
+mark_values = pytest.mark.parametrize(
+    ("date", "xcal"),
+    [
+        (timedelta(days=15, hours=5, seconds=20), "P15DT5H0M20S"),
+        (timedelta(days=49), "P49D"),
+    ],
+)
+
+
+@mark_values
+def test_to_xcal(v_duration, date, xcal):
+    """Convert to xcal."""
+    e = to_xcal(v_duration(date))
+    assert isinstance(e, ET.Element)
+    assert e.tag == "duration"
+    assert e.text == xcal
+    assert ET.tostring(e, encoding="unicode") == f"<duration>{xcal}</duration>"
+
+
+@mark_values
+def test_from_xcal_from_dt_class(v_duration, date, xcal):
+    """Parse from xcal."""
+    element = list2xml(["x-prop", ["duration", xcal]])
+    result = v_duration.from_xcal(element)
+    assert result.dt == date
+
+
+@pytest.mark.parametrize(
+    ("xcal"),
+    ["INVALID", "P15DT5H0M20Sx", ""],
+)
+def test_invalid_value_from_xcal(v_duration, xcal):
+    """Parse from xcal with invalid value."""
+    element = list2xml(["x-prop", ["duration", xcal]])
+    with pytest.raises(XCalParsingError) as error:
+        v_duration.from_xcal(element)
+    assert (
+        error.value.message
+        == f"Expected duration format https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6, got {xcal!r} in /x-prop/duration[1]."
+    )
+
+
+@pytest.mark.parametrize("invalid", OVERFLOWING_DURATIONS)
+def test_out_of_range_values_raise_xcal_parsing_error(invalid, v_duration):
+    """Test that we raise the correct error if a time cannot be created."""
+    with pytest.raises(XCalParsingError) as error:
+        v_duration.from_xcal(list2xml(["x-prop", ["duration", invalid]]))
+    assert (
+        error.value.message
+        == f"Duration is out of range, got {invalid!r} in /x-prop/duration[1]."
+    )
