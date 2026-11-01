@@ -23,7 +23,7 @@ To install icalendar for development—including all of its dependencies for tes
 
 .. code-block:: shell
 
-    make dev
+    make dev hooks
 
 
 .. _development-make-commands:
@@ -45,13 +45,13 @@ prek
     Replaced :program:`pre-commit` with :program:`prek`.
 
 `prek <https://prek.j178.dev/>`_ is a fast Git hook manager written in Rust, a drop-in replacement for :program:`pre-commit`.
-It is automatically installed as one of the development requirements when running the following command.
+Run ``make hooks`` to install the Git hooks managed by :program:`prek`.
 
-.. code-block:: shell
+.. note::
 
-    make dev
-
-That command installs a supported Python, creates a Python virtual environment, and installs package and development requirements.
+    If you created your development environment before the switch from :program:`pre-commit` to :program:`prek`, run ``make hooks`` again to replace the existing hooks.
+    The ``-f`` option overwrites existing hook scripts in :file:`.git/hooks`.
+    Back up any custom hooks first.
 
 When you commit code to icalendar with ``git commit``, prek runs the following code quality checks and reformats code automatically for you.
 

@@ -34,6 +34,9 @@ help:  # This help message
 	@uv python install "$(PYTHONVERSION)"
 	@uv venv --python "$(PYTHONVERSION)"
 	@uv sync --group dev
+
+.PHONY: hooks
+hooks: .venv  ## Install the Git hooks with prek
 	@uv run prek install -f
 
 .PHONY: sync
@@ -41,7 +44,7 @@ sync:  ## Sync package requirements
 	@uv sync
 
 .PHONY: init
-init: clean clean-python .venv  ## Clean docs build directory, Python virtual environment, and initialize Python virtual environment
+init: clean clean-python hooks  ## Clean docs build directory, Python virtual environment, and initialize Python virtual environment
 
 .PHONY: clean
 clean:  ## Clean docs build directory
