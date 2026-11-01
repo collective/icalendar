@@ -54,13 +54,22 @@ class LazyCalendarIcalParser(ComponentIcalParser):
                 The upper case name of the component, for example, ``"VEVENT"``.
         """
         content_lines = [Contentline(f"BEGIN:{component_name}")]
+        # components with the same name can be nested
+        depth = 1
         for line in self._content_lines_iterator:
             content_lines.append(line)
             if (
+                line[:6].upper() == "BEGIN:"
+                and line[6:].strip().upper() == component_name
+            ):
+                depth += 1
+            elif (
                 line[:4].upper() == "END:"
                 and line[4:].strip().upper() == component_name
             ):
-                break
+                depth -= 1
+                if depth == 0:
+                    break
         if self.component is None:
             raise ValueError(
                 f"BEGIN:{component_name} encountered outside of a parent component."

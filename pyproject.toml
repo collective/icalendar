@@ -154,7 +154,8 @@ exclude = [
 # Tests for files included in the distribution reside here:
 # src/icalendar/tests/test_create_release.sh
 "funding.json" = "funding.json"
-"generate_windows_to_olson_mapping.py" = "generate_windows_to_olson_mapping.py"
+# Required by the source distribution's generator tests; see #1770.
+"scripts/generate_windows_to_olson_mapping.py" = "scripts/generate_windows_to_olson_mapping.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/icalendar"]
@@ -283,6 +284,9 @@ extend-safe-fixes = [
 "src/icalendar/fuzzing/*" = [
     "T201",   # print found
     "N802",   # Function name {name} should be lowercase
+]
+"scripts/generate_windows_to_olson_mapping.py" = [
+    "INP001", # Standalone development script, not a Python package.
 ]
 "docs/conf.py" = [
     "INP001", # needs __init__.py

@@ -467,6 +467,59 @@ def test_skip():
         vSkip.parse_jcal_value("INVALID")
 
 
+@pytest.mark.parametrize("key", ["rscale", "x-foo"])
+@pytest.mark.parametrize("value", ["a;COUNT=100000", "GREGORIAN;FREQ=SECONDLY", "a,b"])
+@pytest.mark.parametrize("as_list", [False, True])
+def test_recur_text_part_must_not_contain_separator(key, value, as_list):
+    """A text value of an RRULE part cannot contain ``;`` or ``,``.
+
+    RECUR has no escaping, so the value would add rule parts or list
+    values once the rule is serialized to iCalendar and parsed again.
+    """
+    index = r"\[0\]" if as_list else ""
+    with pytest.raises(
+        JCalParsingError,
+        match=rf'\[3\]\["{key}"\]{index} in vRecur: '
+        r"The value must not contain a semicolon or comma\.",
+    ):
+        vRecur.from_jcal(
+            [
+                "rrule",
+                {},
+                "recur",
+                {"freq": "daily", key: [value] if as_list else value},
+            ]
+        )
+
+
+def test_recur_text_part_cannot_change_the_rule():
+    """An injected COUNT or FREQ does not survive a jCal to iCalendar conversion."""
+    jcal = [
+        "vcalendar",
+        [],
+        [
+            [
+                "vevent",
+                [
+                    [
+                        "rrule",
+                        {},
+                        "recur",
+                        {
+                            "freq": "daily",
+                            "count": 2,
+                            "x-a": "x;COUNT=100000;FREQ=SECONDLY",
+                        },
+                    ]
+                ],
+                [],
+            ]
+        ],
+    ]
+    with pytest.raises(JCalParsingError):
+        Calendar.from_jcal(jcal)
+
+
 INVALID_NAME_TOKENS = ["x-foo:INJECT", "x-foo\rRRULE", "a;b", "a=b", "a,b", "a b", ""]
 
 
