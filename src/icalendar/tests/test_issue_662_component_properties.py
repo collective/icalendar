@@ -303,7 +303,7 @@ invalid_todo_end_4.add("DURATION", timedelta(hours=1))
         ),
         (
             invalid_event_end_3,
-            "Only one of DTEND and DURATION may be in a VEVENT, not both.",
+            "DTEND and DURATION specify different end times.",
         ),
         (
             invalid_event_end_4,
@@ -319,7 +319,7 @@ invalid_todo_end_4.add("DURATION", timedelta(hours=1))
         ),
         (
             invalid_todo_end_3,
-            "Only one of DUE and DURATION may be in a VTODO, not both.",
+            "DUE and DURATION specify different end times.",
         ),
         (
             invalid_todo_end_4,
