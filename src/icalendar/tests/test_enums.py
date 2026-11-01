@@ -115,6 +115,12 @@ def test_constructor_still_raises_for_invalid_value():
         enums.PARTSTAT("no-value")
 
 
+def test_constructor_raises_for_non_string_value():
+    """Calling the enum with a non-string value raises ValueError."""
+    with pytest.raises(ValueError):
+        enums.PARTSTAT(123)
+
+
 def test_constructor_is_case_insensitive(enum):
     """The constructor finds members regardless of the case of the value.
 
