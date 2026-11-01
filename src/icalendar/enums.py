@@ -31,6 +31,27 @@ class StrEnum(str, Enum):
         """
         return self.value
 
+    @classmethod
+    def _missing_(cls, value: object) -> Self | None:
+        """Look up a value case-insensitively.
+
+        The RFCs allow values that are not quoted to be case-insensitive,
+        see :rfc:`5545` section 3.1.1. Thus, this enables ``PARTSTAT(
+        "needs-action")`` to find ``PARTSTAT.NEEDS_ACTION``.
+
+        Parameters:
+            value: The value to look up.
+
+        Returns:
+            The member with that value in any case, or None if there is
+            no such member.
+        """
+        if isinstance(value, str):
+            for member in cls:
+                if member._value_.upper() == value.upper():
+                    return member
+        return None
+
     @overload
     @classmethod
     def get(cls, value: str) -> Self | None: ...
@@ -73,7 +94,7 @@ class StrEnum(str, Enum):
 
         """
         try:
-            return cls(value.upper())
+            return cls(value)
         except ValueError:
             return default
 

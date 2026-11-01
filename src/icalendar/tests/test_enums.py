@@ -113,3 +113,27 @@ def test_constructor_still_raises_for_invalid_value():
     """Calling the enum directly still raises ValueError for an unknown value."""
     with pytest.raises(ValueError):
         enums.PARTSTAT("no-value")
+
+
+def test_constructor_is_case_insensitive(enum):
+    """The constructor finds members regardless of the case of the value.
+
+    RFC 5545 section 3.1.1 allows values that are not quoted to be
+    case-insensitive.
+    """
+    for member in enum:
+        assert enum(member.value.lower()) is member
+
+
+def test_lowercase_values_equal_members():
+    """Lowercase values equal the enum members they look up - issue #1840.
+
+    >>> from icalendar.enums import PARTSTAT
+    >>> PARTSTAT("needs-action") == PARTSTAT("NEEDS-ACTION") == PARTSTAT.NEEDS_ACTION
+    True
+    """
+    assert (
+        enums.PARTSTAT("needs-action")
+        == enums.PARTSTAT("NEEDS-ACTION")
+        == enums.PARTSTAT.NEEDS_ACTION
+    )
