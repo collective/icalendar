@@ -101,12 +101,27 @@ def test_rdate_single_value(calendars):
     assert [d.dt for d in rdate.dts] == [RDATE]
 
 
-def test_single_values_are_parsed(calendars):
-    """The properties also work with only one value."""
+def test_single_values_categories(calendars):
+    """CATEGORIES with one value is parsed."""
     event = calendars.rfc_6321_multivalue_properties_xcal.subcomponents[1]
     assert event["CATEGORIES"].cats == [vText("Work")]
+
+
+def test_single_values_resources(calendars):
+    """RESOURCES with one value is parsed."""
+    event = calendars.rfc_6321_multivalue_properties_xcal.subcomponents[1]
     assert resource_values(event["RESOURCES"]) == [vText("Projector")]
+
+
+def test_single_values_exdate(calendars):
+    """EXDATE with one value is parsed."""
+    event = calendars.rfc_6321_multivalue_properties_xcal.subcomponents[1]
     assert [d.dt for d in event["EXDATE"].dts] == EXDATE_MULTIPLE[:1]
+
+
+def test_single_values_rdate(calendars):
+    """RDATE with one value is parsed."""
+    event = calendars.rfc_6321_multivalue_properties_xcal.subcomponents[1]
     assert [d.dt for d in event["RDATE"].dts] == [RDATE]
 
 
@@ -162,3 +177,66 @@ def test_exdate_and_rdate_use_date_time_value_elements(calendars):
     xcal_string = to_xcal_string(calendar)
     assert "<exdate><date-time>2026-11-02T09:00:00Z</date-time>" in xcal_string
     assert "<rdate><date-time>2026-12-01T09:00:00Z</date-time></rdate>" in xcal_string
+
+
+RESOURCES_MULTIPLE = [vText("Projector"), vText("Whiteboard")]
+
+
+def calendar_with_resources() -> Component:
+    """A calendar with one event with several RESOURCES values."""
+    from icalendar import Calendar, Event
+
+    calendar = Calendar.new()
+    event = Event()
+    event.add("RESOURCES", RESOURCES_MULTIPLE)
+    calendar.add_component(event)
+    return calendar
+
+
+def test_resources_serialize_to_ical():
+    """RESOURCES values survive an iCal serialization round-trip.
+
+    RFC 5545 allows RESOURCES to occur several times, and this is how
+    a list of values is serialized: one property occurrence per value.
+    """
+    calendar = calendar_with_resources()
+    ical = calendar.to_ical()
+    parsed = Component.from_ical(ical)
+    event = parsed.walk("VEVENT")[0]
+    assert resource_values(event["RESOURCES"]) == RESOURCES_MULTIPLE
+
+
+def test_resources_serialize_to_xcal():
+    """RESOURCES values survive an xCal serialization round-trip.
+
+    Each value is serialized into its own <resources> property element
+    with one <text> value element per value.
+    """
+    calendar = calendar_with_resources()
+    xcal_string = to_xcal_string(calendar)
+    parsed = Component.from_xcal(xcal_string.encode())[0]
+    event = parsed.walk("VEVENT")[0]
+    assert resource_values(event["RESOURCES"]) == RESOURCES_MULTIPLE
+    assert (
+        "<resources><text>Projector</text></resources>"
+        "<resources><text>Whiteboard</text></resources>" in xcal_string
+    )
+
+
+def test_resources_serialize_to_jcal():
+    """RESOURCES values survive a jCal serialization round-trip.
+
+    Each value is serialized as a separate jCal property array, see
+    RFC 7265 Section 3.6.1 on multi-valued properties.
+    """
+    calendar = calendar_with_resources()
+    jcal = calendar.to_jcal()
+    parsed = Component.from_jcal(jcal)
+    event = parsed.walk("VEVENT")[0]
+    assert resource_values(event["RESOURCES"]) == RESOURCES_MULTIPLE
+    # the event's properties contain one "resources" entry per value
+    event_jcal = [comp for comp in jcal[-1] if comp[0] == "vevent"][0]
+    resources_entries = [
+        prop for prop in event_jcal[1] if prop[0] == "resources"
+    ]
+    assert [entry[3] for entry in resources_entries] == ["Projector", "Whiteboard"]
