@@ -116,6 +116,42 @@ class vCalAddress(str):
             return self[7:]
         return str(self)
 
+    def has_email(self, email: str) -> bool:
+        """Whether an email matches the calendar address or its EMAIL parameter.
+
+        Comparison ignores case and an optional ``mailto:`` prefix on either
+        address. An EMAIL parameter does not replace the calendar address for
+        this comparison: either can match. This method does not validate email
+        syntax.
+
+        Parameters:
+            email: The address to compare, with or without ``mailto:``.
+
+        Returns:
+            Whether either stored address matches the given email.
+
+        Example:
+            .. code-block:: pycon
+
+                >>> from icalendar import vCalAddress
+                >>> attendee = vCalAddress("mailto:calendar@example.com")
+                >>> attendee.EMAIL = "contact@example.com"
+                >>> attendee.has_email("CALENDAR@example.com")
+                True
+                >>> attendee.has_email("mailto:contact@example.com")
+                True
+                >>> attendee.has_email("other@example.com")
+                False
+
+        .. versionadded:: 0.0.0
+        """
+        normalized = email.lower().removeprefix("mailto:")
+        return any(
+            address is not None
+            and address.lower().removeprefix("mailto:") == normalized
+            for address in (self.ical_value, self.EMAIL)
+        )
+
     from icalendar.param import (
         CN,
         CUTYPE,
