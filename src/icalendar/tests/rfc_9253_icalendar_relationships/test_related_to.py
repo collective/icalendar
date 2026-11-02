@@ -105,3 +105,20 @@ def test_strings_are_converted_to_the_default_value_type(related_to_component):
     assert related_to_component.related_to[0].params.value is None, (
         "We do not need to specify the default value."
     )
+
+
+def test_delete_related_to(related_to_component):
+    """Deleting related_to clears the property from the component."""
+    del related_to_component.related_to
+    related_to_component.related_to = ["https://example.com/rel"]
+    del related_to_component.related_to
+    assert related_to_component.related_to == []
+    assert "RELATED-TO" not in related_to_component
+
+
+def test_delete_related_to_with_none(related_to_component):
+    """Setting related_to to None clears the property from the component."""
+    related_to_component.related_to = ["https://example.com/rel"]
+    related_to_component.related_to = None
+    assert related_to_component.related_to == []
+    assert "RELATED-TO" not in related_to_component

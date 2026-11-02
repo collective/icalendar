@@ -1,0 +1,1 @@
+Added the ``uri`` property to :class:`~icalendar.prop.cal_address.vCalAddress`. It returns the ``mailto:`` link. Prepared with AI assistance (Claude); reviewed and tested locally. @DEVJHAWAR11
