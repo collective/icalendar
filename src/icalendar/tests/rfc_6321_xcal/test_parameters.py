@@ -276,6 +276,15 @@ def test_parameter_name_matching_property_uses_parameter_type():
     assert b"<priority><unknown>hello</unknown></priority>" in xcal
 
 
+def test_property_name_matching_parameter_uses_property_type():
+    """A property named after a parameter uses the property type."""
+    event = Event.from_ical("BEGIN:VEVENT\r\nTZID:hello\r\nEND:VEVENT\r\n")
+
+    xcal = event.to_xcal()
+
+    assert b"<tzid><text>hello</text></tzid>" in xcal
+
+
 @mark_parameters
 def test_parameters_from_xcal(name, value, xcal, message):
     """Parse Parameters from xcal."""

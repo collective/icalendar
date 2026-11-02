@@ -233,21 +233,11 @@ class TypesFactory(CaselessDict):
         }
     )
 
-    def for_name(self, name: str) -> type[VPROPERTY]:
-        """Returns the type class for a property or parameter name."""
-        name = name.upper()
-        return self[
-            self.types_map.get(
-                name,
-                self.parameter_types_map.get(name, "unknown"),
-            )
-        ]
-
     def for_property(self, name, value_param: str | None = None) -> type[VPROPERTY]:
-        """Returns the type class for a property or parameter.
+        """Returns the type class for a property.
 
         Parameters:
-            name: Property or parameter name
+            name: Property name.
             value_param: Optional ``VALUE`` parameter, for example,
                 "DATE", "DATE-TIME", or other string.
 
@@ -281,7 +271,7 @@ class TypesFactory(CaselessDict):
         if value_param and (value_param in self) and value_param != "IMAGE":
             return self[value_param]
 
-        return self.for_name(name)
+        return self[self.types_map.get(name, "unknown")]
 
     #: jCal value types defined by :rfc:`7265` that are used verbatim as the
     #: type field. Internal type keys outside of this set (for example
@@ -338,14 +328,14 @@ class TypesFactory(CaselessDict):
         """Encodes a named value from a primitive python type to an icalendar
         encoded string.
         """
-        type_class = self.for_name(name)
+        type_class = self.for_property(name)
         return type_class(value).to_ical()
 
     def from_ical(self, name, value):
         """Decodes a named property or parameter value from an icalendar
         encoded string to a primitive python type.
         """
-        type_class = self.for_name(name)
+        type_class = self.for_property(name)
         return type_class.from_ical(value)
 
 
