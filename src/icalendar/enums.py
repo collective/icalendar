@@ -117,7 +117,7 @@ class PARTSTAT(StrEnum):
 
 
 class STATUS(StrEnum):
-    """Enum for STATUS from :rfc:`5545`.
+    """Enum for STATUS from :rfc:`5545`, extended by :rfc:`10051#section-11.2`.
 
     Values for :class:`icalendar.cal.event.Event`:
         ``CONFIRMED``,
@@ -128,7 +128,9 @@ class STATUS(StrEnum):
         ``NEEDS_ACTION``,
         ``COMPLETED``,
         ``IN_PROCESS``,
-        ``CANCELLED``
+        ``CANCELLED``,
+        ``PENDING``,
+        ``FAILED``
 
     Values for :class:`icalendar.cal.journal.Journal`:
         ``DRAFT``,
@@ -146,6 +148,10 @@ class STATUS(StrEnum):
         cancelled.  In a "VJOURNAL" calendar component, the "Organizer"
         can indicate that a journal entry is draft, final, or has been
         cancelled or removed.
+
+        :rfc:`10051#section-11.2` adds two task statuses: ``PENDING`` for a
+        task that has been accepted but has not started, and ``FAILED`` for
+        a task that has failed.
     """
 
     # Event
@@ -157,6 +163,8 @@ class STATUS(StrEnum):
     NEEDS_ACTION = "NEEDS-ACTION"
     COMPLETED = "COMPLETED"
     IN_PROCESS = "IN-PROCESS"
+    PENDING = "PENDING"
+    FAILED = "FAILED"
     # CANCELLED
 
     # Journal

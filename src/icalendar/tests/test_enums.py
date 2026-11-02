@@ -113,3 +113,16 @@ def test_constructor_still_raises_for_invalid_value():
     """Calling the enum directly still raises ValueError for an unknown value."""
     with pytest.raises(ValueError):
         enums.PARTSTAT("no-value")
+
+
+@pytest.mark.parametrize("value", ["PENDING", "FAILED"])
+def test_rfc_10051_todo_status(value):
+    """RFC 10051 task statuses can be set and read back from iCalendar."""
+    status = enums.STATUS(value)
+    assert getattr(enums.STATUS, value) is status
+
+    todo = icalendar.Todo()
+    todo.status = status
+    serialized = todo.to_ical()
+    assert f"STATUS:{value}\r\n".encode() in serialized
+    assert icalendar.Todo.from_ical(serialized).status is status
