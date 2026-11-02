@@ -229,3 +229,18 @@ def test_uid_is_present_but_not_in_the_uid_property(calendars):
     """
     components = calendars.issue_1050_all_components.with_uid("alarm")
     assert len(components) == 0
+
+
+def test_nested_component_with_the_same_name(calendars):
+    """A nested component with the same name does not end the outer one early."""
+    calendar = calendars.pr_2006_nested_components_with_the_same_name
+    assert [component.name for component in calendar.walk()] == [
+        "VCALENDAR",
+        "X-WRAPPER",
+        "X-WRAPPER",
+        "VEVENT",
+    ]
+    outer = calendar.subcomponents[0]
+    assert outer["X-OUTER"] == "2"
+    assert outer.subcomponents[0]["X-INNER"] == "1"
+    assert calendar.events[0].uid == "after-the-wrapper"

@@ -42,6 +42,7 @@ if TYPE_CHECKING:
 
 
 DEFAULT_PRODID = f"-//collective//icalendar//{__version__}//EN"
+"""The value for :attr:`~icalendar.cal.calendar.Calendar.prodid` when it's not provided."""
 
 
 class Calendar(Component):
@@ -58,6 +59,17 @@ class Calendar(Component):
             >>> calendar = Calendar.new(name="My Calendar")
             >>> print(calendar.calendar_name)
             My Calendar
+
+        Get the example Calendar:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Calendar
+            >>> calendar = Calendar.example()
+            >>> print(calendar.calendar_name)
+            Holidays
+            >>> len(calendar.events)
+            3
 
     """
 
@@ -218,7 +230,7 @@ class Calendar(Component):
 
     @property
     def availabilities(self) -> list[Availability]:
-        """All :class:`Availability` components in the calendar.
+        """All :class:`~icalendar.cal.availability.Availability` components in the calendar.
 
         This is a shortcut to get all availabilities.
         Modifications do not change the calendar.
