@@ -1,4 +1,5 @@
 """Factory class for all the property types."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, ClassVar
@@ -232,9 +233,7 @@ class TypesFactory(CaselessDict):
         }
     )
 
-    def for_property(
-        self, name, value_param: str | None = None
-    ) -> type[VPROPERTY]:
+    def for_property(self, name, value_param: str | None = None) -> type[VPROPERTY]:
         """Returns the type class for a property.
 
         Parameters:
