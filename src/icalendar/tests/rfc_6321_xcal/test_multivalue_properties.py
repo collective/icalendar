@@ -236,7 +236,5 @@ def test_resources_serialize_to_jcal():
     assert resource_values(event["RESOURCES"]) == RESOURCES_MULTIPLE
     # the event's properties contain one "resources" entry per value
     event_jcal = [comp for comp in jcal[-1] if comp[0] == "vevent"][0]
-    resources_entries = [
-        prop for prop in event_jcal[1] if prop[0] == "resources"
-    ]
+    resources_entries = [prop for prop in event_jcal[1] if prop[0] == "resources"]
     assert [entry[3] for entry in resources_entries] == ["Projector", "Whiteboard"]
