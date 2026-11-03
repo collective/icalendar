@@ -6,6 +6,9 @@ Run with:
 
 """
 
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
 import pytest
 from generate_matrix import generate_matrix
 
@@ -129,6 +132,7 @@ def test_all_cases_are_always_included(running_names, skipped_names, matrix):
         "python_version",
         "skip",
         "test_command",
+        "tz",
     ],
 )
 def test_parameters_are_present(matrix, attribute):
@@ -154,3 +158,24 @@ def test_pypy_only_runs_on_push_to_main(event_name, git_ref, expected_skip):
     matrix = generate_matrix(git_ref, "", event_name)
     pypy = next(case for case in matrix["include"] if case["test_name"] == "pypy3")
     assert pypy["skip"] is expected_skip
+
+
+def test_time_zones_exist(matrix):
+    """Each job runs in a time zone that exists."""
+    for case in matrix["include"]:
+        ZoneInfo(case["tz"])
+
+
+def test_minimal_jobs_run_west_and_east_of_utc():
+    """A pull request runs the tests west and east of UTC.
+
+    See https://github.com/collective/icalendar/issues/468
+    """
+    matrix = generate_matrix("refs/heads/pr-branch", "", "pull_request")
+    now = datetime(2026, 1, 1, 12)  # noqa: DTZ001
+    offsets = {
+        ZoneInfo(case["tz"]).utcoffset(now)
+        for case in matrix["include"]
+        if not case["skip"]
+    }
+    assert min(offsets) < timedelta(0) < max(offsets)

@@ -65,6 +65,8 @@ jobs:
         uv tree
     - name: Test
       if: ${{ !matrix.skip }}
+      env:
+        TZ: ${{ matrix.tz }}
       run: ${{ matrix.test_command }}
     - name: Coveralls Parallel
       if: ${{ !matrix.skip }}

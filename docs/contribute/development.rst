@@ -119,6 +119,13 @@ The following command shows how to run tests in Python 3.14.
 
     make test TOX_ENV=py314
 
+The tests run in the local time zone of your computer.
+To run them in another time zone, set the ``TZ`` environment variable, as in the following example.
+
+..  code-block:: shell
+
+    TZ=Asia/Tokyo make test TOX_ENV=py314
+
 .. seealso::
 
     tox's `CLI interface documentation <https://tox.wiki/en/stable/reference/cli.html>`_.

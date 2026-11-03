@@ -33,6 +33,12 @@ PYTHON_MINOR_VERSION_MAX = 14
 
 COMMAND_TEST = "uv run tox -e py"
 
+# Time zones to run the tests in, see https://github.com/collective/icalendar/issues/468
+TZ_WEST = "America/Argentina/Buenos_Aires"  # UTC-3
+TZ_EUROPE = "Europe/Berlin"  # UTC+1
+TZ_EAST = "Asia/Tokyo"  # UTC+9
+TZ_DEFAULT = "UTC"
+
 
 def generate_matrix(git_ref, review, event_name=""):
     """Generate a matrix of test runs.
@@ -92,10 +98,12 @@ def generate_matrix(git_ref, review, event_name=""):
     # minimal set of jobs
     #
     # RULE: always test the lowest allowed version
+    # RULE: the minimal set of jobs runs west and east of UTC
     matrix.append(
         {
             "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}",
             "skip": run_no_jobs,
+            "tz": TZ_WEST,
         }
     )
     # RULE: use lowest allowed version for nopytz
@@ -105,6 +113,7 @@ def generate_matrix(git_ref, review, event_name=""):
             "test_name": f"3.{PYTHON_MINOR_VERSION_MIN} (nopytz)",
             "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}",
             "skip": run_no_jobs,
+            "tz": TZ_EUROPE,
         }
     )
     # RULE: always test the latest version
@@ -112,6 +121,7 @@ def generate_matrix(git_ref, review, event_name=""):
         {
             "python_version": f"3.{PYTHON_MINOR_VERSION_MAX}",
             "skip": run_no_jobs,
+            "tz": TZ_EAST,
         }
     )
 
@@ -150,6 +160,7 @@ def generate_matrix(git_ref, review, event_name=""):
     for run in matrix:
         run.setdefault("test_name", run["python_version"])
         run.setdefault("test_command", COMMAND_TEST)
+        run.setdefault("tz", TZ_DEFAULT)
 
     include = list(matrix)
     skipped = [run["test_name"] for run in matrix if run["skip"]]
