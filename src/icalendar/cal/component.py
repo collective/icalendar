@@ -44,7 +44,7 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Callable
 
     from icalendar.compatibility import Self
 
@@ -220,10 +220,7 @@ class Component(CaselessDict):
         component_factory = cls._get_component_factory()
         existing = component_factory.get(component_class.name)
         if existing is not None and existing is not component_class:
-            raise ValueError(
-                f"Component '{component_class.name}' is already registered"
-                f" as {existing}"
-            )
+            raise ValueError(f"Component '{component_class.name}' is already registered" f" as {existing}")
 
         component_factory.add_component_class(component_class)
 
@@ -272,11 +269,11 @@ class Component(CaselessDict):
         """Returns True, CaselessDict would return False if it had no items."""
         return True
 
-    def __getitem__(self, key) -> VPROPERTY:
+    def __getitem__(self, key: str) -> VPROPERTY:
         """Get property value from the component dictionary."""
         return super().__getitem__(key)
 
-    def get(self, key, default=None) -> Any:
+    def get(self, key: str, default: Any = None) -> Any:
         """Get property value with default."""
         try:
             return self[key]
@@ -349,7 +346,7 @@ class Component(CaselessDict):
         self,
         name: str,
         value,
-        parameters: dict[str, str] | Parameters = None,
+        parameters: dict[str, str] | Parameters | None = None,
         encode: bool = True,
     ) -> None:
         """Add a property to this component.
@@ -394,11 +391,7 @@ class Component(CaselessDict):
             value = tzp.localize_utc(value)
 
         # encode value
-        if (
-            encode
-            and isinstance(value, list)
-            and name.lower() not in ["rdate", "exdate", "categories"]
-        ):
+        if encode and isinstance(value, list) and name.lower() not in ["rdate", "exdate", "categories"]:
             # Individually convert each value to an ical type except rdate and
             # exdate, where lists of dates might be passed to vDDDLists.
             value = [self._encode(name, v, parameters, encode) for v in value]
@@ -465,7 +458,7 @@ class Component(CaselessDict):
             return [self._decode(name, val) for val in vals]
         return vals
 
-    def set_inline(self, name, values, encode=1):
+    def set_inline(self, name: str, values: list, encode: int = 1) -> None:
         """Converts a list of values into comma separated string and sets value
         to that.
         """
@@ -480,9 +473,7 @@ class Component(CaselessDict):
         """Add a subcomponent to this component."""
         self.subcomponents.append(component)
 
-    def _walk(
-        self, name: str | None, select: callable[[Component], bool]
-    ) -> list[Component]:
+    def _walk(self, name: str | None, select: Callable[[Component], bool]) -> list[Component]:
         """Walk to given component."""
         result = []
         stack = [self]
@@ -496,7 +487,7 @@ class Component(CaselessDict):
     def walk(
         self,
         name: str | None = None,
-        select: callable[[Component], bool] = lambda _: True,
+        select: Callable[[Component], bool] = lambda _: True,
     ) -> list[Component]:
         """Recursively traverses component and subcomponents. Returns sequence
         of same. If name is passed, only components with name will be returned.
@@ -522,7 +513,7 @@ class Component(CaselessDict):
         """
         return self.walk(select=lambda c: c.uid == uid)
 
-    def _validate_name(self):
+    def _validate_name(self) -> None:
         """Make sure the component has a name.
 
         Raises:
@@ -580,15 +571,11 @@ class Component(CaselessDict):
 
     @overload
     @classmethod
-    def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[False] = False
-    ) -> Component: ...
+    def from_ical(cls, st: str | bytes | Path, multiple: Literal[False] = False) -> Component: ...
 
     @overload
     @classmethod
-    def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[True]
-    ) -> list[Component]: ...
+    def from_ical(cls, st: str | bytes | Path, multiple: Literal[True]) -> list[Component]: ...
 
     @classmethod
     def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
@@ -596,9 +583,7 @@ class Component(CaselessDict):
         return ComponentIcalParser(st, cls._get_component_factory(), cls.types_factory)
 
     @classmethod
-    def from_ical(
-        cls, st: str | bytes | Path, multiple: bool = False
-    ) -> Component | list[Component]:
+    def from_ical(cls, st: str | bytes | Path, multiple: bool = False) -> Component | list[Component]:
         """Parse iCalendar data into component instances.
 
         Handles standard and custom components (``X-*``, IANA-registered).
@@ -621,17 +606,9 @@ class Component(CaselessDict):
         if multiple:
             return components
         if len(components) > 1:
-            raise ValueError(
-                cls._format_error(
-                    "Found multiple components where only one is allowed", st
-                )
-            )
+            raise ValueError(cls._format_error("Found multiple components where only one is allowed", st))
         if len(components) < 1:
-            raise ValueError(
-                cls._format_error(
-                    "Found no components where exactly one is required", st
-                )
-            )
+            raise ValueError(cls._format_error("Found no components where exactly one is required", st))
         return components[0]
 
     @staticmethod
@@ -643,12 +620,12 @@ class Component(CaselessDict):
             return f"{error_description}: {bad_input[:truncate_to]} {elipsis}"
         return f"{error_description}: {bad_input}"
 
-    def content_line(self, name, value, sorted: bool = True):
+    def content_line(self, name, value, sorted: bool = True) -> Contentline:
         """Returns property as content line."""
         params = getattr(value, "params", Parameters())
         return Contentline.from_parts(name, params, value, sorted=sorted)
 
-    def content_lines(self, sorted: bool = True):
+    def content_lines(self, sorted: bool = True) -> Contentlines:
         """Converts the Component and subcomponents into content lines."""
         contentlines = Contentlines()
         for name, value in self.property_items(sorted=sorted):
@@ -852,7 +829,7 @@ class Component(CaselessDict):
         self.LAST_MODIFIED = value
 
     @last_modified.deleter
-    def last_modified(self):
+    def last_modified(self) -> None:
         del self.LAST_MODIFIED
 
     @property
@@ -869,7 +846,7 @@ class Component(CaselessDict):
         self.CREATED = value
 
     @created.deleter
-    def created(self):
+    def created(self) -> None:
         del self.CREATED
 
     def is_thunderbird(self) -> bool:
@@ -919,7 +896,7 @@ class Component(CaselessDict):
     _validate_new = True
 
     @staticmethod
-    def _validate_start_and_end(start, end):
+    def _validate_start_and_end(start, end) -> None:
         """This validates start and end.
 
         Raises:
@@ -972,11 +949,7 @@ class Component(CaselessDict):
         component.concepts = concepts
         component.refids = refids
         if subcomponents is not None:
-            component.subcomponents = (
-                subcomponents
-                if isinstance(subcomponents, list)
-                else list(subcomponents)
-            )
+            component.subcomponents = subcomponents if isinstance(subcomponents, list) else list(subcomponents)
         return component
 
     def to_jcal(self) -> list:
@@ -1115,9 +1088,7 @@ class Component(CaselessDict):
                 # implementation. This also preserves the error value and
                 # traceback, like the nested context managers did before.
                 with JCalParsingError.reraise_with_path_added(*child_prefix):
-                    child, child_subcomponents = _node_from_jcal(
-                        subcomponent, type(parent)
-                    )
+                    child, child_subcomponents = _node_from_jcal(subcomponent, type(parent))
                 parent.subcomponents.append(child)
                 stack.append((child, child_subcomponents, child_prefix))
         return root
@@ -1194,9 +1165,7 @@ class Component(CaselessDict):
     ) -> None: ...
 
     @overload
-    def to_xcal(
-        self, destination: Element | IO[bytes], *, indent: int | str | None = None
-    ) -> None: ...
+    def to_xcal(self, destination: Element | IO[bytes], *, indent: int | str | None = None) -> None: ...
 
     @overload
     def to_xcal(self, *, indent: int | str | None = None) -> bytes: ...
@@ -1257,17 +1226,14 @@ class Component(CaselessDict):
             stream = Element("icalendar", xmlns="urn:ietf:params:xml:ns:icalendar-2.0")
             if destination is not None and not hasattr(destination, "write"):
                 raise TypeError(
-                    "Expected an XML Element or a file-like "
-                    f"object for destination, got {destination!r}"
+                    "Expected an XML Element or a file-like " f"object for destination, got {destination!r}"
                 )
         self.to_xcal_element(stream)
         if indent is not None:
             if isinstance(indent, int):
                 indent = " " * indent
             elif not isinstance(indent, str):
-                raise TypeError(
-                    f"Expected an integer or string for indent, got {type(indent)}"
-                )
+                raise TypeError(f"Expected an integer or string for indent, got {type(indent)}")
         if input_is_element:
             return None
         return_bytes = destination is None
@@ -1350,12 +1316,8 @@ class Component(CaselessDict):
         elif isinstance(xcal, Element):
             element = xcal
         else:
-            raise TypeError(
-                f"Expected an XML Element, bytes, Path, or file object. Got {xcal}"
-            )
-        parser = XCalComponentParser(
-            element, cls._get_component_factory(), cls.types_factory
-        )
+            raise TypeError(f"Expected an XML Element, bytes, Path, or file object. Got {xcal}")
+        parser = XCalComponentParser(element, cls._get_component_factory(), cls.types_factory)
         components = []
         while not parser.is_finished():
             component = parser.parse_component()
@@ -1385,14 +1347,10 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
             is relative to this node; callers prepend the nesting path.
     """
     if not isinstance(jcal, list) or len(jcal) != 3:
-        raise JCalParsingError(
-            "A component must be a list with 3 items.", starting_cls, value=jcal
-        )
+        raise JCalParsingError("A component must be a list with 3 items.", starting_cls, value=jcal)
     name, properties, subcomponents = jcal
     if not isinstance(name, str):
-        raise JCalParsingError(
-            "The name must be a string.", starting_cls, path=[0], value=name
-        )
+        raise JCalParsingError("The name must be a string.", starting_cls, path=[0], value=name)
     JCalParsingError.validate_jcal_token(name, "component name", starting_cls, [0])
     if name.upper() != starting_cls.name:
         # delegate to correct component class
@@ -1411,9 +1369,7 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
         JCalParsingError.validate_property(prop, component_cls, path=[1, i])
         prop_name = prop[0]
         prop_value = prop[2]
-        prop_cls: type[VPROPERTY] = component_cls.types_factory.for_property(
-            prop_name, prop_value
-        )
+        prop_cls: type[VPROPERTY] = component_cls.types_factory.for_property(prop_name, prop_value)
         with JCalParsingError.reraise_with_path_added(1, i):
             v_prop = prop_cls.from_jcal(prop)
         # jCal encodes the value type in the type field (``prop[2]``)
