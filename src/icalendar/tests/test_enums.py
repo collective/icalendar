@@ -126,3 +126,20 @@ def test_rfc_10051_todo_status(value):
     serialized = todo.to_ical()
     assert f"STATUS:{value}\r\n".encode() in serialized
     assert icalendar.Todo.from_ical(serialized).status is status
+
+
+def test_rfc_10051_todo_participant_status():
+    """RFC 10051 participants can report a failed task after a round trip."""
+    status = enums.PARTSTAT("FAILED")
+    assert status is enums.PARTSTAT.FAILED
+    assert enums.PARTSTAT.get("failed") is status
+
+    attendee = icalendar.vCalAddress("mailto:person@example.com")
+    attendee.PARTSTAT = status
+    todo = icalendar.Todo()
+    todo.add("attendee", attendee)
+
+    serialized = todo.to_ical()
+    assert b"ATTENDEE;PARTSTAT=FAILED:mailto:person@example.com\r\n" in serialized
+    parsed = icalendar.Todo.from_ical(serialized)
+    assert parsed["ATTENDEE"].PARTSTAT is status

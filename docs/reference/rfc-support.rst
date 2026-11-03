@@ -30,6 +30,16 @@ icalendar supports the following RFC standards.
 :rfc:`9253`
     Support for iCalendar Relationships
 
+Partially supported RFCs
+------------------------
+
+:rfc:`10051`
+    Support for iCalendar Tasks: :class:`~icalendar.enums.STATUS` includes
+    ``PENDING`` and ``FAILED`` from :rfc:`10051#section-11.2`, and
+    :class:`~icalendar.enums.PARTSTAT` includes ``FAILED`` from
+    :rfc:`10051#section-9.1`. Other extensions from this RFC are not
+    covered by this support claim.
+
 Unsupported RFCs
 ----------------
 

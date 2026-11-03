@@ -1493,6 +1493,10 @@ Description:
     cancelled.  In a "VJOURNAL" calendar component, the "Organizer"
     can indicate that a journal entry is draft, final, or has been
     cancelled or removed.
+
+    :rfc:`10051#section-11.2` adds ``PENDING`` for a task that has been
+    created and accepted but has not yet started, and ``FAILED`` for
+    a task that has failed.
 """,
 )
 

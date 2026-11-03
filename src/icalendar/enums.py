@@ -79,7 +79,7 @@ class StrEnum(str, Enum):
 
 
 class PARTSTAT(StrEnum):
-    """Enum for PARTSTAT from :rfc:`5545`.
+    """Enum for PARTSTAT from :rfc:`5545`, extended by :rfc:`10051#section-9.1`.
 
     Values:
         ``NEEDS_ACTION``,
@@ -88,7 +88,8 @@ class PARTSTAT(StrEnum):
         ``TENTATIVE``,
         ``DELEGATED``,
         ``COMPLETED``,
-        ``IN_PROCESS``
+        ``IN_PROCESS``,
+        ``FAILED``
 
     Purpose:
         To specify the participation status for the calendar user
@@ -105,6 +106,9 @@ class PARTSTAT(StrEnum):
         allows this parameter, the default value is NEEDS-ACTION.
         Applications MUST treat x-name and iana-token values they don't
         recognize the same way as they would the NEEDS-ACTION value.
+
+        :rfc:`10051#section-9.1` adds ``FAILED`` for a participant who
+        cannot complete a task in a "VTODO" calendar component.
     """
 
     NEEDS_ACTION = "NEEDS-ACTION"
@@ -114,6 +118,7 @@ class PARTSTAT(StrEnum):
     DELEGATED = "DELEGATED"
     COMPLETED = "COMPLETED"
     IN_PROCESS = "IN-PROCESS"
+    FAILED = "FAILED"
 
 
 class STATUS(StrEnum):
