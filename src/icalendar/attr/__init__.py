@@ -7,7 +7,7 @@ from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, TypeAlias
 
-from icalendar.attr.property_list import PropertyListView
+from icalendar.attr.property_list import PropertyListView, PropertyListViewProperty
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
@@ -1187,7 +1187,8 @@ Examples:
 """,  # noqa: E501
 )
 
-comments_property = multi_text_property(
+
+comments_property = PropertyListViewProperty.for_text(
     "COMMENT",
     """Specifies a comment to the calendar user.
 
@@ -2851,6 +2852,7 @@ __all__ = [
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
     "PropertyListView",
+    "PropertyListViewProperty",
     "REQUEST_STATUS_property",
     "RESOURCES_property",
     "XML_property",
