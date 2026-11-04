@@ -13,19 +13,11 @@ You are invited to read it to help you decide whether you would enjoy being a pa
 Examples of how to contribute
 -----------------------------
 
--   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
--   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
--   Comment on and resolve issues.
--   Triage open issues and `pull requests <https://github.com/collective/icalendar/pulls>`_.
--   Review, comment on, and make suggestions to change a pull request.
-    See the GitHub documentation `Reviewing proposed changes in a pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request>`_.
--   Submit pull requests from your fork of the icalendar repository.
--   Extend the :doc:`documentation/index`.
--   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
--   Join a live chat with icalendar team members in the `icalendar room <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or its parent organization in the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_.
--   Write a blog post about icalendar.
--   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
--   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
+-   **Code contributions**: report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_, report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_, comment on and resolve issues, submit pull requests from your fork of the icalendar repository, extend the :doc:`documentation/index`.
+-   **Triage & review**: triage open issues and `pull requests <https://github.com/collective/icalendar/pulls>`_, review, comment on, and make suggestions to change a pull request (see `Reviewing proposed changes in a pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request>`_), create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
+-   **Documentation & communication**: join the `icalendar Matrix room <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or the `PyCal space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_, follow and boost `PyCal on Mastodon <https://fosstodon.org/@pycal>`_.
+-   **Financial support**: sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
+-   **Other ways**: write a blog post about icalendar, share announcements on social media, star the repository on GitHub to help others find it.
 
 
 .. _first-time-contributors:
