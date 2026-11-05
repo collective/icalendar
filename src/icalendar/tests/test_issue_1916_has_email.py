@@ -34,6 +34,21 @@ def test_has_email_checks_both_addresses_when_email_parameter_is_set():
     assert address.has_email("contact@example.com")
 
 
+@pytest.mark.parametrize("stored", ["straße@example.com", "STRASSE@example.com"])
+@pytest.mark.parametrize("query", ["straße@example.com", "STRASSE@example.com"])
+@pytest.mark.parametrize("use_parameter", [False, True])
+def test_has_email_matches_unicode_case_variants(stored, query, use_parameter):
+    """Case-insensitive matching handles Unicode in both address sources."""
+    if use_parameter:
+        address = vCalAddress("urn:uuid:calendar-user")
+        address.EMAIL = stored
+    else:
+        address = vCalAddress("mailto:" + stored)
+
+    assert address.has_email("MAILTO:" + query)
+    assert not address.has_email("other@example.com")
+
+
 def test_has_email_uses_current_parameter():
     """Changing or deleting EMAIL updates which contact address matches."""
     address = vCalAddress("mailto:calendar@example.com")
