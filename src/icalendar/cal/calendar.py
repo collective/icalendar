@@ -18,7 +18,7 @@ from icalendar.attr import (
     uid_property,
     url_property,
 )
-from icalendar.cal.component import Component, _SerializedInput
+from icalendar.cal.component import SERIALIZED_INPUT, Component
 from icalendar.cal.examples import get_example
 from icalendar.cal.timezone import Timezone
 from icalendar.error import IncompleteComponent
@@ -162,18 +162,18 @@ class Calendar(Component):
     @overload
     @classmethod
     def from_ical(
-        cls, st: _SerializedInput, multiple: Literal[False] = False
+        cls, st: SERIALIZED_INPUT, multiple: Literal[False] = False
     ) -> Calendar: ...
 
     @overload
     @classmethod
     def from_ical(
-        cls, st: _SerializedInput, multiple: Literal[True]
+        cls, st: SERIALIZED_INPUT, multiple: Literal[True]
     ) -> list[Calendar]: ...
 
     @classmethod
     def from_ical(
-        cls, st: _SerializedInput, multiple: bool = False
+        cls, st: SERIALIZED_INPUT, multiple: bool = False
     ) -> Calendar | list[Calendar]:
         """Parse iCalendar data into calendar instances.
 

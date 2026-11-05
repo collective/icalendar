@@ -50,7 +50,8 @@ if TYPE_CHECKING:
 
 _marker = []
 
-_SerializedInput = str | bytes | Path | IO[str] | IO[bytes]
+SERIALIZED_INPUT = str | bytes | Path | IO[str] | IO[bytes]
+"""Serialized calendar data, a path to it, or an open text or binary stream."""
 
 
 @dataclass
@@ -583,13 +584,13 @@ class Component(CaselessDict):
     @overload
     @classmethod
     def from_ical(
-        cls, st: _SerializedInput, multiple: Literal[False] = False
+        cls, st: SERIALIZED_INPUT, multiple: Literal[False] = False
     ) -> Component: ...
 
     @overload
     @classmethod
     def from_ical(
-        cls, st: _SerializedInput, multiple: Literal[True]
+        cls, st: SERIALIZED_INPUT, multiple: Literal[True]
     ) -> list[Component]: ...
 
     @classmethod
@@ -599,7 +600,7 @@ class Component(CaselessDict):
 
     @classmethod
     def from_ical(
-        cls, st: _SerializedInput, multiple: bool = False
+        cls, st: SERIALIZED_INPUT, multiple: bool = False
     ) -> Component | list[Component]:
         """Parse iCalendar data into component instances.
 
@@ -1058,7 +1059,7 @@ class Component(CaselessDict):
         )
 
     @classmethod
-    def from_jcal(cls, jcal: _SerializedInput | list) -> Component:
+    def from_jcal(cls, jcal: SERIALIZED_INPUT | list) -> Component:
         """Create a component from a jCal list.
 
         Parameters:
@@ -1313,7 +1314,7 @@ class Component(CaselessDict):
                 subcomponent.to_xcal(e_components)
 
     @classmethod
-    def from_xcal(cls, xcal: Element | _SerializedInput) -> list[Self]:
+    def from_xcal(cls, xcal: Element | SERIALIZED_INPUT) -> list[Self]:
         """Parse xCal according to :rfc:`6321`.
 
         Parameters:
@@ -1461,4 +1462,4 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
     return component, subcomponents
 
 
-__all__ = ["Component"]
+__all__ = ["SERIALIZED_INPUT", "Component"]
