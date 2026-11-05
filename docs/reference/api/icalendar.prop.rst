@@ -32,10 +32,12 @@ Submodules
    icalendar.prop.integer
    icalendar.prop.n
    icalendar.prop.org
+   icalendar.prop.request_status
    icalendar.prop.text
    icalendar.prop.uid
    icalendar.prop.unknown
    icalendar.prop.uri
+   icalendar.prop.xml
    icalendar.prop.xml_reference
 
 Module contents

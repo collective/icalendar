@@ -224,8 +224,23 @@ INVALID_VALUE = [
         "asd",
         "Expected OMIT|BACKWARD|FORWARD https://datatracker.ietf.org/doc/html/rfc7529#section-4.1, got 'asd' in /recur/skip[1].",
     ),
-    # RSCALE
-    # For RSCALE, we use text, so there is no issue.
+    # RSCALE and unknown parts are text, which cannot contain separators
+    # because RECUR has no escaping.
+    (
+        "rscale",
+        "GREGORIAN;FREQ=SECONDLY",
+        "Expected a value without a semicolon or comma, got 'GREGORIAN;FREQ=SECONDLY' in /recur/rscale[1].",
+    ),
+    (
+        "x-foo",
+        "a;COUNT=100000",
+        "Expected a value without a semicolon or comma, got 'a;COUNT=100000' in /recur/x-foo[1].",
+    ),
+    (
+        "x-foo",
+        "a,b",
+        "Expected a value without a semicolon or comma, got 'a,b' in /recur/x-foo[1].",
+    ),
 ]
 
 POSITIVE_INTS = [

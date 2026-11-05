@@ -100,7 +100,7 @@ def test_invalid_component_type(list_expected):
         JCalParsingError,
         match=r"\[2\]\[0\] in Calendar: A component must be a list with 3 items\.",
     ):
-        Component.from_jcal(["VCALENDAR", [], [list_expected]])
+        Component.from_jcal(["vcalendar", [], [list_expected]])
 
 
 def test_invalid_component_name(str_expected):
@@ -467,6 +467,59 @@ def test_skip():
         vSkip.parse_jcal_value("INVALID")
 
 
+@pytest.mark.parametrize("key", ["rscale", "x-foo"])
+@pytest.mark.parametrize("value", ["a;COUNT=100000", "GREGORIAN;FREQ=SECONDLY", "a,b"])
+@pytest.mark.parametrize("as_list", [False, True])
+def test_recur_text_part_must_not_contain_separator(key, value, as_list):
+    """A text value of an RRULE part cannot contain ``;`` or ``,``.
+
+    RECUR has no escaping, so the value would add rule parts or list
+    values once the rule is serialized to iCalendar and parsed again.
+    """
+    index = r"\[0\]" if as_list else ""
+    with pytest.raises(
+        JCalParsingError,
+        match=rf'\[3\]\["{key}"\]{index} in vRecur: '
+        r"The value must not contain a semicolon or comma\.",
+    ):
+        vRecur.from_jcal(
+            [
+                "rrule",
+                {},
+                "recur",
+                {"freq": "daily", key: [value] if as_list else value},
+            ]
+        )
+
+
+def test_recur_text_part_cannot_change_the_rule():
+    """An injected COUNT or FREQ does not survive a jCal to iCalendar conversion."""
+    jcal = [
+        "vcalendar",
+        [],
+        [
+            [
+                "vevent",
+                [
+                    [
+                        "rrule",
+                        {},
+                        "recur",
+                        {
+                            "freq": "daily",
+                            "count": 2,
+                            "x-a": "x;COUNT=100000;FREQ=SECONDLY",
+                        },
+                    ]
+                ],
+                [],
+            ]
+        ],
+    ]
+    with pytest.raises(JCalParsingError):
+        Calendar.from_jcal(jcal)
+
+
 INVALID_NAME_TOKENS = ["x-foo:INJECT", "x-foo\rRRULE", "a;b", "a=b", "a,b", "a b", ""]
 
 
@@ -504,8 +557,34 @@ def test_invalid_recur_part_name_token(key):
         vRecur.from_jcal(["rrule", {}, "recur", {key: "DAILY"}])
 
 
+@pytest.mark.parametrize("name", INVALID_NAME_TOKENS)
+def test_invalid_component_name_token(name):
+    """A jCal component name that is not a valid token is rejected.
+
+    Otherwise the name is written into the ``BEGIN`` and ``END``
+    content lines and used as the XML element name in xCal, so a ``:``, ``;``,
+    or ``<`` injects structure on serialization.
+    """
+    with pytest.raises(
+        JCalParsingError,
+        match=r"\[2\]\[0\]\[0\] in Calendar: "
+        r"The component name must be a valid iCalendar token",
+    ):
+        Component.from_jcal(["vcalendar", [], [[name, [], []]]])
+
+
 # valid tokens that are not lowercase (RFC 7265 sections 3.4, 3.5 and 3.6.10)
 UPPER_CASE_NAMES = ["SUMMARY", "Summary", "X-Foo", "x-Foo"]
+
+
+@pytest.mark.parametrize("name", UPPER_CASE_NAMES)
+def test_component_name_must_be_lowercase(name):
+    """A jCal component name must be lowercase (RFC 7265 section 3.3)."""
+    with pytest.raises(
+        JCalParsingError,
+        match=r"The component name must be lowercase\.",
+    ):
+        Component.from_jcal([name, [], []])
 
 
 @pytest.mark.parametrize("name", UPPER_CASE_NAMES)

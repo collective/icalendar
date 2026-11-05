@@ -1,5 +1,9 @@
+# Remove dunder methods after converting to MyST, and make them inline literals in links in contribute/style.rst
+__init__
+__new__
 Args
 backported
+contentline
 (?i)datetime
 defusedxml
 dicts
@@ -18,6 +22,8 @@ Nicco
 Params
 Penner
 (?i)Plone
+Python
+python\-icalendar
 Repology
 recur.recur
 reformats
@@ -31,6 +37,7 @@ src
 (?i)subpackages?
 subtyping
 towncrier
+tox's
 (?i)Traceback
 (?i)unescaped
 uv

@@ -3,6 +3,7 @@
 import base64
 import binascii
 from typing import ClassVar
+from urllib.parse import quote
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
@@ -80,6 +81,22 @@ class vBinary:
         """
         self.bytes = self.from_ical(value)
 
+    @property
+    def uri(self) -> str:
+        """Return this value as an RFC 2397 base64 data URI.
+
+        The media type comes from the current ``FMTTYPE`` parameter, or
+        defaults to ``application/octet-stream`` when it is not set. See
+        :rfc:`2397` for the data URI scheme.
+
+        Examples:
+            >>> from icalendar import vBinary
+            >>> vBinary(b"hello", params={"FMTTYPE": "text/plain"}).uri
+            'data:text/plain;base64,aGVsbG8='
+        """
+        media_type = self.params.get("FMTTYPE") or "application/octet-stream"
+        return f"data:{quote(media_type, safe='/;=')};base64,{self.base64data}"
+
     def __eq__(self, other: object) -> bool:
         """self == other"""
         return isinstance(other, vBinary) and self.bytes == other.bytes
@@ -124,7 +141,7 @@ class vBinary:
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)

@@ -1,4 +1,4 @@
-"""BYWEEKDAY, BYDAY, and WKST value type of RECUR from :rfc:`5545`."""
+"""BYDAY and WKST value type of RECUR from :rfc:`5545`."""
 
 from __future__ import annotations
 
@@ -122,7 +122,7 @@ class vWeekday(str):
         """Parse a jCal value for vWeekday.
 
         Raises:
-            ~error.JCalParsingError: If the value is not a valid weekday.
+            ~icalendar.error.JCalParsingError: If the value is not a valid weekday.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:
