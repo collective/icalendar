@@ -12,6 +12,8 @@ EXCLUDED_PROPERTY_NAMES = {
     "vN",
     # not in use
     "vInline",
+    # only the value of the XML property, see test_xml_property.py
+    "vXml",
 }
 
 XCAL_PROPERTY_NAMES = PROPERTY_NAMES - EXCLUDED_PROPERTY_NAMES
