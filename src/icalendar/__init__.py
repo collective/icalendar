@@ -34,10 +34,12 @@ from icalendar.enums import (
 )
 from icalendar.error import (
     BrokenCalendarProperty,
+    CalendarDecodeError,
     ComponentEndMissing,
     ComponentStartMissing,
     FeatureWillBeRemovedInFutureVersion,
     GloballyUniqueTZIDGuessed,
+    ICalDecodeError,
     ICalParsingError,
     IncompleteAlarmInformation,
     IncompleteComponent,
@@ -124,6 +126,7 @@ __all__ = [
     "Available",
     "BrokenCalendarProperty",
     "Calendar",
+    "CalendarDecodeError",
     "Component",
     "ComponentEndMissing",
     "ComponentFactory",
@@ -133,6 +136,7 @@ __all__ = [
     "FeatureWillBeRemovedInFutureVersion",
     "FreeBusy",
     "GloballyUniqueTZIDGuessed",
+    "ICalDecodeError",
     "ICalParsingError",
     "Image",
     "IncompleteAlarmInformation",

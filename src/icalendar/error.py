@@ -55,6 +55,70 @@ class ICalParsingError(InvalidCalendar):
         super().__init__(full_message)
 
 
+class CalendarDecodeError(InvalidCalendar):
+    """The calendar data could not be decoded.
+
+    :rfc:`5545#section-3.1.4` requires iCalendar data to be UTF-8.
+    icalendar does not guess another encoding,
+    because a wrong guess silently turns the text into different characters.
+
+    If you know the encoding of the data, decode it yourself and pass the string
+    to :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`.
+    See :doc:`/how-to/parse-errors` for examples.
+    If you get such calendars from a well-known application,
+    please open an issue related to :issue:`1793`.
+
+    The original :class:`UnicodeDecodeError` is chained as ``__cause__``.
+
+    ..  versionadded:: 0.0.0
+    """
+
+    encoding: str
+    """The encoding that was used to decode the data."""
+
+    value: bytes
+    """The bytes that could not be decoded."""
+
+    start: int
+    """The position of the first byte that could not be decoded."""
+
+    line_number: int
+    """The line of the bytes that could not be decoded, starting at 1."""
+
+    def __init__(self, error: UnicodeDecodeError) -> None:
+        """Create a new CalendarDecodeError.
+
+        Parameters:
+            error: The error raised while decoding the data.
+        """
+        value = error.object[error.start : error.end]
+        line_number = error.object.count(b"\n", 0, error.start) + 1
+        super().__init__(
+            f"Could not decode {value!r} at position {error.start} (line "
+            f"{line_number}) as {error.encoding}. RFC 5545 requires iCalendar "
+            "data to be UTF-8. To find out how to proceed, see "
+            "https://icalendar.readthedocs.io/en/stable/reference/api/"
+            "icalendar.error.html#icalendar.error.CalendarDecodeError "
+            "and https://github.com/collective/icalendar/issues/1793"
+        )
+        self.encoding = error.encoding
+        self.value = value
+        self.start = error.start
+        self.line_number = line_number
+
+
+class ICalDecodeError(CalendarDecodeError, ICalParsingError):
+    """The iCalendar data could not be decoded.
+
+    :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`
+    raises this error, so you can catch it as either
+    :class:`~icalendar.error.CalendarDecodeError` or
+    :class:`~icalendar.error.ICalParsingError`.
+
+    ..  versionadded:: 0.0.0
+    """
+
+
 class BrokenCalendarProperty(InvalidCalendar):
     """A property could not be parsed and its value is broken.
 
@@ -399,9 +463,11 @@ class XCalParsingError(InvalidCalendar):
 
 __all__ = [
     "BrokenCalendarProperty",
+    "CalendarDecodeError",
     "ComponentEndMissing",
     "ComponentStartMissing",
     "FeatureWillBeRemovedInFutureVersion",
+    "ICalDecodeError",
     "ICalParsingError",
     "IncompleteAlarmInformation",
     "IncompleteComponent",

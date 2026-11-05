@@ -1,5 +1,6 @@
 import unittest
 
+from icalendar.error import CalendarDecodeError
 from icalendar.parser_tools import data_encode, from_unicode, to_unicode
 
 
@@ -10,7 +11,8 @@ class TestParserTools(unittest.TestCase):
         assert to_unicode(b"spam") == "spam"
         assert to_unicode(b"\xc6\xb5") == "Ƶ"
         assert to_unicode(b"\xc6\xb5") == "Ƶ"
-        assert to_unicode(b"\xc6\xb5", encoding="ascii") == "Ƶ"
+        with self.assertRaises(CalendarDecodeError):
+            to_unicode(b"\xc6\xb5", encoding="ascii")
         assert to_unicode(1) == 1
         assert to_unicode(None) is None
 
