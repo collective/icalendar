@@ -2,18 +2,30 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from datetime import datetime, time
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from icalendar.error import ICalParsingError, InvalidToken
 from icalendar.parser.content_line import Contentline, Contentlines
 from icalendar.parser.property import split_on_unescaped_comma
 from icalendar.prop import vBroken
 from icalendar.timezone import tzp
+from icalendar.timezone.tzid import is_utc
 
 if TYPE_CHECKING:
     from icalendar.cal import Component, ComponentFactory
     from icalendar.parser.parameter import Parameters
     from icalendar.prop import VPROPERTY, TypesFactory
+
+
+def _is_utc_value(value: Any) -> bool:
+    """Whether a parsed value is a time in UTC.
+
+    A list or a period shares one TZID, so all its times must be in UTC.
+    """
+    if isinstance(value, (list, tuple)):
+        return bool(value) and all(_is_utc_value(v) for v in value)
+    return isinstance(value, (datetime, time)) and is_utc(value)
 
 
 class ComponentIcalParser:
@@ -254,6 +266,11 @@ class ComponentIcalParser:
         else:
             vals_inst = factory(parsed_val)
             vals_inst.params = params
+            if params.tzid and _is_utc_value(parsed_val):
+                # The TZID was equivalent to UTC, such as Etc/UTC.
+                # The value is written with a Z, which excludes a TZID.
+                vals_inst.params = params.copy()
+                del vals_inst.params.tzid
             self.component.add(name, vals_inst, encode=False)
 
     def handle_property_parse_error(
