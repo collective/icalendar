@@ -1,0 +1,1 @@
+Add comprehensive test coverage and fixture for RFC 6321 multi-valued properties (``CATEGORIES``, ``RESOURCES``, ``FREEBUSY``, ``EXDATE``, ``RDATE``) and ensure multi-valued list properties serialize grouped under a single XML element. @RajGahoi
