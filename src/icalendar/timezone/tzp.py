@@ -51,6 +51,7 @@ class TZP:
     def _use(self, provider: TZProvider) -> None:
         """Use a timezone implementation."""
         self.__tz_cache = {}
+        self.__tz_definitions = {}
         self.__guessed_ids = {}
         self.__provider = provider
 
@@ -140,15 +141,22 @@ class TZP:
 
         This can influence the result from timezone(): Once cached, the
         custom timezone is returned from timezone().
+
+        A cached timezone is replaced when a timezone component with the
+        same ``TZID`` but a different definition is cached, so that a
+        calendar uses its own ``VTIMEZONE`` rather than one from a calendar
+        parsed earlier.
         """
         _unclean_id = timezone_component["TZID"]
         _id = self.clean_timezone_id(_unclean_id)
-        if (
-            not self.__provider.knows_timezone_id(_id)
-            and not self.__provider.knows_timezone_id(_unclean_id)
-            and _id not in self.__tz_cache
+        if self.__provider.knows_timezone_id(_id) or self.__provider.knows_timezone_id(
+            _unclean_id
         ):
+            return
+        definition = timezone_component.to_ical()
+        if self.__tz_definitions.get(_id) != definition:
             self.__tz_cache[_id] = timezone_component.to_tz(self, lookup_tzid=False)
+            self.__tz_definitions[_id] = definition
 
     def fix_rrule_until(self, rrule: rrule, ical_rrule: prop.vRecur) -> None:
         """Make sure the until value works."""

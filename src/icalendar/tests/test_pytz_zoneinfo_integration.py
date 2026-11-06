@@ -17,6 +17,7 @@ import pytest
 from dateutil.rrule import MONTHLY, rrule
 from dateutil.tz.tz import _tzicalvtz
 
+from icalendar import Calendar, LazyCalendar
 from icalendar.prop import vDDDTypes
 from icalendar.timezone.zoneinfo import ZONEINFO, zoneinfo
 
@@ -80,6 +81,80 @@ def test_cache_reuse_timezone_cache(tzp, timezones):
     assert tzp1 is tzp.timezone("custom_Pacific/Fiji")
     tzp.cache_timezone_component(timezones.pacific_fiji)
     assert tzp1 is tzp.timezone("custom_Pacific/Fiji"), "Cache is not replaced."
+
+
+CALENDAR_WITH_CUSTOM_TZID = """BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:test
+{}
+END:VCALENDAR
+"""
+VTIMEZONE_WITH_OFFSET = """BEGIN:VTIMEZONE
+TZID:{tzid}
+BEGIN:STANDARD
+DTSTART:16010101T000000
+TZOFFSETFROM:{offset}
+TZOFFSETTO:{offset}
+END:STANDARD
+END:VTIMEZONE"""
+VEVENT_WITH_TZID = """BEGIN:VEVENT
+UID:event
+DTSTART;TZID={tzid}:20260601T100000
+END:VEVENT"""
+
+
+@pytest.mark.parametrize("forward_reference", [False, True])
+def test_calendar_uses_its_own_vtimezone(tzp, forward_reference):
+    """A VTIMEZONE cached from another calendar must not replace a calendar's own.
+
+    The other calendar defines the same custom TZID with a different offset.
+    """
+    tzid = f"custom_Own/Definition_{forward_reference}"
+
+    def calendar(offset):
+        vtimezone = VTIMEZONE_WITH_OFFSET.format(tzid=tzid, offset=offset)
+        vevent = VEVENT_WITH_TZID.format(tzid=tzid)
+        components = [vevent, vtimezone] if forward_reference else [vtimezone, vevent]
+        return CALENDAR_WITH_CUSTOM_TZID.format("\n".join(components))
+
+    Calendar.from_ical(calendar("-1100"))
+    start = Calendar.from_ical(calendar("+0200")).events[0].start
+    assert start.utcoffset() == timedelta(hours=2)
+
+
+@pytest.mark.parametrize(
+    ("calendar_class", "forward_reference"),
+    [
+        (Calendar, False),
+        pytest.param(
+            Calendar,
+            True,
+            marks=pytest.mark.xfail(
+                strict=True,
+                reason="The forward reference re-parse uses one cache for all calendars.",
+            ),
+        ),
+        (LazyCalendar, False),
+        (LazyCalendar, True),
+    ],
+)
+def test_calendars_in_one_file_use_their_own_vtimezone(
+    tzp, calendar_class, forward_reference
+):
+    """Each calendar read with multiple=True uses its own VTIMEZONE."""
+    tzid = f"custom_Own/Multiple_{calendar_class.__name__}_{forward_reference}"
+
+    def calendar(offset):
+        vtimezone = VTIMEZONE_WITH_OFFSET.format(tzid=tzid, offset=offset)
+        vevent = VEVENT_WITH_TZID.format(tzid=tzid)
+        components = [vevent, vtimezone] if forward_reference else [vtimezone, vevent]
+        return CALENDAR_WITH_CUSTOM_TZID.format("\n".join(components))
+
+    calendars = calendar_class.from_ical(
+        calendar("-1100") + calendar("+0200"), multiple=True
+    )
+    offsets = [calendar.events[0].start.utcoffset() for calendar in calendars]
+    assert offsets == [timedelta(hours=-11), timedelta(hours=2)]
 
 
 @pytest.mark.parametrize("new_tzp_name", NEW_TZP_NAME)
