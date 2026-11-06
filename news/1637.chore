@@ -1,1 +1,1 @@
-Migrated the Git hook manager from ``pre-commit`` to ``prek``. @SemTiOne
+Migrated the Git hook manager from :program:`pre-commit` to :program:`prek`. @SemTiOne

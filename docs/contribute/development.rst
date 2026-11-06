@@ -23,7 +23,7 @@ To install icalendar for development—including all of its dependencies for tes
 
 .. code-block:: shell
 
-    make dev hooks
+    make dev
 
 
 .. _development-make-commands:
@@ -45,9 +45,12 @@ prek
     Replaced :program:`pre-commit` with :program:`prek`.
 
 `prek <https://prek.j178.dev/>`_ is a fast Git hook manager written in Rust, a drop-in replacement for :program:`pre-commit`.
-Run ``make hooks`` to install the Git hooks managed by :program:`prek`.
+:program:`prek` is automatically installed as one of the development requirements when running the following command.
 
-.. note::
+..  code-block:: shell
+
+    make dev
+
 
     If you created your development environment before the switch from :program:`pre-commit` to :program:`prek`, run ``make hooks`` again to replace the existing hooks.
     The ``-f`` option overwrites existing hook scripts in :file:`.git/hooks`.
@@ -64,10 +67,9 @@ When you commit code to icalendar with ``git commit``, prek runs the following c
 :program:`ai-prompt-auto-commit`
     Automatically records AI prompts and appends them to your commit messages.
 
-The configuration file, :file:`.pre-commit-config.yaml`, is compatible with both ``prek`` and ``pre-commit`` and is located at the root of the repository.
+The configuration file, :file:`.pre-commit-config.yaml`, is compatible with :program:`prek` and is located at the root of the repository.
 
 .. _prek-ai-prompts:
-.. _pre-commit-ai-prompts:
 
 AI prompt automation
 ''''''''''''''''''''
@@ -91,7 +93,7 @@ You can use the ``--no-verify`` flag for the ``git commit`` command.
     git commit -m "My commit message" --no-verify
 
 Alternatively, configure your editor to use ``--no-verify`` for all commits.
-The screenshot below shows how to configure PyCharm to disable prek/pre-commit by searching for "git commit hooks" in its settings.
+The screenshot below shows how to configure PyCharm to disable prek by searching for "git commit hooks" in its settings.
 
 .. card::
 
