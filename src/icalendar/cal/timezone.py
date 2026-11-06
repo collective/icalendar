@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
-from itertools import islice
+from itertools import islice, takewhile
 
 import dateutil.rrule
 import dateutil.tz
@@ -169,10 +169,8 @@ class Timezone(Component):
                     end = first + timedelta(days=400)
                 except OverflowError:
                     end = datetime.max  # noqa: DTZ901, the rule is floating
-                # The transitions are sorted, so there are more than limit
-                # transitions in that year if the one after the limit is in it.
-                first_transitions = list(islice(rrule, limit + 1))
-                if len(first_transitions) > limit and first_transitions[limit] < end:
+                transitions_in_year = takewhile(lambda dt, end=end: dt < end, rrule)
+                if len(list(islice(transitions_in_year, limit + 1))) > limit:
                     raise ValueError(
                         f"Invalid iCalendar VTIMEZONE: RRULE {ical_rrule.to_ical().decode()}"
                         f" produces more than {limit} transitions within a year."

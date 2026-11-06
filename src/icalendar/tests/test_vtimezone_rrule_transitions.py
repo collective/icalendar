@@ -6,10 +6,31 @@ A frequent RRULE could exhaust memory or CPU.
 
 from datetime import datetime
 
+import dateutil.rrule
 import pytest
 
 import icalendar.config as cfg
 from icalendar import Calendar, Timezone
+
+# Far more than any test here needs, small enough to stop in seconds.
+MAX_EXPANDED_TRANSITIONS = 10_000
+
+
+@pytest.fixture(autouse=True)
+def bounded_rrule_expansion(monkeypatch):
+    """Fail fast instead of hanging if an RRULE is expanded without a limit."""
+    expand = dateutil.rrule.rrule._iter
+
+    def bounded_expand(self):
+        for count, dt in enumerate(expand(self)):
+            if count >= MAX_EXPANDED_TRANSITIONS:
+                pytest.fail(
+                    f"RRULE expanded to more than {MAX_EXPANDED_TRANSITIONS} transitions"
+                )
+            yield dt
+
+    monkeypatch.setattr(dateutil.rrule.rrule, "_iter", bounded_expand)
+
 
 VTIMEZONE = """BEGIN:VTIMEZONE
 TZID:{tzid}
