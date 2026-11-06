@@ -34,10 +34,7 @@ help:  # This help message
 	@uv python install "$(PYTHONVERSION)"
 	@uv venv --python "$(PYTHONVERSION)"
 	@uv sync --group dev
-
-.PHONY: hooks
-hooks: .venv  ## Install the Git hooks with prek
-	@uv run prek install -f
+	@uv run prek install
 
 .PHONY: sync
 sync:  ## Sync package requirements

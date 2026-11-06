@@ -51,10 +51,7 @@ prek
 
     make dev
 
-
-    If you created your development environment before the switch from :program:`pre-commit` to :program:`prek`, run ``make hooks`` again to replace the existing hooks.
-    The ``-f`` option overwrites existing hook scripts in :file:`.git/hooks`.
-    Back up any custom hooks first.
+That command installs a supported Python, creates a Python virtual environment, and installs package and development requirements.
 
 When you commit code to icalendar with ``git commit``, prek runs the following code quality checks and reformats code automatically for you.
 
