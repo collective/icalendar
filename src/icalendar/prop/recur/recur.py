@@ -415,6 +415,65 @@ class vRecur(CaselessDict):
         self.pop("COUNT", None)
 
     @property
+    def interval(self) -> int | None:
+        """The INTERVAL part of the recurrence rule.
+
+        This is the positive integer interval between occurrences of the
+        recurrence frequency. When omitted, RFC 5545 defines the default as
+        1; this accessor returns None so callers can distinguish an omitted
+        value from an explicit one.
+
+        If multiple values are present, the first one is returned. If the
+        value is missing or an empty sequence, None is returned.
+
+        Setting this to None deletes the value, as does del.
+
+        Raises:
+            InvalidCalendar: if a stored value is not a positive integer.
+            InvalidCalendar: when setting a value less than one.
+            TypeError: when setting a value that is not an int.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2").interval
+                2
+                >>> vRecur.from_ical("FREQ=DAILY").interval is None
+                True
+        """
+        values = self.get("INTERVAL")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        if isinstance(value, bool):
+            raise InvalidCalendar("INTERVAL must be a positive int")
+        try:
+            interval = int(value)
+        except (TypeError, ValueError) as e:
+            raise InvalidCalendar("INTERVAL must be a positive int") from e
+        if interval < 1:
+            raise InvalidCalendar(f"INTERVAL must be >= 1, got {interval}")
+        return interval
+
+    @interval.setter
+    def interval(self, value: int | None) -> None:
+        """Set the INTERVAL part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.interval
+            return
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise TypeError(f"interval must be an int, got {value!r}")
+        if value < 1:
+            raise InvalidCalendar(f"INTERVAL must be >= 1, got {value}")
+        self["INTERVAL"] = [vNonNegativeInt(value)]
+
+    @interval.deleter
+    def interval(self) -> None:
+        """Delete the INTERVAL part of the recurrence rule."""
+        self.pop("INTERVAL", None)
+
+    @property
     def wkst(self) -> vWeekday | None:
         """The WKST part of the recurrence rule.
 
