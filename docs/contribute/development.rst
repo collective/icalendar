@@ -118,6 +118,23 @@ The following command shows how to run tests in Python 3.14.
 
     tox's `CLI interface documentation <https://tox.wiki/en/stable/reference/cli.html>`_.
 
+Check Typing
+------------
+
+:term:`pyright` flags up typing issues in the Python files.
+
+Use the following command to check for typing issues during development.
+
+..  code-block:: shell
+
+    make test-types
+
+:term:`pyright` is widely used and we recommend using a plugin for the code editor to highlight typing issues during development.
+
+.. seealso::
+
+    :file:`pyproject.toml` contains the :term:`pyright` configuration.
+    `pyright documentation <https://github.com/microsoft/pyright/blob/main/docs/README.md>`_
 
 Format code
 -----------

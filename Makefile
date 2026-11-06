@@ -4,6 +4,7 @@ SHELL           = bash
 
 # You can set these variables from the command line.
 SPHINXOPTS      ?=
+PYRIGHTOPTS     ?=
 PAPER           ?=
 VERSION			?=
 
@@ -152,6 +153,10 @@ test: .venv  ## Run code tests and coverage
 .PHONY: test-dist
 test-dist:  ## Build and test the distribution files
 	@src/icalendar/tests/test_create_release.sh
+
+.PHONY: test-types
+test-types: .venv
+	@uv run pyright $(PYRIGHTOPTS)
 # /test
 
 

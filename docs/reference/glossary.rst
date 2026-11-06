@@ -72,3 +72,6 @@ Glossary
         ..  seealso::
 
             :rfc:`5545#section-3.6`
+
+    pyright
+        `pyright <https://github.com/microsoft/pyright>`_ is a command line tool for type checking of Python files.
