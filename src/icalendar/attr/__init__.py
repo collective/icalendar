@@ -27,7 +27,7 @@ from icalendar.prop import (
 from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 from icalendar.timezone import tzp
-from icalendar.tools import is_date
+from icalendar.tools import is_date, normalize_pytz
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -1779,7 +1779,7 @@ def get_start_end_duration_with_validation(
     # When both properties are present, DURATION is authoritative only
     # when it describes the same end time; conflicting values are ambiguous.
     if duration is not None and end is not None:
-        if start is not None and end != start + duration:
+        if start is not None and end != normalize_pytz(start + duration):
             msg = f"{end_property} and DURATION specify different end times."
             raise InvalidCalendar(msg)
         end = None
