@@ -42,8 +42,24 @@ def test_setting_interval_to_none_deletes_the_value():
     assert "INTERVAL" not in recur
 
 
+def test_setting_interval_to_none_removes_all_multiple_values():
+    recur = vRecur(FREQ=["DAILY"], INTERVAL=[2, 3])
+    recur.interval = None
+
+    assert recur.interval is None
+    assert "INTERVAL" not in recur
+
+
 def test_deleting_interval_removes_the_value():
     recur = vRecur.from_ical("FREQ=DAILY;INTERVAL=2")
+    del recur.interval
+
+    assert recur.interval is None
+    assert "INTERVAL" not in recur
+
+
+def test_deleting_interval_removes_all_multiple_values():
+    recur = vRecur(FREQ=["DAILY"], INTERVAL=[2, 3])
     del recur.interval
 
     assert recur.interval is None
