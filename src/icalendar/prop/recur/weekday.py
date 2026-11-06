@@ -1,4 +1,4 @@
-"""BYWEEKDAY, BYDAY, and WKST value type of RECUR from :rfc:`5545`."""
+"""BYDAY and WKST value type of RECUR from :rfc:`5545`."""
 
 from __future__ import annotations
 
