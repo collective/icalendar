@@ -246,7 +246,7 @@ class vDDDTypes(TimeBase):
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
         element = parser.parse_tag()
-        if not element.children:
+        if not element.icalendar_children:
             # we have only one element here and that is with a date or date-time text.
             text = element.get_text_without_whitespace()
             if len(text) <= 10:  # YYYY-MM-DD
