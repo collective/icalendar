@@ -1,0 +1,1 @@
+   Removed the reStructuredText heading from ``LICENSE.rst`` so that GitHub detects the project's license as BSD-2-Clause. I used AI (Claude) to assist me in drafting the issue and this pull request; the fix was tested by @stevepiercy. @Arsalan900
