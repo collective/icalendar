@@ -74,3 +74,36 @@ def test_limit_can_be_disabled(tzp, monkeypatch):
     vtimezone = VTIMEZONE.format(tzid="transitions-disabled", rrule="FREQ=DAILY")
     timezone = Timezone.from_ical(vtimezone.replace("\n", "\r\n"))
     assert timezone.to_tz(tzp, lookup_tzid=False) is not None
+
+
+PR_EXAMPLE = """BEGIN:VCALENDAR
+BEGIN:VTIMEZONE
+TZID:Custom
+BEGIN:STANDARD
+DTSTART:19700101T000000
+RRULE:FREQ=SECONDLY
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0000
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:19700601T000000
+RRULE:FREQ=YEARLY
+TZOFFSETFROM:+0000
+TZOFFSETTO:+0100
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:a
+DTSTART;TZID=Custom:20250101T120000
+END:VEVENT
+END:VCALENDAR
+""".replace("\n", "\r\n")
+
+
+def test_secondly_rrule_from_1970_is_invalid(tzp):
+    """Reading the offset of an event in a SECONDLY timezone fails fast.
+
+    Without the limit, this exhausts memory.
+    """
+    with pytest.raises(ValueError, match="transitions within a year"):
+        Calendar.from_ical(PR_EXAMPLE).events[0].DTSTART.utcoffset()
