@@ -1,0 +1,1 @@
+``icalendar.enums.StrEnum`` values are now looked up case-insensitively by the constructor, so ``PARTSTAT("needs-action")`` equals ``PARTSTAT.NEEDS_ACTION``, as :rfc:`5545` section 3.1.1 allows for values that are not quoted. I used AI to assist me with this change. @guan5313
