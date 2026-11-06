@@ -424,12 +424,13 @@ class vRecur(CaselessDict):
         value from an explicit one.
 
         If multiple values are present, the first one is returned. If the
-        value is missing or an empty sequence, None is returned.
-
-        Setting this to None deletes the value, as does del.
+        value is missing or an empty sequence, None is returned. Assigning
+        None or deleting the property removes the entire INTERVAL entry,
+        including all values in a multi-value entry.
 
         Raises:
-            InvalidCalendar: if a stored value is not a positive integer.
+            InvalidCalendar: if a stored value cannot be read as an int or is
+                less than one.
             InvalidCalendar: when setting a value less than one.
             TypeError: when setting a value that is not an int.
 
@@ -439,6 +440,8 @@ class vRecur(CaselessDict):
                 >>> from icalendar.prop import vRecur
                 >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2").interval
                 2
+                >>> vRecur(FREQ=["DAILY"], INTERVAL=[2, 3]).interval
+                2
                 >>> vRecur.from_ical("FREQ=DAILY").interval is None
                 True
         """
@@ -446,12 +449,10 @@ class vRecur(CaselessDict):
         if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
             return None
         value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
-        if isinstance(value, bool):
-            raise InvalidCalendar("INTERVAL must be a positive int")
         try:
             interval = int(value)
         except (TypeError, ValueError) as e:
-            raise InvalidCalendar("INTERVAL must be a positive int") from e
+            raise InvalidCalendar("INTERVAL must be an int") from e
         if interval < 1:
             raise InvalidCalendar(f"INTERVAL must be >= 1, got {interval}")
         return interval
