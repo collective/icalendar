@@ -120,7 +120,7 @@ class vCalAddress(str):
         """Check whether an email matches this calendar user.
 
         The email can match either the calendar address or its ``EMAIL``
-        parameter. If they contain different addresses, both are checked.
+        parameter.
         Comparison ignores case and an optional ``mailto:`` prefix on either
         address. This method does not validate email syntax.
 
