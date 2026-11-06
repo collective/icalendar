@@ -449,6 +449,8 @@ class vRecur(CaselessDict):
         if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
             return None
         value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        if isinstance(value, bool):
+            raise InvalidCalendar("INTERVAL must be an int")
         try:
             interval = int(value)
         except (TypeError, ValueError) as e:
