@@ -94,14 +94,14 @@ Migrate from pre-commit to prek
 
 icalendar now uses `prek <https://prek.j178.dev/>`_ instead of :program:`pre-commit` to manage its Git hooks.
 
-If you have an existing development environment with :program:`pre-commit` hooks installed, replace them by running the following command once.
+If you have an existing development environment with :program:`pre-commit` hooks installed, first back up any custom hooks.
+Then replace all hooks by running the following command once.
 
 .. code-block:: shell
 
     uv run prek install -f
 
 The ``-f`` option overwrites existing hook scripts in :file:`.git/hooks`.
-Back up any custom hooks first.
 
 
 .. _upgrade-7.0.0:
