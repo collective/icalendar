@@ -1,0 +1,1 @@
+Fixed custom time zone resolution in :meth:`Component.from_xcal <icalendar.cal.component.Component.from_xcal>` and :meth:`Component.from_jcal <icalendar.cal.component.Component.from_jcal>` regardless of ``VTIMEZONE`` order, including date lists across daylight saving transitions. AI assisted with this change. @AthosTomich
