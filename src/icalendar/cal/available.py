@@ -146,10 +146,11 @@ class Available(Component):
             sequence: The :attr:`sequence` of the Available component.
             stamp: The :attr:`~icalendar.cal.component.Component.stamp` of the Available component.
                 If None, this is set to the current time.
-            start: The :attr:`start` of the Available component.
+            start: Required. The :attr:`start` of the Available component.
+                If ``None``, an :class:`~icalendar.error.InvalidCalendar` is raised.
             summary: The :attr:`summary` of the Available component.
             uid: The :attr:`uid` of the Available component.
-                If None, this is set to a new :func:`uuid.uuid4`.
+                If ``None``, this is set to a new :func:`uuid.uuid4`.
 
         Returns:
             :class:`Available`
