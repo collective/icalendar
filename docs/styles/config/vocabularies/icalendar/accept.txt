@@ -22,6 +22,7 @@ Nicco
 Params
 Penner
 (?i)Plone
+prek
 Python
 python\-icalendar
 Repology

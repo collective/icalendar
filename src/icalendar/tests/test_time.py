@@ -74,7 +74,7 @@ def test_vtime_multiple_timezones(calendars):
     assert floating.tzinfo is None
 
 
-def test_vtime_with_tzinfo_object():
+def test_vtime_with_tzinfo_object(tzp):
     tz = datetime.timezone.utc
 
     parsed = vTime.from_ical("083000", timezone=tz)
