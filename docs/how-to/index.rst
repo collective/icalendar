@@ -9,6 +9,7 @@ How to guides
     configure
     upgrade
     usage
+    parse
     parse-errors
     attendees
     custom-components
