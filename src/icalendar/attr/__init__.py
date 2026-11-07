@@ -27,7 +27,7 @@ from icalendar.prop import (
 from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 from icalendar.timezone import tzp
-from icalendar.tools import is_date
+from icalendar.tools import is_date, normalize_pytz
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -1776,14 +1776,13 @@ def get_start_end_duration_with_validation(
     end = getattr(component, end_property, None)
     duration = component.DURATION
 
-    # RFC 5545: Only one of end property and DURATION may be present
+    # When both properties are present, DURATION is authoritative only
+    # when it describes the same end time; conflicting values are ambiguous.
     if duration is not None and end is not None:
-        end_name = "DTEND" if end_property == "DTEND" else "DUE"
-        msg = (
-            f"Only one of {end_name} and DURATION "
-            f"may be in a {component_name}, not both."
-        )
-        raise InvalidCalendar(msg)
+        if start is not None and end != normalize_pytz(start + duration):
+            msg = f"{end_property} and DURATION specify different end times."
+            raise InvalidCalendar(msg)
+        end = None
 
     # RFC 5545: When DTSTART is a date, DURATION must be of days or weeks
     if (
