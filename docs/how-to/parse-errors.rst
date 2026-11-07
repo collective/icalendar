@@ -139,3 +139,38 @@ When you access a property descriptor like :attr:`event.DTSTART <icalendar.cal.e
     Original error: Expected datetime, date, or time. Got: 'INVALID-DATE'
 
 :class:`~icalendar.error.BrokenCalendarProperty` is a subclass of :class:`~icalendar.error.InvalidCalendar`, so existing ``except InvalidCalendar`` handlers will still catch it.
+
+
+Parse calendars that are not UTF-8
+----------------------------------
+
+:rfc:`5545#section-3.1.4` requires iCalendar data to be UTF-8.
+Some applications still export calendars in other encodings, such as ``cp1252``.
+If the data is not valid UTF-8, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` raises an :class:`~icalendar.error.ICalDecodeError`.
+
+.. code-block:: pycon
+
+    >>> from icalendar import ICalDecodeError
+    >>> data = b"BEGIN:VCALENDAR\r\nPRODID:R\xe9union\r\nEND:VCALENDAR\r\n"
+    >>> try:
+    ...     Calendar.from_ical(data)
+    ... except ICalDecodeError as e:
+    ...     print(f"Line {e.line_number}: {e.value!r}")
+    Line 2: b'\xe9'
+
+icalendar does not guess the encoding, because a wrong guess silently turns the text into different characters.
+If you know the encoding of the data, decode it yourself and pass the string.
+
+.. code-block:: pycon
+
+    >>> calendar = Calendar.from_ical(data.decode("cp1252"))
+    >>> print(calendar["PRODID"])
+    Réunion
+
+If you prefer the behavior of earlier versions of icalendar, which replaced the invalid bytes with the replacement character ``�``, decode the data with ``errors="replace"``.
+
+.. code-block:: pycon
+
+    >>> calendar = Calendar.from_ical(data.decode("utf-8", errors="replace"))
+    >>> print(calendar["PRODID"])
+    R�union

@@ -66,12 +66,11 @@ The example below shows how to correctly access binary data:
     >>> v_binary.bytes[:4]  # correct access for PNG image data
     b'\x89PNG'
 
-For backward compatibility, if corrupt data is acceptable and you need to get the bytes as a Unicode string, use :meth:`~icalendar.parser_tools.to_unicode` as shown in the following code:
+For backward compatibility, if corrupt data is acceptable and you need to get the bytes as a Unicode string, decode them with ``errors="replace"`` as shown in the following code:
 
 .. code-block:: pycon
 
-    >>> from icalendar.parser_tools import to_unicode
-    >>> string = to_unicode(v_binary.bytes)  # corrupts data
+    >>> string = v_binary.bytes.decode("utf-8", errors="replace")  # corrupts data
 
 ..  _removed-from-icalendar-parser-string:
 
@@ -85,6 +84,28 @@ These functions have been removed from :mod:`icalendar.parser.string`:
 * ``foldline``,
 * ``unescape_char``
 * ``unescape_string``
+
+..  _from-ical-not-utf-8:
+
+``Component.from_ical`` raises an error for data that is not UTF-8
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+:meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` used to replace bytes that are not valid UTF-8 with ``�``, which silently corrupted the text.
+It now raises an :class:`~icalendar.error.ICalDecodeError` instead.
+
+If you know the encoding of the data, decode it yourself and pass the string:
+
+.. code-block:: python
+
+    calendar = Calendar.from_ical(data.decode("cp1252"))
+
+If you want the previous behavior, decode the data with ``errors="replace"``:
+
+.. code-block:: python
+
+    calendar = Calendar.from_ical(data.decode("utf-8", errors="replace"))
+
+See :doc:`parse-errors` for more information.
 
 
 .. _upgrade-8.0.0-prek:

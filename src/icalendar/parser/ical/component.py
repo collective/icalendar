@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from icalendar.error import ICalParsingError, InvalidToken
+from icalendar.error import (
+    CalendarDecodeError,
+    ICalDecodeError,
+    ICalParsingError,
+    InvalidToken,
+)
 from icalendar.parser.content_line import Contentline, Contentlines
 from icalendar.parser.property import split_on_unescaped_comma
 from icalendar.prop import vBroken
@@ -79,11 +84,12 @@ class ComponentIcalParser:
     def initialize_parsing(self):
         self._stack: list[Component] = []
         self._components: list[Component] = []
-        self._data = self._content_lines = (
-            self._data
-            if isinstance(self._data, list)
-            else Contentlines.from_ical(self._data)
-        )
+        if not isinstance(self._data, list):
+            try:
+                self._data = Contentlines.from_ical(self._data)
+            except CalendarDecodeError as error:
+                raise ICalDecodeError(error.__cause__) from error.__cause__
+        self._content_lines = self._data
         self._content_lines_iterator = iter(self._content_lines)
 
     def handle_line_parse_error(self, exception: Exception):
