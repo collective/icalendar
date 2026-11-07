@@ -130,6 +130,7 @@ class vCalAddress(str):
         RSVP,
         SENT_BY,
         VALUE,
+        language,
     )
 
     DELEGATED_FROM = DELEGATED_FROM

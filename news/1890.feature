@@ -1,0 +1,1 @@
+Support ``language`` property accessor for text and component properties per :rfc:`5646` across :class:`~icalendar.prop.vText`, :class:`~icalendar.prop.vCategory`, :class:`~icalendar.prop.vCalAddress`, :class:`~icalendar.prop.vUnknown`, and :class:`~icalendar.prop.vUri`. I used AI (Antigravity) to assist with this change. @RajGahoi
