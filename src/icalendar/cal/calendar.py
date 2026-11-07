@@ -18,7 +18,7 @@ from icalendar.attr import (
     uid_property,
     url_property,
 )
-from icalendar.cal.component import Component
+from icalendar.cal.component import SERIALIZED_INPUT, Component
 from icalendar.cal.examples import get_example
 from icalendar.cal.timezone import Timezone
 from icalendar.error import IncompleteComponent
@@ -28,7 +28,6 @@ from icalendar.version import __version__
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from datetime import date, datetime
-    from pathlib import Path
 
     from icalendar.cal import (
         Availability,
@@ -163,23 +162,25 @@ class Calendar(Component):
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[False] = False
+        cls, st: SERIALIZED_INPUT, multiple: Literal[False] = False
     ) -> Calendar: ...
 
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[True]
+        cls, st: SERIALIZED_INPUT, multiple: Literal[True]
     ) -> list[Calendar]: ...
 
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: bool = False
+        cls, st: SERIALIZED_INPUT, multiple: bool = False
     ) -> Calendar | list[Calendar]:
         """Parse iCalendar data into calendar instances.
 
         Parameters:
-            st: iCalendar data as bytes or string, or a path to an iCalendar file.
+            st: iCalendar data as a string, bytes, :class:`pathlib.Path`, or an
+                open text or binary file. Open files are read from their current
+                position and left open. Strings are data, not file names.
             multiple: If ``True``, returns a list of calendars.
                 If ``False``, returns a single calendar.
 

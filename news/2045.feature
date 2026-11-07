@@ -1,0 +1,1 @@
+Aligned component iCal, jCal, and xCal parsers to accept strings, bytes, paths, and open text or binary files while preserving caller ownership. AI assistance was used for implementation and tests. @mayankdhingra02
