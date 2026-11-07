@@ -1,0 +1,1 @@
+Fixed broken cross-references in the documentation and API docstrings, and enabled nitpicky mode for documentation builds. I used opencode/deepseek-v4.1-flash-free to assist with this change. @TejasS1233

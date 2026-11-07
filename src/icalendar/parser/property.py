@@ -8,7 +8,7 @@ from icalendar.parser.string import _unescape_string
 def unescape_list_or_string(val: str | list[str]) -> str | list[str]:
     """Unescape a value that may be a string or list of strings.
 
-    Applies :func:`_unescape_string` to the value. If the value is a list,
+    Applies ``_unescape_string`` to the value. If the value is a list,
     unescapes each element.
 
     Parameters:
@@ -28,7 +28,7 @@ _unescape_backslash_regex = re.compile(r"\\([\\,;:nN])")
 def unescape_backslash(val: str) -> str:
     r"""Unescape backslash sequences in iCalendar text.
 
-    Unlike :func:`~icalendar.parser.string.unescape_string`, this only handles
+    Unlike the full text unescaper, this only handles
     actual backslash escapes per :rfc:`5545`, not URL encoding. This preserves
     URL-encoded values like ``%3A`` in URLs.
 
