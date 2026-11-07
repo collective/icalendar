@@ -32,6 +32,7 @@ ALLOWED_HEADINGS = {
 }
 
 KNOWN_BAD_HEADINGS = {
+    "ACTION",
     "Availability",
     "Available",
     "BUSYTYPE",

@@ -21,6 +21,7 @@ from icalendar.attr import (
     property_set_duration,
     repeat_property,
     single_int_property,
+    single_string_enum_property,
     single_string_property,
     single_utc_property,
     summary_property,
@@ -28,6 +29,7 @@ from icalendar.attr import (
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
+from icalendar.enums import ACTION as AlarmAction  # noqa: N811
 from icalendar.error import InvalidCalendar
 from icalendar.prop import vCalAddress
 
@@ -356,18 +358,21 @@ class Alarm(Component):
                 )
         _set_attachments(self, value)
 
-    ACTION = single_string_property(
+    ACTION = single_string_enum_property(
         "ACTION",
+        AlarmAction,
+        "",
         """The action invoked when the alarm triggers.
 
         Typical values defined by :rfc:`5545#section-3.8.6.1` are
         ``AUDIO``, ``DISPLAY``, and ``EMAIL``. The empty string is
         returned when no ``ACTION`` property is present.
         """,
+        preserve_unknown=True,
     )
 
     @ACTION.setter
-    def ACTION(self, value: str | None) -> None:
+    def ACTION(self, value: AlarmAction | str | None) -> None:
         if value == "AUDIO" and len(self.attachments) > 1:
             raise InvalidCalendar(
                 "An AUDIO alarm must not contain more than one attachment.\n"
@@ -390,7 +395,7 @@ class Alarm(Component):
     def new(
         cls,
         /,
-        action: str | None = None,
+        action: AlarmAction | str | None = None,
         trigger: timedelta | datetime | None = None,
         attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: ATTENDEE_TYPE_SETTER = None,
@@ -515,11 +520,13 @@ class Alarm(Component):
             .. code-block:: pycon
 
                 >>> from datetime import timedelta
-                >>> from icalendar import Alarm
+                >>> from icalendar import ACTION, Alarm
                 >>> alarm = Alarm.new_display(
                 ...     description="Team meeting in 15 minutes",
                 ...     trigger=timedelta(minutes=-15),
                 ... )
+                >>> alarm.ACTION is ACTION.DISPLAY
+                True
                 >>> print(alarm.to_ical().decode())
                 BEGIN:VALARM
                 ACTION:DISPLAY
@@ -549,7 +556,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("DISPLAY alarm requires a trigger")
         alarm: Alarm = cls.new(
-            action="DISPLAY",
+            action=AlarmAction.DISPLAY,
             trigger=trigger,
             description=description,
             uid=uid,
@@ -629,7 +636,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("AUDIO alarm requires a trigger")
         alarm: Alarm = cls.new(
-            action="AUDIO",
+            action=AlarmAction.AUDIO,
             trigger=trigger,
             attachments=attachments,
             uid=uid,
@@ -740,7 +747,7 @@ class Alarm(Component):
         if not cleaned_attendees:
             raise InvalidCalendar("EMAIL alarm requires at least one valid attendee")
         alarm: Alarm = cls.new(
-            action="EMAIL",
+            action=AlarmAction.EMAIL,
             trigger=trigger,
             attachments=attachments,
             summary=summary,

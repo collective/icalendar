@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
     from icalendar.cal.alarm import Alarm
+    from icalendar.enums import ACTION
     from icalendar.prop import vBinary, vUri
 
 Parent = Event | Todo
@@ -89,7 +90,7 @@ class AlarmTime:
         return self._alarm
 
     @property
-    def action(self) -> str:
+    def action(self) -> ACTION | str:
         """The action invoked when this alarm triggers.
 
         This delegates to :attr:`Alarm.ACTION <icalendar.cal.alarm.Alarm.ACTION>`.
