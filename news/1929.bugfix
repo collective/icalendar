@@ -1,0 +1,1 @@
+The ``UID`` setter now validates the value as an :rfc:`5545` ``iana-token`` shorter than 255 octets per :rfc:`7986#section-5.3` and rejects non-string/UUID types, raising :exc:`~icalendar.error.InvalidCalendar` or :exc:`TypeError`. I used AI to assist me with this change. @Siddharth-singla
