@@ -173,7 +173,7 @@ rtd-prepare:  ## Prepare environment on Read the Docs
 	asdf global uv latest
 
 .PHONY: rtd-pr-preview
-rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
+rtd-pr-preview: rtd-prepare changes .venv ## Build pull request preview on Read the Docs
 	cd $(DOCS_DIR) && $(SPHINXBUILD) -b html $(ALLSPHINXOPTS) ${READTHEDOCS_OUTPUT}/html/
 # /deployment
 
