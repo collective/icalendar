@@ -1,0 +1,1 @@
+Fixed a bug where a content line folded in the middle of a multi-byte UTF-8 character parsed to U+FFFD replacement characters: raw bytes are now unfolded before decoding, so such values round-trip losslessly (RFC 5545 section 3.1 anticipates such folds). I used AI to help with this change. @rahul05ranjan
