@@ -1,4 +1,5 @@
 from datetime import date, datetime, time, timedelta
+from unittest.mock import Mock
 
 import pytest
 
@@ -57,8 +58,7 @@ def test_parse_jcal_value_uses_the_matching_parser(
 ):
     """The value format selects the parser, without trial and error."""
 
-    def fail(*args, **kwargs):
-        raise AssertionError("unexpected parser")
+    fail = Mock(side_effect=AssertionError("unexpected parser"))
 
     for parser in unused_parsers:
         monkeypatch.setattr(parser, "parse_jcal_value", fail)
