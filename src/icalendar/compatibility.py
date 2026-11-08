@@ -11,7 +11,7 @@ import functools
 import sys
 import warnings
 from collections.abc import Callable
-from typing import TYPE_CHECKING, ParamSpec, TypeGuard, TypeVar
+from typing import ParamSpec, TypeGuard, TypeVar
 
 P = ParamSpec("P")
 R = TypeVar("R")
