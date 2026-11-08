@@ -174,7 +174,7 @@ rtd-prepare:  ## Prepare environment on Read the Docs
 
 .PHONY: rtd-pr-preview
 rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
-	@uvx towncrier --version=Unreleased build --yes
+	@uvx towncrier build --version=Unreleased --yes
 	cd $(DOCS_DIR) && $(SPHINXBUILD) -b html $(ALLSPHINXOPTS) ${READTHEDOCS_OUTPUT}/html/
 # /deployment
 
