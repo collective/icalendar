@@ -171,6 +171,7 @@ rtd-prepare:  ## Prepare environment on Read the Docs
 	asdf plugin add uv
 	asdf install uv latest
 	asdf global uv latest
+	export VERSION=Unreleased
 
 .PHONY: rtd-pr-preview
 rtd-pr-preview: rtd-prepare changes .venv ## Build pull request preview on Read the Docs
