@@ -1,11 +1,4 @@
-"""Functions for manipulating strings and bytes.
-
-..  versionremoved:: 8.0.0
-    Removed ``escape_char``, ``escape_string``, ``foldline``, ``unescape_char``,
-    ``unescape_string``.
-
-    .. seealso:: :ref:`removed-from-icalendar-parser-string`.
-"""
+"""Functions for manipulating strings and bytes."""
 
 import re
 
@@ -65,7 +58,7 @@ def _escape_char(text: str | bytes) -> str:
 def _unescape_char(text: str | bytes) -> str | bytes:
     r"""Unescape iCalendar TEXT values.
 
-    Reverses the escaping applied by :func:`_escape_char` according to
+    Reverses the escaping applied by ``_escape_char`` according to
     :rfc:`5545#section-3.3.11` TEXT escaping rules.
 
     Parameters:
@@ -180,7 +173,7 @@ def _escape_string(val: str) -> str:
 
         A literal ``%`` is escaped first so that percent sequences already in
         the value (e.g. ``%2C`` in a URI) are not confused with the markers
-        introduced here. :func:`_unescape_string` reverses it.
+        introduced here. ``_unescape_string`` reverses it.
     """
     # f'{i:02X}'
     return (
@@ -195,7 +188,7 @@ def _escape_string(val: str) -> str:
 def _unescape_string(val: str) -> str:
     r"""Unescape URL-encoded hex values to their original characters.
 
-    Reverses :func:`_escape_string` by converting percent-encoded hex values
+    Reverses ``_escape_string`` by converting percent-encoded hex values
     back to their original characters. This is used for parameter parsing.
 
     Parameters:
@@ -213,7 +206,7 @@ def _unescape_string(val: str) -> str:
         - ``%5C`` -> ``\``
         - ``%25`` -> ``%``
 
-        ``%25`` is restored last so a literal ``%`` that :func:`_escape_string`
+        ``%25`` is restored last so a literal ``%`` that ``_escape_string``
         protected does not re-trigger the marker replacements above.
     """
     return (
