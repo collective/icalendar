@@ -1,0 +1,1 @@
+Added parameter and return type annotations to :func:`~icalendar.compatibility.deprecate_for_version_8`, preserving the decorated callable's signature for static type checkers. OpenAI Codex (GPT-6) assisted with the typing design and review; I reviewed and validated the change. @cdinhosbc98-cell
