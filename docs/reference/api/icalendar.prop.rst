@@ -23,6 +23,7 @@ Submodules
    icalendar.prop.cal_address
    icalendar.prop.categories
    icalendar.prop.conference
+   icalendar.prop.empty
    icalendar.prop.factory
    icalendar.prop.float
    icalendar.prop.geo
@@ -31,10 +32,12 @@ Submodules
    icalendar.prop.integer
    icalendar.prop.n
    icalendar.prop.org
+   icalendar.prop.request_status
    icalendar.prop.text
    icalendar.prop.uid
    icalendar.prop.unknown
    icalendar.prop.uri
+   icalendar.prop.xml
    icalendar.prop.xml_reference
 
 Module contents

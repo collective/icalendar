@@ -154,6 +154,12 @@ def test_convert_property_to_jcal(jcal_value, prop):
     assert prop.to_jcal(jcal_value[0]) == jcal_value
 
 
+def test_recur_to_jcal_uses_canonical_order():
+    """Check that recurrence rule parts use their canonical order."""
+    recur = vRecur({"count": 5, "bymonth": 10, "freq": "YEARLY", "byday": "2MO"})
+    assert list(recur.to_jcal("rrule")[3]) == ["freq", "count", "byday", "bymonth"]
+
+
 @mark_pairs
 def test_convert_jcal_to_property(jcal_value, prop):
     """Check converting an icalendar property type into a jCal value"""

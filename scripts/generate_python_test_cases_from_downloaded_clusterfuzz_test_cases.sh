@@ -10,8 +10,8 @@ set -e
 HERE="`dirname \"$0\"`"
 OSS_FUZZ_DIRECTORY="$HOME/oss-fuzz"
 DOWNLOADS_DIRECTORY="$HOME/Downloads"
-LOCAL_ICALENDAR_DIRECTORY="$HERE/../../../../"
-PYTHON_TEST_CASE_DIRECTORY="$HERE/../calendars/"
+LOCAL_ICALENDAR_DIRECTORY="$HERE/.."
+PYTHON_TEST_CASE_DIRECTORY="$HERE/../src/icalendar/tests/calendars/"
 PROJECT_NAME="icalendar"
 
 echo "### Building Project $PROJECT_NAME"

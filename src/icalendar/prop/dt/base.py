@@ -11,7 +11,7 @@ class TimeBase:
     params: Parameters
     ignore_for_equality = {"TZID", "VALUE"}
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """self == other"""
         if isinstance(other, date):
             return self.dt == other
@@ -31,12 +31,12 @@ class TimeBase:
             return other == self
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.dt)
 
     from icalendar.param import RANGE, RELATED, TZID
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """String representation."""
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
 

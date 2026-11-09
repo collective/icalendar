@@ -1,6 +1,14 @@
 """Enumerations for different types in the RFCs."""
 
+from __future__ import annotations
+
 from enum import Enum as _Enum
+from typing import TYPE_CHECKING, TypeVar, overload
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+
+T = TypeVar("T")
 
 
 class Enum(_Enum):
@@ -8,11 +16,13 @@ class Enum(_Enum):
 
     def __reduce_ex__(self, _p):
         """For pickling."""
-        return self.__class__, (self._name_,)
+        return self.__class__, (self._value_,)
 
 
 class StrEnum(str, Enum):
     """Enum for strings."""
+
+    _value_: str
 
     def __str__(self) -> str:
         """Convert to a string.
@@ -20,6 +30,52 @@ class StrEnum(str, Enum):
         This is needed when we set the value directly in components.
         """
         return self.value
+
+    @overload
+    @classmethod
+    def get(cls, value: str) -> Self | None: ...
+
+    @overload
+    @classmethod
+    def get(cls, value: str, default: T) -> Self | T: ...
+
+    @classmethod
+    def get(cls, value: str, default: T | None = None) -> Self | T | None:
+        """Return the member with the given value, or a default.
+
+        Unlike calling the enum directly, as in ``PARTSTAT("no-value")``, it does
+        not raise a :class:`ValueError` for an unknown value. The lookup is
+        case-insensitive.
+
+        Parameters:
+            value: Required. Value to look up.
+            default: Optional value to return in case ``value`` is not found.
+
+        Returns:
+            The member with that value, or ``default`` if there is none.
+
+        Example:
+            This example shows how to use this method.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import PARTSTAT
+                >>> PARTSTAT.get("ACCEPTED")
+                <PARTSTAT.ACCEPTED: 'ACCEPTED'>
+                >>> PARTSTAT.get("accepted")
+                <PARTSTAT.ACCEPTED: 'ACCEPTED'>
+                >>> print(PARTSTAT.get("invalid-value"))
+                None
+                >>> print(PARTSTAT.get("invalid-value", "No value given"))
+                No value given
+                >>> print(PARTSTAT.get("ACCEPTED", "No value given"))
+                ACCEPTED
+
+        """
+        try:
+            return cls(value.upper())
+        except ValueError:
+            return default
 
 
 class PARTSTAT(StrEnum):
@@ -118,7 +174,7 @@ class FBTYPE(StrEnum):
         ``BUSY_UNAVAILABLE``,
         ``BUSY_TENTATIVE``
 
-    See also :class:`BUSYTYPE`.
+    See also :class:`~icalendar.enums.BUSYTYPE`.
 
     Purpose:
         To specify the free or busy time type.
@@ -417,7 +473,8 @@ class BUSYTYPE(StrEnum):
 
     Description:
         This property is used to specify the default busy time
-        type.  The values correspond to those used by the :class:`FBTYPE`
+        type.  The values correspond to those used by the
+        :class:`~icalendar.enums.FBTYPE`
         parameter used on a "FREEBUSY" property, with the exception that
         the "FREE" value is not used in this property.  If not specified
         on a component that allows this property, the default is "BUSY-

@@ -9,23 +9,20 @@ from icalendar.prop import vAdr, vN, vOrg
 class TestComponentIntegration:
     """Test vCard properties work within Component parsing."""
 
-    def test_adr_in_component(self):
+    def test_adr_in_component(self, comp):
         """ADR property works in a Component."""
-        comp = Component()
         comp.add("ADR", ("", "", "123 Main St", "City", "State", "12345", "USA"))
         ical = comp.to_ical()
         assert b"ADR:;;123 Main St;City;State;12345;USA" in ical
 
-    def test_n_in_component(self):
+    def test_n_in_component(self, comp):
         """N property works in a Component."""
-        comp = Component()
         comp.add("N", ("Doe", "John", "M.", "Dr.", "Jr."))
         ical = comp.to_ical()
         assert b"N:Doe;John;M.;Dr.;Jr." in ical
 
-    def test_org_in_component(self):
+    def test_org_in_component(self, comp):
         """ORG property works in a Component."""
-        comp = Component()
         comp.add("ORG", ("ABC Inc.", "Marketing"))
         ical = comp.to_ical()
         assert b"ORG:ABC Inc.;Marketing" in ical

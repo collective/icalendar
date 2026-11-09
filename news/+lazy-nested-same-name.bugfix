@@ -1,0 +1,1 @@
+Fixed :class:`~icalendar.cal.lazy.LazyCalendar` ending a lazily parsed component at the first ``END`` line with its name, so a component nested inside a component with the same name, such as an ``X-`` component, no longer makes parsing fail with ``END encountered without an accompanying BEGIN!``. I used AI to assist me with this change. @alhudz

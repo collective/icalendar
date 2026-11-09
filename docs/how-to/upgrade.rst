@@ -48,6 +48,62 @@ If your code passes a file path as a ``str``:
     calendar = Calendar.from_ical(Path("/path/to/calendar.ics"))
 
 
+..  _vbinary-obj-removed:
+
+``vBinary.obj`` removed
+'''''''''''''''''''''''
+
+``vBinary.obj`` corrupted data.
+Use :meth:`vBinary.bytes <icalendar.prop.binary.vBinary.bytes>` instead.
+
+The example below shows how to correctly access binary data:
+
+.. code-block:: pycon
+
+    >>> from icalendar import Calendar
+    >>> cal = Calendar.example("rfc_7986_image.ics")
+    >>> v_binary = cal.events[1]["IMAGE"]
+    >>> v_binary.bytes[:4]  # correct access for PNG image data
+    b'\x89PNG'
+
+For backward compatibility, if corrupt data is acceptable and you need to get the bytes as a Unicode string, use :meth:`~icalendar.parser_tools.to_unicode` as shown in the following code:
+
+.. code-block:: pycon
+
+    >>> from icalendar.parser_tools import to_unicode
+    >>> string = to_unicode(v_binary.bytes)  # corrupts data
+
+..  _removed-from-icalendar-parser-string:
+
+Functions removed from :mod:`icalendar.parser.string`
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+These functions have been removed from :mod:`icalendar.parser.string`:
+
+* ``escape_char``
+* ``escape_string``
+* ``foldline``,
+* ``unescape_char``
+* ``unescape_string``
+
+
+.. _upgrade-8.0.0-prek:
+
+Migrate from pre-commit to prek
+-------------------------------
+
+icalendar now uses `prek <https://prek.j178.dev/>`_ instead of :program:`pre-commit` to manage its Git hooks.
+
+If you have an existing development environment with :program:`pre-commit` hooks installed, first back up any custom hooks.
+Then replace all hooks by running the following command once.
+
+.. code-block:: shell
+
+    uv run prek install -f
+
+The ``-f`` option overwrites existing hook scripts in :file:`.git/hooks`.
+
+
 .. _upgrade-7.0.0:
 
 7.0.0

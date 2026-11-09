@@ -1,0 +1,1 @@
+Changed the custom component names in the test calendars for :issue:`178` and in :doc:`../how-to/custom-components` to names that start with ``X-``, so that they are valid iCalendar. I used AI to help with this change. @arrudagba

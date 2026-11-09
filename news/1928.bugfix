@@ -1,0 +1,1 @@
+Serialized jCal recurrence rule parts in canonical order, matching iCal and xCal serialization. I used OpenAI GPT-5 Codex to assist with this change. @nightcityblade
