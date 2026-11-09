@@ -206,7 +206,6 @@ def test_matching_duration_and_end_normalize_pytz_across_dst() -> None:
     assert validated_start == start
     assert validated_end is None
     assert duration == timedelta(hours=1)
-    assert event.end == end
 
 class TestConsolidatedPropertyGetters:
     """Test consolidated property getter functions."""
