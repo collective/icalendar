@@ -294,23 +294,18 @@ class Component(CaselessDict):
     def _encode(cls, name, value, parameters=None, encode=1):
         """Encode values to icalendar property values.
 
-        :param name: Name of the property.
-        :type name: string
+        Parameters:
+            name (str): Required. Name of the property.
+            value (obj): Required. Value of the property. Either a native Python type or
+                any of icalendar's own property types.
+            encode (bool): ``True`` if the value should be encoded to one of
+                icalendar's own property types (falls back to ``vText``),
+                or ``False`` if not.
+            parameters (dict or None): Property parameter dictionary for the value.
+                Only used if ``encode`` is set to ``True``.
 
-        :param value: Value of the property. Either of a basic Python type of
-                      any of the icalendar's own property types.
-        :type value: Python native type or icalendar property type.
-
-        :param parameters: Property parameter dictionary for the value. Only
-                           available, if encode is set to True.
-        :type parameters: Dictionary
-
-        :param encode: True, if the value should be encoded to one of
-                       icalendar's own property types (Fallback is "vText")
-                       or False, if not.
-        :type encode: Boolean
-
-        :returns: icalendar property value
+        Returns:
+            The encoded icalendar property value.
         """
         if not encode:
             return value
@@ -498,14 +493,21 @@ class Component(CaselessDict):
         name: str | None = None,
         select: callable[[Component], bool] = lambda _: True,
     ) -> list[Component]:
-        """Recursively traverses component and subcomponents. Returns sequence
-        of same. If name is passed, only components with name will be returned.
+        """Return this component and its subcomponents that match the filters.
 
-        :param name: The name of the component or None such as ``VEVENT``.
-        :param select: A function that takes the component as first argument
-          and returns True/False.
-        :returns: A list of components that match.
-        :rtype: list[Component]
+        A component is kept only if it matches both ``name`` and ``select``.
+        The name match is case-insensitive, so ``"vevent"`` finds ``VEVENT``
+        components.
+
+        Parameters:
+            name: Component name to keep, such as ``"VEVENT"``; ``None`` keeps
+                every name.
+            select: Function that takes a component and returns ``True`` to
+                keep it. By default, every component is kept.
+
+        Returns:
+            list[Component]: The matching components, starting with this one
+                if it matches.
         """
         if name is not None:
             name = name.upper()
@@ -1393,6 +1395,7 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
         raise JCalParsingError(
             "The name must be a string.", starting_cls, path=[0], value=name
         )
+    JCalParsingError.validate_jcal_token(name, "component name", starting_cls, [0])
     if name.upper() != starting_cls.name:
         # delegate to correct component class
         component_cls = starting_cls.get_component_class(name.upper())
