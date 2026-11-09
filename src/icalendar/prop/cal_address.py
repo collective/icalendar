@@ -124,10 +124,10 @@ class vCalAddress(str):
     def __ne__(self, other: object) -> bool:
         """Negation of :meth:`__eq__`.
 
-        This is required because :class:`vCalAddress` extends
-        :class:`str`: without it, ``!=`` would use :meth:`str.__ne__`
-        (plain string comparison) and could disagree with
-        :meth:`__eq__`; for example, case-insensitively equal addresses would
+        This method is required because :class:`vCalAddress` extends
+        :class:`str`. Without it, ``!=`` would use :meth:`str.__ne__`
+        using plain string comparison and could disagree with
+        :meth:`__eq__`. For example, case-insensitively equal addresses would
         be both ``==`` and ``!=`` at the same time.
         """
         result = self.__eq__(other)
