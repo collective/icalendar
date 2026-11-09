@@ -277,7 +277,7 @@ _DISALLOWED_LANGUAGE_CHARS = re.compile(r"[^a-zA-Z0-9-]")
 
 
 def _validate_language_tag(tag: str) -> str:
-    """Validate a language tag per RFC 5646.
+    """Validate a language tag per :rfc:`5646`.
 
     Raises:
         ValueError: If the language tag contains invalid characters or structure.
@@ -310,7 +310,7 @@ Description:
     can be used to set the default language for the entire body part.
     Otherwise, no default language is assumed.
 
-    This is the raw parameter accessor for the iCalendar ``LANGUAGE`` parameter.
+    This is the raw parameter accessor for the iCalendar LANGUAGE parameter.
     For sanitized access, use :attr:`language` as the best way to access the parameter.
 """,
 )
@@ -329,17 +329,17 @@ Description:
 
 Returns:
     ``None`` if no language is set, or a string with only ``a-z``, ``A-Z``,
-    ``0-9`` and ``-`` in it (any invalid characters are removed), possibly a
-    valid :rfc:`5646` language identifier.
+    ``0-9``, and ``-`` in it, removing any invalid characters, resulting in a
+    possible valid :rfc:`5646` language identifier.
 
 Raises:
     ValueError: If invalid characters or format are present when setting the
         language tag.
 
-.. note::
+..  tip::
 
-    To standardize language tags, the external library `langcodes <https://pypi.org/project/langcodes/>`_
-    can be used. It is not installed with icalendar.
+    To standardize language tags, install and use the external library
+    `langcodes <https://pypi.org/project/langcodes/>`_.
 
     The example below shows how to set valid language tags:
 
