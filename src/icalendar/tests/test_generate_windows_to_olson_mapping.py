@@ -59,13 +59,16 @@ def test_generator_pins_mapping_to_latest_cldr_commit(monkeypatch):
 
     output = Output()
 
-    def open_output(_path, _mode):
+    def open_output(path, _mode):
+        assert path == Path(__file__).parents[1] / "timezone" / "windows_to_olson.py"
         return output
 
     monkeypatch.setattr(request, "urlopen", urlopen)
     monkeypatch.setattr(Path, "open", open_output)
 
-    generator = Path(__file__).parents[3] / "generate_windows_to_olson_mapping.py"
+    generator = (
+        Path(__file__).parents[3] / "scripts" / "generate_windows_to_olson_mapping.py"
+    )
     runpy.run_path(str(generator), run_name="__main__")
 
     generated = output.getvalue()
@@ -96,6 +99,8 @@ def test_generator_rejects_invalid_cldr_version(monkeypatch):
 
     monkeypatch.setattr(request, "urlopen", urlopen)
 
-    generator = Path(__file__).parents[3] / "generate_windows_to_olson_mapping.py"
+    generator = (
+        Path(__file__).parents[3] / "scripts" / "generate_windows_to_olson_mapping.py"
+    )
     with pytest.raises(ValueError, match="Invalid CLDR commit SHA"):
         runpy.run_path(str(generator), run_name="__main__")

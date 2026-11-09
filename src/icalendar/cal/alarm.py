@@ -29,6 +29,7 @@ from icalendar.attr import (
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 from icalendar.error import InvalidCalendar
+from icalendar.prop import vCalAddress
 
 if TYPE_CHECKING:
     import uuid
@@ -390,6 +391,7 @@ class Alarm(Component):
         cls,
         /,
         action: str | None = None,
+        trigger: timedelta | datetime | None = None,
         attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: ATTENDEE_TYPE_SETTER = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
@@ -408,6 +410,7 @@ class Alarm(Component):
             action: The :attr:`ACTION` of the alarm. Typical values are
                 ``"AUDIO"``, ``"DISPLAY"``, and ``"EMAIL"``. When you set
                 ``"AUDIO"``, the alarm accepts at most one attachment.
+            trigger: The required :attr:`TRIGGER` of the alarm.
             attachments: The :attr:`attachments` of the alarm.
             attendees: The :attr:`attendees` of the alarm.
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
@@ -422,11 +425,16 @@ class Alarm(Component):
             :class:`Alarm`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            ~icalendar.error.InvalidCalendar: If the content is not valid
                 according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
+        if cls._validate_new:
+            if not action:
+                raise InvalidCalendar("Alarm requires an ACTION")
+            if trigger is None:
+                raise InvalidCalendar("Alarm requires a TRIGGER")
         alarm: Self = super().new(
             links=links,
             related_to=related_to,
@@ -435,6 +443,8 @@ class Alarm(Component):
         )
         if action is not None:
             alarm.ACTION = action
+        if trigger is not None:
+            alarm.TRIGGER = trigger
         alarm.attachments = attachments
         alarm.summary = summary
         alarm.description = description
@@ -540,6 +550,7 @@ class Alarm(Component):
             raise InvalidCalendar("DISPLAY alarm requires a trigger")
         alarm: Alarm = cls.new(
             action="DISPLAY",
+            trigger=trigger,
             description=description,
             uid=uid,
             links=links,
@@ -547,7 +558,6 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
-        alarm.TRIGGER = trigger
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
@@ -620,6 +630,7 @@ class Alarm(Component):
             raise InvalidCalendar("AUDIO alarm requires a trigger")
         alarm: Alarm = cls.new(
             action="AUDIO",
+            trigger=trigger,
             attachments=attachments,
             uid=uid,
             links=links,
@@ -627,7 +638,6 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
-        alarm.TRIGGER = trigger
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
@@ -712,29 +722,36 @@ class Alarm(Component):
                 TRIGGER:-PT30M
                 END:VALARM
         """
-        if isinstance(attendees, str):
+        if isinstance(attendees, (str, vCalAddress)):
             attendees = [attendees]
+        elif attendees is None:
+            attendees = []
+        cleaned_attendees = [
+            a
+            for a in attendees
+            if a is not None and (not isinstance(a, str) or a.strip())
+        ]
         if not summary:
             raise InvalidCalendar("EMAIL alarm requires a summary")
         if not description:
             raise InvalidCalendar("EMAIL alarm requires a description")
         if trigger is None:
             raise InvalidCalendar("EMAIL alarm requires a trigger")
-        if not attendees:
-            raise InvalidCalendar("EMAIL alarm requires at least one attendee")
+        if not cleaned_attendees:
+            raise InvalidCalendar("EMAIL alarm requires at least one valid attendee")
         alarm: Alarm = cls.new(
             action="EMAIL",
+            trigger=trigger,
             attachments=attachments,
             summary=summary,
             description=description,
             uid=uid,
-            attendees=attendees,
+            attendees=cleaned_attendees,
             links=links,
             related_to=related_to,
             refids=refids,
             concepts=concepts,
         )
-        alarm.TRIGGER = trigger
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
 

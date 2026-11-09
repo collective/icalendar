@@ -186,6 +186,17 @@ class Event(Component):
             UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
             END:VEVENT
 
+        Get the example Event:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event
+            >>> event = Event.example()
+            >>> print(event["SUMMARY"])
+            Meeting
+            >>> len(event.alarms.times)
+            2
+
     """
 
     name = "VEVENT"
@@ -272,7 +283,17 @@ class Event(Component):
 
     @classmethod
     def example(cls, name: str = "rfc_9074_example_3") -> Event:
-        """Return the calendar example with the given name."""
+        """Return the event example with the given name.
+
+        Example:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event.example()
+                >>> print(event["SUMMARY"])
+                Meeting
+        """
         return cls.from_ical(get_example("events", name))
 
     DTSTART = create_single_property(
@@ -481,24 +502,24 @@ class Event(Component):
             categories: The :attr:`categories` of the event.
             classification: The :attr:`classification` of the event.
             color: The :attr:`color` of the event.
-            comments: The :attr:`~icalendar.Component.comments` of the event.
-            concepts: The :attr:`~icalendar.Component.concepts` of the event.
+            comments: The :attr:`~icalendar.cal.component.Component.comments` of the event.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the event.
             conferences: The :attr:`conferences` of the event.
-            created: The :attr:`~icalendar.Component.created` of the event.
+            created: The :attr:`~icalendar.cal.component.Component.created` of the event.
             description: The :attr:`description` of the event.
             end: The :attr:`end` of the event.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of the event.
-            links: The :attr:`~icalendar.Component.links` of the event.
+            last_modified: The :attr:`~icalendar.cal.component.Component.last_modified` of the event.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the event.
             location: The :attr:`location` of the event.
             organizer: The :attr:`organizer` of the event.
             priority: The :attr:`priority` of the event.
             recurrence_id: The :attr:`RECURRENCE_ID` of the event.
-            refids: :attr:`~icalendar.Component.refids` of the event.
-            related_to: :attr:`~icalendar.Component.related_to` of the event.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the event.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the event.
             request_status: The :attr:`REQUEST_STATUS` of the event.
             resources: The :attr:`RESOURCES` of the event.
             sequence: The :attr:`sequence` of the event.
-            stamp: The :attr:`~icalendar.Component.stamp` of the event.
+            stamp: The :attr:`~icalendar.cal.component.Component.stamp` of the event.
                 If ``None``, this is set to the current UTC time.
             start: The :attr:`start` of the event.
             status: The :attr:`status` of the event.

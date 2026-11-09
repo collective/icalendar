@@ -1,0 +1,1 @@
+Quote parameter values that end with a backslash when serializing. The parser reads a backslash outside of double quotes as an escape character, so an unquoted ``CN=Mallory\`` swallowed the following delimiter, merging the next parameter or the property value into it when the output was parsed again. I used AI to assist me with this change. @alhudz

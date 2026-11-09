@@ -2,7 +2,7 @@
 
 import re
 
-from icalendar.compatibility import deprecate_for_version_8
+from icalendar.error import InvalidToken
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 
@@ -55,20 +55,10 @@ def _escape_char(text: str | bytes) -> str:
     )
 
 
-escape_char = deprecate_for_version_8(_escape_char)
-"""Format value according to iCalendar TEXT escaping rules.
-
-.. deprecated:: 7.0.0
-    Use the private :func:`_escape_char` internally. For external use,
-    this function is deprecated. Please use alternative escaping methods
-    or contact the maintainers.
-"""
-
-
 def _unescape_char(text: str | bytes) -> str | bytes:
     r"""Unescape iCalendar TEXT values.
 
-    Reverses the escaping applied by :func:`_escape_char` according to
+    Reverses the escaping applied by ``_escape_char`` according to
     :rfc:`5545#section-3.3.11` TEXT escaping rules.
 
     Parameters:
@@ -110,16 +100,6 @@ def _unescape_char(text: str | bytes) -> str | bytes:
         .replace(b"\\;", b";")
         .replace(b"\\\\", b"\\")
     )
-
-
-unescape_char = deprecate_for_version_8(_unescape_char)
-"""Unescape iCalendar TEXT values.
-
-.. deprecated:: 7.0.0
-    Use the private :func:`_unescape_char` internally. For external use,
-    this function is deprecated. Please use alternative unescaping methods
-    or contact the maintainers.
-"""
 
 
 def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
@@ -169,14 +149,6 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     return fold_sep.join(folded_lines)
 
 
-foldline = deprecate_for_version_8(_foldline)
-"""Make a string folded as defined in RFC5545.
-
-.. deprecated:: 7.0.0
-    Use the private :func:`_foldline` internally.
-"""
-
-
 def _escape_string(val: str) -> str:
     r"""Escape backslash sequences to URL-encoded hex values.
 
@@ -201,7 +173,7 @@ def _escape_string(val: str) -> str:
 
         A literal ``%`` is escaped first so that percent sequences already in
         the value (e.g. ``%2C`` in a URI) are not confused with the markers
-        introduced here. :func:`_unescape_string` reverses it.
+        introduced here. ``_unescape_string`` reverses it.
     """
     # f'{i:02X}'
     return (
@@ -213,19 +185,10 @@ def _escape_string(val: str) -> str:
     )
 
 
-escape_string = deprecate_for_version_8(_escape_string)
-"""Escape backslash sequences to URL-encoded hex values.
-
-.. deprecated:: 7.0.0
-    Use the private :func:`_escape_string` internally. For external use,
-    this function is deprecated.
-"""
-
-
 def _unescape_string(val: str) -> str:
     r"""Unescape URL-encoded hex values to their original characters.
 
-    Reverses :func:`_escape_string` by converting percent-encoded hex values
+    Reverses ``_escape_string`` by converting percent-encoded hex values
     back to their original characters. This is used for parameter parsing.
 
     Parameters:
@@ -243,7 +206,7 @@ def _unescape_string(val: str) -> str:
         - ``%5C`` -> ``\``
         - ``%25`` -> ``%``
 
-        ``%25`` is restored last so a literal ``%`` that :func:`_escape_string`
+        ``%25`` is restored last so a literal ``%`` that ``_escape_string``
         protected does not re-trigger the marker replacements above.
     """
     return (
@@ -255,36 +218,31 @@ def _unescape_string(val: str) -> str:
     )
 
 
-unescape_string = deprecate_for_version_8(_unescape_string)
-"""Unescape URL-encoded hex values to their original characters.
-
-.. deprecated:: 7.0.0
-    Use the private :func:`_unescape_string` internally. For external use,
-    this function is deprecated.
-"""
-
-
 # [\w-] because of the iCalendar RFC
 # . because of the vCard RFC
-NAME = re.compile(r"[\w.-]+")
+NAME = re.compile(r"[\w.-]+", re.ASCII)
 
 
 def validate_token(name: str) -> None:
     r"""Validate that a name is a valid iCalendar token.
 
     Checks if the name matches the :rfc:`5545` token syntax using the NAME
-    regex pattern (``[\w.-]+``).
+    regex pattern (``[\w.-]+``), with ``\w`` matching ASCII characters only.
 
     Parameters:
-        name: The token name to validate.
+        name: Required. The token name to validate.
 
     Raises:
-        ValueError: If the name is not a valid token.
+        ~icalendar.error.InvalidToken: If the name is not a valid token.
+
+    ..  versionchanged:: 0.0.0
+        Raise :exc:`~icalendar.error.InvalidToken`, a subclass of
+        :exc:`ValueError`, and reject non-ASCII characters.
     """
     match = NAME.findall(name)
     if len(match) == 1 and name == match[0]:
         return
-    raise ValueError(name)
+    raise InvalidToken(name)
 
 
 __all__ = [
@@ -293,10 +251,5 @@ __all__ = [
     "_foldline",
     "_unescape_char",
     "_unescape_string",
-    "escape_char",
-    "escape_string",
-    "foldline",
-    "unescape_char",
-    "unescape_string",
     "validate_token",
 ]

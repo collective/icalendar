@@ -76,3 +76,19 @@ def test_timezone_id_resolves(tzp, tzid, resolved_tzid):
         assert tz is None
     else:
         assert tzid_from_tzinfo(tz) == resolved_tzid
+
+
+def test_cached_guess_warns_on_every_lookup(tzp):
+    """A repeated lookup of a guessed TZID warns again despite the cache.
+
+    The first lookup stores the guessed timezone in the TZID cache. The
+    second lookup is served from the cache and must still emit
+    GloballyUniqueTZIDGuessed: the result is a guess no matter where it
+    comes from. See https://github.com/collective/icalendar/issues/1660
+    """
+    tzid = "/mozilla.org/20070129_1/America/New_York"
+    with pytest.warns(GloballyUniqueTZIDGuessed):
+        first = tzp.timezone(tzid)
+    with pytest.warns(GloballyUniqueTZIDGuessed):
+        second = tzp.timezone(tzid)
+    assert first is second

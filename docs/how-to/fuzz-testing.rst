@@ -22,7 +22,7 @@ For simplicity, the timestamp is omitted.
 
 A typical calendar example consists of a start and end delimiter surrounding the base64 encoded calendar as shown.
 
-.. code-block:: text
+..  code-block:: text
 
     --- start calendar ---
     QkVHSU46CkJpaWloOgpCaWlpMDoKRU5kOg==
@@ -30,13 +30,13 @@ A typical calendar example consists of a start and end delimiter surrounding the
 
 To decode this calendar, use the following command.
 
-.. code-block:: shell
+..  code-block:: shell
 
-    $ echo "QkVHSU46CkJpaWloOgpCaWlpMDoKRU5kOg==" | base64 -d
+    echo "QkVHSU46CkJpaWloOgpCaWlpMDoKRU5kOg==" | base64 -d
 
 Observe all kinds of random data in the output that the fuzzer generates, and which may trigger errors.
 
-.. code-block:: console
+..  code-block:: console
 
     BEGIN:
     Biiih:
@@ -44,9 +44,9 @@ Observe all kinds of random data in the output that the fuzzer generates, and wh
     END:
 
 When fuzz testing fails, it appears as an error in the log file.
-To identify uncaught fuzzing errors for which icalendar needs a test case, look for a start delimiter, followed by the base64 encoded calendar, and finally a line with an error code followed by the text ``libFuzzer: fuzz target exited``.
+To identify uncaught fuzzing errors for which icalendar needs a test case, look for a start delimiter, followed by the base64-encoded calendar, and finally a line with an error code followed by the text ``libFuzzer: fuzz target exited``.
 
-.. code-block:: console
+..  code-block:: text
 
     --- start calendar ---
     QkVHSU46VgpSUlVMRTolbjtCWU1PTlRIPQ==
@@ -58,13 +58,13 @@ Create a fuzz test case
 
 To create the fuzz test case locally, use the following template, filling in the ``<base64>`` string and adding a descriptive ``<filename>``.
 
-.. code-block:: console
+..  code-block:: shell
 
     echo "<base64>" | base64 -d | tee src/icalendar/tests/calendars/fuzz_testcase_<filename>.ics
 
 Then, you can run the tests and see that the error is reproduced.
 
-.. code-block:: console
+..  code-block:: shell
 
     tox -e py313 -- src/icalendar/tests/fuzzed/
 
@@ -76,15 +76,15 @@ Reproduction example
 --------------------
 
 In the sample log file :download:`fuzz-testing-log.txt`, find the fuzz test error by searching for the string ``libFuzzer: fuzz target exited``.
-Copy the immediately preceding base64 encoded calendar.
+Copy the immediately preceding base64-encoded calendar.
 
-.. code-block:: console
+..  code-block:: text
 
     QkVHSU46VgpSUlVMRTolbjtCWU1PTlRIPQ==
 
-The log shows the Python traceback usually a few hundred lines above this calendar.
+The log shows the Python traceback, usually a few hundred lines above this calendar.
 
-.. code-block:: text
+..  code-block:: text
 
     --- start calendar ---
     === Uncaught Python exception: ===
@@ -94,21 +94,26 @@ The log shows the Python traceback usually a few hundred lines above this calend
 This provides a clue for how to write a test case.
 Generate the test case file by running the following command from the root of the repository, using the copied calendar.
 
-.. code-block:: console
+..  code-block:: shell
 
-    $ echo "QkVHSU46VgpSUlVMRTolbjtCWU1PTlRIPQ==" | base64 -d | tee src/icalendar/tests/calendars/fuzz_testcase_invalid_month.ics
+    echo "QkVHSU46VgpSUlVMRTolbjtCWU1PTlRIPQ==" | base64 -d | tee src/icalendar/tests/calendars/fuzz_testcase_invalid_month.ics
+
+It should return the following output.
+
+..  code-block:: console
+
     BEGIN:V
     RRULE:%n;BYMONTH=
 
 Next, run the tests.
 
-.. code-block:: shell
+..  code-block:: shell
 
-    $ tox -e py313 -- src/icalendar/tests/fuzzed/
+    tox -e py313 -- src/icalendar/tests/fuzzed/
 
 The output shows that the error is reproduced.
 
-.. code-block:: console
+..  code-block:: console
 
     src/icalendar/tests/fuzzed/test_fuzzed_calendars.py .F
     # ...
@@ -124,14 +129,12 @@ Commit the test case and push it to a pull request, so that the error can be saf
 Reproduce fuzzing issues locally
 ================================
 
-To reproduce fuzzing issues locally, install `OSS-Fuzz`_ locally, following its
-`setup instructions <https://google.github.io/oss-fuzz/advanced-topics/reproducing/#reproduce-using-local-source-checkout>`_.
+To reproduce fuzzing issues locally, install `OSS-Fuzz`_ locally, following its `setup instructions <https://google.github.io/oss-fuzz/advanced-topics/reproducing/#reproduce-using-local-source-checkout>`_.
 
-Then, you can run the script ``generate_python_test_cases_from_downloaded_clusterfuzz_test_cases.sh``
-in ``src/icalendar/tests/fuzzed/`` to generate python test cases from the downloaded fuzzer test cases.
+Then, you can run the script ``generate_python_test_cases_from_downloaded_clusterfuzz_test_cases.sh`` in ``scripts/`` to generate Python test cases from the downloaded fuzzer test cases.
 
-.. code-block:: shell
+..  code-block:: shell
 
-    src/icalendar/tests/fuzzed/generate_python_test_cases_from_downloaded_clusterfuzz_test_cases.sh
+    scripts/generate_python_test_cases_from_downloaded_clusterfuzz_test_cases.sh
 
 .. _OSS-Fuzz: https://google.github.io/oss-fuzz/

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+  <vcalendar>
+    <properties>
+      <prodid>
+        <text>-//Example Inc.//Example Calendar//EN</text>
+      </prodid>
+      <version>
+        <text>2.0</text>
+      </version>
+      <ext:source xmlns:ext="http://example.com/ns/ext" ext:id="1">a, b; c\d</ext:source>
+    </properties>
+    <components>
+      <vevent>
+        <properties>
+          <dtstamp>
+            <date-time>2026-10-15T10:00:00Z</date-time>
+          </dtstamp>
+          <uid>
+            <text>rfc-6321-xml-property@example.com</text>
+          </uid>
+          <dtstart>
+            <date-time>2026-10-20T10:00:00Z</date-time>
+          </dtstart>
+          <summary>
+            <text>Meeting with a location in KML</text>
+          </summary>
+          <kml xmlns="http://www.opengis.net/kml/2.2">
+            <Document>
+              <name>KML Sample</name>
+              <open>1</open>
+              <description>An incomplete example of a KML document - used as an example!</description>
+            </Document>
+          </kml>
+          <ext:note xmlns:ext="http://example.com/ns/ext">Bring the map.</ext:note>
+        </properties>
+      </vevent>
+    </components>
+  </vcalendar>
+</icalendar>

@@ -5,6 +5,7 @@ import argparse
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import cast
 
 from icalendar import __version__, vCalAddress
 from icalendar.cal.calendar import Calendar
@@ -86,7 +87,7 @@ def view(event: Event) -> str:
 {description}"""
 
 
-def main():
+def main() -> None:
     """Parse command-line arguments and print a summary of calendar events.
 
     Reads one or more iCalendar files or stdin, and writes a human-readable
@@ -132,7 +133,8 @@ def main():
             try:
                 calendar = Calendar.from_ical(f.read())
                 output_file.writelines(
-                    view(event) + "\n\n" for event in calendar.walk("vevent")
+                    view(cast("Event", event)) + "\n\n"
+                    for event in calendar.walk("vevent")
                 )
             finally:
                 if close_input:

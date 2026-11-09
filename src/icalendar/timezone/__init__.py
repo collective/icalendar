@@ -6,12 +6,12 @@ from .tzp import TZP
 tzp = TZP()
 
 
-def use_pytz():
+def use_pytz() -> None:
     """Use pytz as the implementation that looks up and creates timezones."""
     tzp.use_pytz()
 
 
-def use_zoneinfo():
+def use_zoneinfo() -> None:
     """Use zoneinfo as the implementation that looks up and creates timezones."""
     tzp.use_zoneinfo()
 

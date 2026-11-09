@@ -238,21 +238,21 @@ class Journal(Component):
             categories: The :attr:`categories` of the journal.
             classification: The :attr:`classification` of the journal.
             color: The :attr:`color` of the journal.
-            comments: The :attr:`~icalendar.Component.comments` of the journal.
-            concepts: The :attr:`~icalendar.Component.concepts` of the journal.
+            comments: The :attr:`~icalendar.cal.component.Component.comments` of the journal.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the journal.
             contacts: The :attr:`contacts` of the journal.
-            created: The :attr:`~icalendar.Component.created` of the journal.
+            created: The :attr:`~icalendar.cal.component.Component.created` of the journal.
             description: The :attr:`description` of the journal.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of
+            last_modified: The :attr:`~icalendar.cal.component.Component.last_modified` of
                 the journal.
-            links: The :attr:`~icalendar.Component.links` of the journal.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the journal.
             organizer: The :attr:`organizer` of the journal.
             recurrence_id: The :attr:`RECURRENCE_ID` of the journal.
-            refids: :attr:`~icalendar.Component.refids` of the journal.
-            related_to: :attr:`~icalendar.Component.related_to` of the journal.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the journal.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the journal.
             request_status: The :attr:`REQUEST_STATUS` of the journal.
             sequence: The :attr:`sequence` of the journal.
-            stamp: The :attr:`~icalendar.Component.stamp` of the journal.
+            stamp: The :attr:`~icalendar.cal.component.Component.stamp` of the journal.
                 If None, this is set to the current time.
             start: The :attr:`start` of the journal.
             status: The :attr:`status` of the journal.
@@ -265,7 +265,7 @@ class Journal(Component):
             :class:`Journal`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            ~icalendar.error.InvalidCalendar: If the content is not valid
                 according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.

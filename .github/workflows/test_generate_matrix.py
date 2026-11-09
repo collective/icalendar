@@ -2,7 +2,7 @@
 
 Run with:
 
-    pytest .github/workflows/test_generate_matrix.py
+    uv run pytest .github/workflows/test_generate_matrix.py
 
 """
 
@@ -19,27 +19,24 @@ CASES_0 = set()
     params=[
         # push runs PyPy on main only; review never runs PyPy
         ("", CASES_ALL, "refs/heads/main", "push"),
+        ("", CASES_NO_PYPY, "refs/heads/8.x", "push"),
         ("", CASES_NO_PYPY, "refs/heads/7.x", "push"),
-        ("", CASES_NO_PYPY, "refs/heads/6.x", "push"),
-        ("", CASES_NO_PYPY, "refs/heads/5.x", "push"),
         ("", CASES_NO_PYPY, "refs/heads/release-1", "push"),
-        ("", CASES_NO_PYPY, "refs/tags/v7.0.2", "push"),
+        ("", CASES_NO_PYPY, "refs/tags/v8.0.2", "push"),
         ("", CASES_MIN, "refs/heads/pr-branch", "push"),
         # review
         ("changes_requested", CASES_0, "refs/heads/main", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/8.x", "pull_request_review"),
         ("changes_requested", CASES_0, "refs/heads/7.x", "pull_request_review"),
-        ("changes_requested", CASES_0, "refs/heads/6.x", "pull_request_review"),
-        ("changes_requested", CASES_0, "refs/heads/5.x", "pull_request_review"),
         ("changes_requested", CASES_0, "refs/heads/release-2", "pull_request_review"),
-        ("changes_requested", CASES_0, "refs/tags/v7.0.2", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/tags/v8.0.2", "pull_request_review"),
         ("changes_requested", CASES_0, "refs/heads/pr-branch", "pull_request_review"),
         ("approved", CASES_NO_PYPY, "refs/heads/main", "pull_request_review"),
         ("approved", CASES_NO_PYPY, "refs/pull/123/merge", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/8.x", "pull_request_review"),
         ("approved", CASES_NO_PYPY, "refs/heads/7.x", "pull_request_review"),
-        ("approved", CASES_NO_PYPY, "refs/heads/6.x", "pull_request_review"),
-        ("approved", CASES_NO_PYPY, "refs/heads/5.x", "pull_request_review"),
         ("approved", CASES_NO_PYPY, "refs/heads/release-3", "pull_request_review"),
-        ("approved", CASES_NO_PYPY, "refs/tags/v7.0.2", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/tags/v8.0.2", "pull_request_review"),
         ("approved", CASES_NO_PYPY, "refs/heads/pr-branch", "pull_request_review"),
     ],
 )
@@ -147,9 +144,9 @@ def test_parameters_are_present(matrix, attribute):
         ("schedule", "refs/heads/main", True),
         ("workflow_dispatch", "refs/heads/main", True),
         ("pull_request_review", "refs/heads/main", True),
-        ("schedule", "refs/heads/7.x", True),
-        ("push", "refs/heads/7.x", True),
-        ("pull_request_review", "refs/heads/7.x", True),
+        ("schedule", "refs/heads/8.x", True),
+        ("push", "refs/heads/8.x", True),
+        ("pull_request_review", "refs/heads/8.x", True),
     ],
 )
 def test_pypy_only_runs_on_push_to_main(event_name, git_ref, expected_skip):
