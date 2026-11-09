@@ -87,6 +87,23 @@ These functions have been removed from :mod:`icalendar.parser.string`:
 * ``unescape_string``
 
 
+.. _upgrade-8.0.0-prek:
+
+Migrate from pre-commit to prek
+-------------------------------
+
+icalendar now uses `prek <https://prek.j178.dev/>`_ instead of :program:`pre-commit` to manage its Git hooks.
+
+If you have an existing development environment with :program:`pre-commit` hooks installed, first back up any custom hooks.
+Then replace all hooks by running the following command once.
+
+.. code-block:: shell
+
+    uv run prek install -f
+
+The ``-f`` option overwrites existing hook scripts in :file:`.git/hooks`.
+
+
 .. _upgrade-7.0.0:
 
 7.0.0
