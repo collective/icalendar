@@ -32,15 +32,13 @@ Triage and review
 -   Triage open issues and `pull requests <https://github.com/collective/icalendar/pulls>`_.
 -   Review, comment on, and make suggestions to change a pull request.
     See the GitHub documentation `Reviewing proposed changes in a pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request>`_.
--   Conduct a reproducibility review: reproduce an issue and note your findings in the issue.
-
+-   Reproduce an issue and add a comment with your findings.
 
 Documentation
 `````````````
 
--   Extend the :doc:`documentation/index`.
--   Write guides and tutorials, or fix typos and improve clarity.
-
+-   Write guides, tutorials, or usage examples to expand the :doc:`documentation/index`.
+-   Fix typos, improve clarity, or suggest improvements to the documentation.
 
 .. _contribute-community:
 
@@ -50,6 +48,9 @@ Community
 -   Join the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_ to access all community channels.
 -   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
 -   Write a blog post about icalendar.
+-   Star or watch us on `GitHub <https://github.com/collective/icalendar>`_.
+-   Follow us on `Mastodon <https://fosstodon.org/@pycal>`_.
+-   Follow us on `LinkedIn <https://www.linkedin.com/company/pycal/>`_.
 -   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
 
 
