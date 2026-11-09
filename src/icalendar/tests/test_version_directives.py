@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 
@@ -71,12 +72,52 @@ def _version_directives():
                     )
 
 
+def test_is_release_branch_returns_false_without_git(monkeypatch):
+    """A missing Git executable must not fail the check."""
+    monkeypatch.delenv("GITHUB_REF_NAME", raising=False)
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        Mock(side_effect=FileNotFoundError("git not found")),
+    )
+
+    assert _is_release_branch() is False
+
+
+@pytest.mark.parametrize("branch", ["main", "8.x"])
+def test_is_release_branch(monkeypatch, branch):
+    """Detect main and version release branches."""
+    monkeypatch.setenv("GITHUB_REF_NAME", branch)
+
+    assert _is_release_branch()
+
+
+def test_released_versions_skips_without_git(monkeypatch):
+    """A failing Git command must skip the check."""
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        Mock(side_effect=FileNotFoundError("git not found")),
+    )
+
+    with pytest.raises(pytest.skip.Exception, match="Git tags are not available"):
+        _released_versions()
+
+
+def test_released_versions_skips_without_tags(monkeypatch):
+    """A repository without tags must skip the check."""
+    monkeypatch.setattr(subprocess, "run", Mock(return_value=Mock(stdout="")))
+
+    with pytest.raises(pytest.skip.Exception, match="No Git tags found"):
+        _released_versions()
+
+
+@pytest.mark.skipif(
+    _is_release_branch(),
+    reason="Version directives are rewritten for a release; checked on pull requests.",
+)
 def test_version_directives_use_released_versions():
     """Version directives must use a released version or the 0.0.0 placeholder."""
-    if _is_release_branch():
-        pytest.skip(
-            "Version directives are rewritten for a release; checked on pull requests."
-        )
     allowed = _released_versions() | {"0.0.0"}
     directives = list(_version_directives())
     assert directives, "No version directives found. The scanner may be broken."
