@@ -282,14 +282,18 @@ class Contentline(str):
         r"""Return the index of the colon that separates the value.
 
         This is the first colon that is not inside a quoted parameter section.
-        A colon inside a quoted parameter value (for example
-        ``ALTREP="http://x"``) is skipped, and a colon that belongs to the
-        value (``TEXT`` does not escape ``:``) is not mistaken for the
-        separator. An escaped double quote (``\"``) inside a quoted section
-        does not close it — :rfc:`2445`-style input such as ``CN="Qu\"ote"``
-        keeps its quote state — so the separator after it is still found.
-        A DQUOTE preceded by a literal backslash does close the section
-        when the separator (or the end of the line) follows it, the shape
+
+        A colon inside a quoted parameter value is skipped, for example,
+        ``ALTREP="http://x"``. A colon that belongs to the value is not
+        mistaken for the colon separator, since TEXT doesn't escape ``:``.
+
+        An escaped double quote (``\"``) inside a quoted section doesn't
+        close it. :rfc:`2445#section-4.3.11`-compliant input, such as
+        ``CN="Qu\"ote"``, both keeps its quote state and the separator after
+        it is still found.
+
+        A DQUOTE preceded by a literal backslash closes the section when the
+        separator or the end of the line follows it. This is the shape
         icalendar itself writes for values ending in a backslash.
 
         Returns:

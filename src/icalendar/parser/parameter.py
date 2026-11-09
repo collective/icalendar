@@ -118,12 +118,13 @@ def dquote(val: str, always_quote: bool = False) -> str:
 
 
 def unescape_quoted_param_value(value: str) -> str:
-    r"""Unescape RFC 2445-style escapes in a quoted parameter value.
+    r"""Unescape :rfc:`2445#section-4.3.11`-compliant escapes in a quoted
+    parameter value.
 
-    ``\"`` becomes a literal double quote and ``\\`` a literal backslash;
-    a lone backslash is kept as-is (it is a valid :rfc:`5545` QSAFE-CHAR
-    with no escape meaning). Scanned left to right so ``\\\"`` resolves
-    to ``\"``.
+    ``\"`` becomes a literal double quote, and ``\\`` becomes a literal
+    backslash. A lone backslash is kept as-is. It's a valid
+    :rfc:`5545#section-3.1` QSAFE-CHAR with no escape meaning. Values are
+    scanned from left to right, resolving ``\\\"`` to ``\"``.
     """
     out = []
     i = 0
@@ -142,9 +143,9 @@ def unescape_quoted_param_value(value: str) -> str:
 # parsing helper
 
 # A DQUOTE preceded by a backslash still closes its quoted section when a
-# structural delimiter (or the end of the string) follows it: icalendar
+# structural delimiter or the end of the string follows it. icalendar
 # itself writes parameter values that end in a backslash as ``"…\"`` (see
-# :func:`param_value`), and :rfc:`5545`/:rfc:`6868` give the backslash no
+# :func:`param_value`). :rfc:`5545` and :rfc:`6868` give the backslash no
 # escape meaning inside parameter values. A backslash-escaped DQUOTE is
 # honored as value content only when more value text follows it, the way
 # :rfc:`2445`-style producers emit ``CN="Qu\"ote"``.
@@ -154,10 +155,10 @@ _STRUCTURAL_DELIMITERS = frozenset(";:,")
 def closes_quoted_section(text: str, quote_index: int) -> bool:
     """Whether the DQUOTE at ``quote_index`` closes its quoted section.
 
-    The DQUOTE may be preceded by a literal backslash: if the next
+    The DQUOTE may be preceded by a literal backslash. If the next
     non-whitespace character after it is a structural delimiter (``;``,
-    ``:`` or ``,``), or nothing but whitespace or the end of the string
-    follows, the backslash is content and the DQUOTE closes the quoted
+    ``:``, or ``,``), nothing but whitespace, or the end of the string
+    follows, then the backslash is content and the DQUOTE closes the quoted
     section. A DQUOTE followed by other text is an escaped quote inside
     the value instead.
     """
