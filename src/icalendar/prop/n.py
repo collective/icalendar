@@ -137,7 +137,7 @@ class vN:
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         if len(jcal_property) != 8:  # name, params, value_type, 5 fields

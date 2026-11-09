@@ -177,8 +177,6 @@ class vText(str):
 
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
-        if name == "request-status":  # TODO: maybe add a vRequestStatus class?
-            return [name, {}, "text", self.split(";", 2)]
         return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
     @classmethod
@@ -194,7 +192,7 @@ class vText(str):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         name = jcal_property[0]
@@ -202,10 +200,11 @@ class vText(str):
             from icalendar.prop import vCategory
 
             return vCategory.from_jcal(jcal_property)
+        if name == "request-status":
+            from .request_status import vRequestStatus
+
+            return vRequestStatus.from_jcal(jcal_property)
         string = jcal_property[3]  # TODO: accept list or string but join with ;
-        if name == "request-status":  # TODO: maybe add a vRequestStatus class?
-            JCalParsingError.validate_list_type(jcal_property[3], str, cls, 3)
-            string = ";".join(jcal_property[3])
         JCalParsingError.validate_value_type(string, str, cls, 3)
         return cls(
             string,

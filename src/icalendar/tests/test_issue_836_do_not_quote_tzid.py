@@ -62,7 +62,9 @@ def test_parameter_is_not_quoted_when_not_needed(tzid, vdt):
     assert f'{tzid}"' not in ics
 
 
-@pytest.mark.parametrize("safe_char", list(map(chr, sorted(SAFE_CHAR))))
+# A value ending with a backslash is quoted so that it is not parsed
+# as escaping the following delimiter.
+@pytest.mark.parametrize("safe_char", list(map(chr, sorted(SAFE_CHAR - {ord("\\")}))))
 def test_safe_char_is_not_escaped(safe_char):
     """Check that paramerter serialization is without quotes for safe chars."""
     params = Parameters(tzid=safe_char)

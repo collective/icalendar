@@ -1,0 +1,1 @@
+Deprecated ``icalendar.parser.parameter.rfc_6868_escape`` and ``icalendar.parser.parameter.rfc_6868_unescape`` as private functions for icalendar version 9. They have been renamed to ``_rfc_6868_escape`` and ``_rfc_6868_unescape`` and are not part of the public API. @BrenoLois

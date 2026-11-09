@@ -99,6 +99,25 @@ def test_quoting(cn_param, cn_quoted):
     )
 
 
+@pytest.mark.parametrize(
+    "params",
+    [
+        {"CN": "Mallory\\", "PARTSTAT": "DECLINED"},
+        {"CN": "\\"},
+        {"X-PARAM": ["a\\", "b"]},
+    ],
+)
+def test_trailing_backslash_in_parameter_value_round_trips(params):
+    """A trailing backslash must not escape the following delimiter."""
+    event = Event()
+    attendee = vCalAddress("mailto:test@example.com")
+    attendee.params.update(params)
+    event.add("ATTENDEE", attendee)
+    parsed = Event.from_ical(event.to_ical())["ATTENDEE"]
+    assert parsed == "mailto:test@example.com"
+    assert parsed.params == params
+
+
 def test_property_params():
     """Property parameters with values containing a COLON character, a
     SEMICOLON character or a COMMA character MUST be placed in quoted

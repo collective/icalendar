@@ -6,7 +6,12 @@ from typing import Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
+from icalendar.error import (
+    ICalParsingError,
+    InvalidCalendar,
+    JCalParsingError,
+    XCalParsingError,
+)
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
@@ -132,11 +137,20 @@ class vDuration(TimeBase):
 
     @staticmethod
     def from_ical(ical) -> timedelta:
+        """Parse an iCalendar DURATION value.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid DURATION.
+        """
         match = DURATION_REGEX.match(ical)
         if not match:
-            raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
+            raise ICalParsingError(
+                "Invalid iCalendar duration",
+                value=ical,
+            )
 
         sign, weeks, days, hours, minutes, seconds = match.groups()
+
         try:
             value = timedelta(
                 weeks=int(weeks or 0),
@@ -147,9 +161,11 @@ class vDuration(TimeBase):
             )
         except OverflowError as e:
             # ``timedelta`` rejects values that are too large for its C
-            # implementation. Raise the same error as other invalid durations
-            # instead of leaking ``OverflowError`` to callers.
-            raise InvalidCalendar(f"Impractical iCalendar duration: {ical}") from e
+            # implementation.
+            raise ICalParsingError(
+                "Impractical iCalendar duration",
+                value=ical,
+            ) from e
 
         if sign == "-":
             value = -value
@@ -182,7 +198,7 @@ class vDuration(TimeBase):
         """Parse a jCal string to a :class:`datetime.timedelta`.
 
         Raises:
-            ~error.JCalParsingError: If it can't parse a duration."""
+            ~icalendar.error.JCalParsingError: If it can't parse a duration."""
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
             return cls.from_ical(jcal)
@@ -197,7 +213,7 @@ class vDuration(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):

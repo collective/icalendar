@@ -53,10 +53,10 @@ def param_value(
         The formatted parameter value, escaped and quoted as needed.
     """
     if isinstance(value, SEQUENCE_TYPES):
-        return q_join(map(rfc_6868_escape, value), always_quote=always_quote)
+        return q_join(map(_rfc_6868_escape, value), always_quote=always_quote)
     if isinstance(value, str):
-        return dquote(rfc_6868_escape(value), always_quote=always_quote)
-    return dquote(rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
+        return dquote(_rfc_6868_escape(value), always_quote=always_quote)
+    return dquote(_rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
 
 
 # Could be improved
@@ -92,13 +92,14 @@ QUOTABLE = re.compile("[,;:’]")  # noqa: RUF001
 
 
 def dquote(val: str, always_quote: bool = False) -> str:
-    """Enclose parameter values in double quotes when needed.
+    r"""Enclose parameter values in double quotes when needed.
 
     Parameter values containing special characters ``,``, ``;``,
     ``:`` or ``'`` must be enclosed
     in double quotes according to :rfc:`5545`. Double-quote characters in the
     value are replaced with single quotes since they're forbidden in parameter
-    values.
+    values. Values ending with a backslash ``\`` are quoted, too, because
+    the parser would otherwise read it as escaping the following delimiter.
 
     Parameters:
         val: The parameter value to quote.
@@ -111,12 +112,63 @@ def dquote(val: str, always_quote: bool = False) -> str:
     # a double-quote character is forbidden to appear in a parameter value
     # so replace it with a single-quote character
     val = val.replace('"', "'")
-    if QUOTABLE.search(val) or always_quote:
+    if QUOTABLE.search(val) or val.endswith("\\") or always_quote:
         return f'"{val}"'
     return val
 
 
+def unescape_quoted_param_value(value: str) -> str:
+    r"""Unescape :rfc:`2445#section-4.3.11`-compliant escapes in a quoted
+    parameter value.
+
+    ``\"`` becomes a literal double quote, and ``\\`` becomes a literal
+    backslash. A lone backslash is kept as-is. It's a valid
+    :rfc:`5545#section-3.1` QSAFE-CHAR with no escape meaning. Values are
+    scanned from left to right, resolving ``\\\"`` to ``\"``.
+    """
+    out = []
+    i = 0
+    length = len(value)
+    while i < length:
+        ch = value[i]
+        if ch == "\\" and i + 1 < length and value[i + 1] in ('"', "\\"):
+            out.append(value[i + 1])
+            i += 2
+        else:
+            out.append(ch)
+            i += 1
+    return "".join(out)
+
+
 # parsing helper
+
+# A DQUOTE preceded by a backslash still closes its quoted section when a
+# structural delimiter or the end of the string follows it. icalendar
+# itself writes parameter values that end in a backslash as ``"…\"`` (see
+# :func:`param_value`). :rfc:`5545` and :rfc:`6868` give the backslash no
+# escape meaning inside parameter values. A backslash-escaped DQUOTE is
+# honored as value content only when more value text follows it, the way
+# :rfc:`2445`-style producers emit ``CN="Qu\"ote"``.
+_STRUCTURAL_DELIMITERS = frozenset(";:,")
+
+
+def closes_quoted_section(text: str, quote_index: int) -> bool:
+    """Whether the DQUOTE at ``quote_index`` closes its quoted section.
+
+    The DQUOTE may be preceded by a literal backslash. If the next
+    non-whitespace character after it is a structural delimiter (``;``,
+    ``:``, or ``,``), nothing but whitespace, or the end of the string
+    follows, then the backslash is content and the DQUOTE closes the quoted
+    section. A DQUOTE followed by other text is an escaped quote inside
+    the value instead.
+    """
+    for ch in text[quote_index + 1 :]:
+        if ch in " \t":
+            continue
+        return ch in _STRUCTURAL_DELIMITERS
+    return True
+
+
 def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     """Split a string on a separator, respecting double quotes.
 
@@ -151,9 +203,21 @@ def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     cursor = 0
     length = len(st)
     inquote = 0
+    escaped = False
     splits = 0
     for i, ch in enumerate(st):
-        if ch == '"':
+        if inquote and escaped:
+            # an escaped character inside a quoted section is content:
+            # ``\"`` does not close the quote (RFC 2445-style input) —
+            # unless a separator or the end of the string follows, which
+            # makes the backslash a literal one and the DQUOTE the closer
+            # (values ending in a backslash, as icalendar writes them).
+            escaped = False
+            if ch == '"' and closes_quoted_section(st, i):
+                inquote = not inquote
+        elif inquote and ch == "\\":
+            escaped = True
+        elif ch == '"':
             inquote = not inquote
         if not inquote and ch == sep:
             result.append(st[cursor:i])
@@ -192,16 +256,14 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def _single_string_parameter(func: Callable | None = None, upper: bool = False):
+def _single_string_parameter(upper: bool = False):
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
-        upper: Convert the value to uppercase
-        func: The function to decorate.
+        upper: Convert the return value of the property getter to uppercase.
 
     Returns:
-        The property for the parameter or a decorator for the parameter
-        if func is ``None``.
+        The property for the parameter.
     """
 
     def decorator(func: Callable) -> property:
@@ -230,9 +292,7 @@ def _single_string_parameter(func: Callable | None = None, upper: bool = False):
 
         return property(fget, fset, fdel, doc=func.__doc__)
 
-    if func is None:
-        return decorator
-    return decorator(func)
+    return decorator
 
 
 single_string_parameter = deprecate_for_version_9(_single_string_parameter)
@@ -340,8 +400,7 @@ class Parameters(CaselessDict[str | list[str]]):
                 and any(c in value for c in check_quoteable_characters)
             )
             quoted_value = param_value(value, always_quote=always_quote)
-            if isinstance(quoted_value, str):
-                quoted_value = quoted_value.encode(DEFAULT_ENCODING)
+            quoted_value = quoted_value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
             result.append(upper_key.encode(DEFAULT_ENCODING) + b"=" + quoted_value)
         return b";".join(result)
@@ -360,16 +419,24 @@ class Parameters(CaselessDict[str | list[str]]):
                 # strings are case insensitive.
                 string_values = []
                 for v in q_split(val, ","):
-                    if v.startswith('"') and v.endswith('"'):
-                        v2 = v.strip('"')
-                        validate_param_value(v2, quoted=True)
-                        string_values.append(rfc_6868_unescape(v2))
+                    if v.startswith('"') and v.endswith('"') and len(v) >= 2:
+                        # validate the still-escaped form: ``\"`` pairs are
+                        # removed first so the literal quote they unescape to
+                        # does not trip QUNSAFE_CHAR, while a raw unescaped
+                        # quote still does. Exactly the surrounding quotes
+                        # are removed — a trailing ``\"`` keeps its quote,
+                        # which ``str.strip('"')`` would also eat.
+                        v2 = v[1:-1]
+                        validate_param_value(v2.replace('\\"', ""), quoted=True)
+                        string_values.append(
+                            _rfc_6868_unescape(unescape_quoted_param_value(v2))
+                        )
                     else:
                         validate_param_value(v, quoted=False)
                         if strict:
-                            string_values.append(rfc_6868_unescape(v.upper()))
+                            string_values.append(_rfc_6868_unescape(v.upper()))
                         else:
-                            string_values.append(rfc_6868_unescape(v))
+                            string_values.append(_rfc_6868_unescape(v))
 
                 if not string_values:
                     string_values = [val]
@@ -457,7 +524,7 @@ class Parameters(CaselessDict[str | list[str]]):
             del jcal["tzid"]
         return jcal
 
-    @_single_string_parameter
+    @_single_string_parameter()
     def tzid(self) -> str | None:
         """The TZID parameter from :rfc:`5545`."""
 
@@ -630,7 +697,7 @@ class Parameters(CaselessDict[str | list[str]]):
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
 
 
-def rfc_6868_unescape(param_value: str) -> str:
+def _rfc_6868_unescape(param_value: str) -> str:
     """Take care of :rfc:`6868` unescaping.
 
     - ^^ -> ^
@@ -651,7 +718,7 @@ def rfc_6868_unescape(param_value: str) -> str:
 RFC_6868_ESCAPE_REGEX = re.compile(r'\^|\r\n|\r|\n|"')
 
 
-def rfc_6868_escape(param_value: str) -> str:
+def _rfc_6868_escape(param_value: str) -> str:
     """Take care of :rfc:`6868` escaping.
 
     - ^ -> ^^
@@ -670,13 +737,15 @@ def rfc_6868_escape(param_value: str) -> str:
     )
 
 
+rfc_6868_escape = deprecate_for_version_9(_rfc_6868_escape)
+rfc_6868_unescape = deprecate_for_version_9(_rfc_6868_unescape)
+
+
 __all__ = [
     "Parameters",
     "dquote",
     "param_value",
     "q_join",
     "q_split",
-    "rfc_6868_escape",
-    "rfc_6868_unescape",
     "validate_param_value",
 ]

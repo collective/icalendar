@@ -4,6 +4,7 @@ from datetime import date, datetime, time, timedelta
 import pytest
 
 from icalendar.parser import Parameters
+from icalendar.prop.factory import TypesFactory
 
 
 class TestProp(unittest.TestCase):
@@ -175,9 +176,9 @@ class TestProp(unittest.TestCase):
 
         r = vRecur.from_ical("FREQ=WEEKLY;INTERVAL=1;BYWEEKDAY=TH")
 
-        assert r == {"FREQ": ["WEEKLY"], "INTERVAL": [1], "BYWEEKDAY": ["TH"]}
+        assert r == {"FREQ": ["WEEKLY"], "INTERVAL": [1], "BYDAY": ["TH"]}
 
-        assert vRecur(r).to_ical() == b"FREQ=WEEKLY;INTERVAL=1;BYWEEKDAY=TH"
+        assert vRecur(r).to_ical() == b"FREQ=WEEKLY;INTERVAL=1;BYDAY=TH"
 
         # Some examples from the spec
         r = vRecur.from_ical("FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1")
@@ -438,6 +439,7 @@ RFC_DEFAULT_VALUE_TYPES = {
     "CONTACT": "text",
     "RESOURCES": "text",
     "REQUEST-STATUS": "text",
+    "XML": "text",
     # URI
     "ATTACH": "uri",
     "URL": "uri",
@@ -479,3 +481,14 @@ def test_default_value_type_matches_rfc(name, expected):
     assert factory.default_value_type(name) == expected
     # Property names are case-insensitive.
     assert factory.default_value_type(name.lower()) == expected
+
+
+def test_types_factory_instance_is_a_singleton():
+    """The singleton pattern implies identity."""
+    assert TypesFactory.instance() is TypesFactory().instance()
+
+
+def test_all_types_map_values_are_in_the_types_factory(types_factory):
+    """This checks that we cannot get an error in TypesMap.default_value_type"""
+    for value in types_factory.types_map.values():
+        assert value in types_factory
