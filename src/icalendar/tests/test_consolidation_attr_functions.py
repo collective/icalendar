@@ -4,6 +4,7 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
+
 from icalendar import Alarm, Event, Todo
 from icalendar.attr import (
     get_duration_property,
@@ -180,6 +181,32 @@ class TestConsolidatedSetters:
         assert event1.end == event2.end
         assert event1.duration == event2.duration
 
+
+
+def test_matching_duration_and_end_normalize_pytz_across_dst() -> None:
+    """Matching DTEND and DURATION must account for pytz DST normalization."""
+    pytz = pytest.importorskip("pytz")
+    timezone = pytz.timezone("Europe/Berlin")
+    start = timezone.localize(datetime(2026, 3, 29, 1, 30))
+    end = timezone.localize(datetime(2026, 3, 29, 3, 30))
+
+    event = Event()
+    event.add("UID", "test-pytz-dst-duration")
+    event.add("DTSTART", start)
+    event.add("DTEND", end)
+    event.add("DURATION", timedelta(hours=1))
+
+    validated_start, validated_end, duration = get_start_end_duration_with_validation(
+        event,
+        "DTSTART",
+        "DTEND",
+        "VEVENT",
+    )
+
+    assert validated_start == start
+    assert validated_end is None
+    assert duration == timedelta(hours=1)
+    assert event.end == end
 
 class TestConsolidatedPropertyGetters:
     """Test consolidated property getter functions."""
