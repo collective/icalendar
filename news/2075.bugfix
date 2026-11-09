@@ -1,0 +1,1 @@
+Fix a guessed globally unique TZID overriding the calendar's own VTIMEZONE in the timezone cache. I used Claude (Sonnet 5.5) to draft this fix and its test. @pujitha24

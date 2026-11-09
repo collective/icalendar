@@ -146,8 +146,10 @@ class TZP:
         if (
             not self.__provider.knows_timezone_id(_id)
             and not self.__provider.knows_timezone_id(_unclean_id)
-            and _id not in self.__tz_cache
+            and (_id not in self.__tz_cache or _id in self.__guessed_ids)
         ):
+            # A VTIMEZONE is authoritative and replaces a guessed timezone.
+            self.__guessed_ids.pop(_id, None)
             self.__tz_cache[_id] = timezone_component.to_tz(self, lookup_tzid=False)
 
     def fix_rrule_until(self, rrule: rrule, ical_rrule: prop.vRecur) -> None:
