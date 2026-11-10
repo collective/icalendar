@@ -1,6 +1,7 @@
 """TEXT values from :rfc:`5545`."""
 
 import re
+import unicodedata
 from typing import Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
@@ -252,4 +253,40 @@ class vText(str):
         return cls(element.get_xsd_string())
 
 
-__all__ = ["vText"]
+def to_nfc(value: str | vText) -> str | vText:
+    """Normalizes vText or string values.
+
+    Values that are already normalized are returned unchanged
+
+    Parameters:
+        value: A string or :class: 'vText' object.
+    Returns:
+        A string or vText in NFC form, with the same type as ``value``.
+    """
+    if not isinstance(value, str):
+        return value
+    if unicodedata.is_normalized("NFC", value):
+        return value
+    normalized = unicodedata.normalize("NFC", value)
+    if isinstance(value, vText):
+        return vText(normalized, value.encoding, params=value.params)
+    return normalized
+
+
+def to_nfc_list(values: list) -> list:
+    """Normalizes a list of vText or string values.
+
+    Values that are already normalized are returned unchanged
+
+    Parameters:
+        values: A list of strings or :class: 'vText' objects.
+    Returns:
+        A list of strings or vText objects in NFC form
+    """
+    result = [to_nfc(v) for v in values]
+    if all(new is old for new, old in zip(result, values, strict=False)):
+        return values
+    return result
+
+
+__all__ = ["to_nfc", "to_nfc_list", "vText"]
