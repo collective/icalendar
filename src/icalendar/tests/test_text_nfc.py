@@ -5,6 +5,7 @@ components (Event, Calendar) live in tests/attr/test_text_properties_nfc.py.
 """
 
 import unicodedata
+
 import pytest
 
 from icalendar.prop import vText
