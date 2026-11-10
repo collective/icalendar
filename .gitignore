@@ -1,5 +1,6 @@
 __pycache__
 /_build/
+/docs/_build/
 /.coverage
 /.hypothesis/
 /.prompts/

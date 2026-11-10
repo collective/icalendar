@@ -114,4 +114,4 @@ icalendar lets you create, inspect, and modify calendaring information with Pyth
 
 License
 -------
-See `LICENSE.rst <https://github.com/collective/icalendar/blob/main/LICENSE.rst>`_.
+See `LICENSE.rst <https://github.com/PyCalendar/icalendar/blob/main/LICENSE.rst>`_.

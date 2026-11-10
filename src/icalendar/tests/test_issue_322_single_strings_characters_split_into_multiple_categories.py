@@ -1,6 +1,6 @@
 """
 
-See https://github.com/collective/icalendar/issues/322
+See https://github.com/PyCalendar/icalendar/issues/322
 """
 
 from icalendar.cal.calendar import Calendar

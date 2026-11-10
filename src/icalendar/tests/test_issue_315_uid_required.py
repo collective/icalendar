@@ -1,6 +1,6 @@
 """This tests if the UID is set be default, closing issue 315.
 
-See https://github.com/collective/icalendar/issues/315
+See https://github.com/PyCalendar/icalendar/issues/315
 """
 
 import pytest

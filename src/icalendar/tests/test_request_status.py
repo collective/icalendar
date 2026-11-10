@@ -1,7 +1,7 @@
 """This tests the REQUEST-STATUS property.
 
 See
-- https://github.com/collective/icalendar/issues/1666
+- https://github.com/PyCalendar/icalendar/issues/1666
 - https://www.rfc-editor.org/rfc/rfc5545#section-3.8.8.3
 """
 
