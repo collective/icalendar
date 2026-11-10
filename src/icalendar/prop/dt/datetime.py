@@ -297,7 +297,7 @@ class vDatetime(TimeBase):
 
         Returns:
             The datetime,timezone-aware if a timezone was set, otherwise its ``tzinfo`` is set to ``None``.
-
+            The datetime of the property. If its ``tzinfo`` was set, then it's timezone-aware, else it's naive and set to ``None``.
         Examples:
            The following represents a datetime where ``tzinfo`` is set to ``None``:
 
