@@ -13,7 +13,7 @@ def test_email_parameter_is_distinct_from_calendar_address():
     address.EMAIL = "person@example.com"
 
     assert address.EMAIL == "person@example.com"
-    assert address.email == "opaque-token@example.com"
+    assert address.email == "person@example.com"
     assert address.params["EMAIL"] == "person@example.com"
 
 
@@ -47,4 +47,4 @@ def test_email_parameter_round_trip(property_name: str):
     parsed_address = parsed[property_name]
     assert isinstance(parsed_address, vCalAddress)
     assert parsed_address.EMAIL == "person@example.com"
-    assert parsed_address.email == "opaque-token@example.com"
+    assert parsed_address.email == "person@example.com"

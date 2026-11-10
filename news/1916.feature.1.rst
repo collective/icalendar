@@ -1,0 +1,4 @@
+Improved the :class:`~icalendar.prop.cal_address.vCalAddress` interface with
+separate ``address`` and ``email`` accessors, RFC 7986 ``EMAIL`` parameter
+support, and case-insensitive :meth:`~icalendar.prop.cal_address.vCalAddress.has_email`
+matching.

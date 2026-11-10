@@ -44,6 +44,92 @@ def test_capital_email():
     assert address.email == "yemaya@posteo.net"
 
 
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("mailto:person@example.com", "person@example.com"),
+        ("MAILTO:person@example.com", "person@example.com"),
+        ("person@example.com", "person@example.com"),
+    ],
+)
+def test_address_removes_mailto(value, expected):
+    address = vCalAddress(value)
+    assert address.address == expected
+
+
+def test_email_getter_uses_address_without_parameter():
+    address = vCalAddress("MAILTO:person@example.com")
+    assert address.email == "person@example.com"
+
+
+def test_email_getter_uses_email_parameter_without_mailto():
+    address = vCalAddress(
+        "mailto:opaque@example.com",
+        params={"EMAIL": "person@example.com"},
+    )
+    assert address.email == "person@example.com"
+
+
+def test_email_getter_removes_mailto_from_email_parameter():
+    address = vCalAddress(
+        "mailto:opaque@example.com",
+        params={"EMAIL": "MAILTO:person@example.com"},
+    )
+    assert address.email == "person@example.com"
+
+
+@pytest.mark.parametrize("value", ["person@example.com", "MAILTO:person@example.com"])
+def test_email_setter_stores_parameter_without_mailto(value):
+    address = vCalAddress("mailto:opaque@example.com")
+    address.email = value
+    assert address.EMAIL == "person@example.com"
+    assert address.email == "person@example.com"
+
+
+def test_email_setter_none_removes_parameter():
+    address = vCalAddress(
+        "mailto:opaque@example.com",
+        params={"EMAIL": "person@example.com"},
+    )
+    address.email = None
+    assert address.EMAIL is None
+    assert address.email == "opaque@example.com"
+
+
+def test_email_deleter_removes_parameter():
+    address = vCalAddress(
+        "mailto:opaque@example.com",
+        params={"EMAIL": "person@example.com"},
+    )
+    del address.email
+    assert address.EMAIL is None
+
+
+@pytest.mark.parametrize(
+    "candidate",
+    [
+        "person@example.com",
+        "MAILTO:PERSON@EXAMPLE.COM",
+        "opaque@example.com",
+        "mailto:OPAQUE@EXAMPLE.COM",
+    ],
+)
+def test_has_email_matches_address_or_email_parameter(candidate):
+    address = vCalAddress(
+        "mailto:opaque@example.com",
+        params={"EMAIL": "person@example.com"},
+    )
+    assert address.has_email(candidate)
+
+
+def test_has_email_returns_false_for_different_email():
+    address = vCalAddress(
+        "mailto:opaque@example.com",
+        params={"EMAIL": "person@example.com"},
+    )
+    assert not address.has_email("other@example.com")
+
+
 def test_name():
     """We want the name, too!"""
     address = vCalAddress("MAILTO:yemaya@posteo.net")

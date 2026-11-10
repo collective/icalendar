@@ -256,8 +256,11 @@ Description:
     Returns ``None`` when absent. Assign ``None`` or delete this property to
     remove the parameter.
 
-    This is distinct from :attr:`email`, which returns the
-    calendar address value without its ``mailto:`` prefix.
+    Access :attr:`~icalendar.prop.cal_address.vCalAddress.email` for this
+    parameter's value when present, falling back to the CAL-ADDRESS value
+    without its ``mailto:`` prefix when the parameter is absent.  Use
+    :attr:`~icalendar.prop.cal_address.vCalAddress.address` for the
+    CAL-ADDRESS value itself.
 """,
 )
 
