@@ -155,6 +155,7 @@ In icalendar's documentation, the most frequently used roles in the Python domai
 -   :rst:role:`mod <py:mod>`
 -   :rst:role:`func <py:func>`
 -   :rst:role:`attr <py:attr>`
+-   :rst:role:`exc <py:exc>`
 
 The target must be either a full dotted Python path or use a shortcut to disambiguate to which object it should be hyperlinked.
 
