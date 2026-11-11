@@ -1,0 +1,1 @@
+Added a test that every Sphinx version directive uses a released version tag or the ``0.0.0`` placeholder, and changed the ``vBinary`` removal directive from the unreleased ``8.0.0`` to ``0.0.0``. Reviewed by GPT-6 Luna. @SemTiOne
