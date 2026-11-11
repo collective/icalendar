@@ -6,7 +6,7 @@ from icalendar import Calendar, Event
 from icalendar.prop import vText
 
 NFD = "cafe\u0301"  # "e" + combining acute accent
-NFC = "caf\u00e9"   # precomposed "é"
+NFC = "caf\u00e9"  # precomposed "é"
 
 
 def test_multi_language_text_properties_are_nfc():
