@@ -20,6 +20,10 @@ class vBoolean(int):
     insensitive.
 
     Parameters:
+        args: Positional parameters forwarded to :class:`int`, such as
+            ``True``, ``False``, ``1``, or ``0``. Use
+            :meth:`from_ical` to parse ``"TRUE"`` and ``"FALSE"``.
+        kwargs: Keyword parameters forwarded to :class:`int`.
         params: iCalendar property parameters associated with the value.
 
     Returns:
