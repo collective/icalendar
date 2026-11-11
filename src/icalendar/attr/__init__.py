@@ -1776,8 +1776,8 @@ def get_start_end_duration_with_validation(
     end = getattr(component, end_property, None)
     duration = component.DURATION
 
-    # When both properties are present, DURATION is authoritative only
-    # when it describes the same end time; conflicting values are ambiguous.
+    # Prefer DURATION over DTEND because it avoids some errors caused by
+    # inconsistent timezone usage (see collective/icalendar#1796).
     if duration is not None and end is not None:
         if start is not None and end != normalize_pytz(start + duration):
             msg = f"{end_property} and DURATION specify different end times."
