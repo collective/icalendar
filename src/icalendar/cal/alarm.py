@@ -251,22 +251,31 @@ class Alarm(Component):
 
     @property
     def TRIGGER_RELATED(self) -> str:
-        """The RELATED parameter of the TRIGGER property.
+        """Return the reference point for this alarm's relative trigger.
 
-        Values are either "START" (default) or "END".
+        The ``RELATED`` parameter is ``"START"`` (the default) to measure a
+        relative :attr:`TRIGGER` from the start of the parent event or to-do.
+        Use ``"END"`` to measure it from the end. If no trigger is set, or it
+        has no ``RELATED`` parameter, this property returns ``"START"``.
 
-        A value of START will set the alarm to trigger off the
-        start of the associated event or to-do.  A value of END will set
-        the alarm to trigger off the end of the associated event or to-do.
+        Returns:
+            The trigger reference point, usually ``"START"`` or ``"END"``.
 
-        In this example, we create an alarm that triggers two hours after the
-        end of its parent component.
+        Example:
+            Measure a positive offset from the end of an event.
 
-        >>> from icalendar import Alarm
-        >>> from datetime import timedelta
-        >>> alarm = Alarm()
-        >>> alarm.TRIGGER = timedelta(hours=2)
-        >>> alarm.TRIGGER_RELATED = "END"
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm()
+                >>> alarm.TRIGGER = timedelta(hours=2)
+                >>> alarm.TRIGGER_RELATED = "END"
+                >>> alarm.TRIGGER_RELATED
+                'END'
+
+        See also:
+            :attr:`TRIGGER`, :attr:`triggers`
         """
         trigger = self.get("TRIGGER")
         if trigger is None:
@@ -275,7 +284,15 @@ class Alarm(Component):
 
     @TRIGGER_RELATED.setter
     def TRIGGER_RELATED(self, value: str):
-        """Set "START" or "END"."""
+        """Set the reference point for the relative trigger.
+
+        Args:
+            value: The ``RELATED`` parameter value, usually ``"START"`` or
+                ``"END"``.
+
+        Raises:
+            ValueError: If :attr:`TRIGGER` has not been set.
+        """
         trigger = self.get("TRIGGER")
         if trigger is None:
             raise ValueError(
@@ -284,13 +301,13 @@ class Alarm(Component):
         trigger.params["RELATED"] = value
 
     class Triggers(NamedTuple):
-        """The computed times of alarm triggers.
+        """Group computed trigger times by the point they are relative to.
 
-        start - triggers relative to the start of the Event or Todo (timedelta)
-
-        end - triggers relative to the end of the Event or Todo (timedelta)
-
-        absolute - triggers at a datetime in UTC
+        Attributes:
+            start: Relative offsets measured from the parent event or to-do
+                start.
+            end: Relative offsets measured from the parent event or to-do end.
+            absolute: Absolute trigger datetimes in UTC.
         """
 
         start: tuple[timedelta]
@@ -299,25 +316,40 @@ class Alarm(Component):
 
     @property
     def triggers(self):
-        """The computed triggers of an Alarm.
+        """Return computed fire times from :attr:`TRIGGER`, :attr:`DURATION`,
+        and :attr:`REPEAT`.
 
-        This takes the TRIGGER, DURATION and REPEAT properties into account.
+        Relative triggers are stored under ``start`` or ``end`` according to
+        :attr:`TRIGGER_RELATED`. Absolute UTC triggers are stored under
+        ``absolute``. When the alarm repeats, each additional time is
+        calculated using :attr:`DURATION`.
 
-        Here, we create an alarm that triggers 3 times before the start of the
-        parent component.
+        Returns:
+            A :class:`~icalendar.cal.alarm.Alarm.Triggers` tuple with relative
+            offsets grouped by reference point and absolute trigger datetimes.
 
-        >>> from icalendar import Alarm
-        >>> from datetime import timedelta
-        >>> alarm = Alarm()
-        >>> alarm.TRIGGER = timedelta(hours=-4)  # trigger 4 hours before START
-        >>> alarm.DURATION = timedelta(hours=1)  # after 1 hour trigger again
-        >>> alarm.REPEAT = 2  # trigger 2 more times
-        >>> alarm.triggers.start == (timedelta(hours=-4),  timedelta(hours=-3),  timedelta(hours=-2))
-        True
-        >>> alarm.triggers.end
-        ()
-        >>> alarm.triggers.absolute
-        ()
+        Example:
+            Create an alarm that fires three times before the parent component
+            starts.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Alarm
+                >>> from datetime import timedelta
+                >>> alarm = Alarm()
+                >>> alarm.TRIGGER = timedelta(hours=-4)  # trigger 4 hours before START
+                >>> alarm.DURATION = timedelta(hours=1)  # after 1 hour trigger again
+                >>> alarm.REPEAT = 2  # trigger 2 more times
+                >>> alarm.triggers.start == (
+                ...     timedelta(hours=-4),
+                ...     timedelta(hours=-3),
+                ...     timedelta(hours=-2),
+                ... )
+                True
+                >>> alarm.triggers.end
+                ()
+                >>> alarm.triggers.absolute
+                ()
         """
         start = []
         end = []
