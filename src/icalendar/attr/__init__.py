@@ -26,6 +26,7 @@ from icalendar.prop import (
 )
 from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
+from icalendar.prop.text import to_nfc, to_nfc_list
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -388,8 +389,9 @@ def multi_language_text_property(
         if isinstance(result, list):
             for item in result:
                 if "LANGUAGE" not in item.params:
-                    return item
-        return result
+                    return to_nfc(item)
+            return to_nfc_list(result)
+        return to_nfc(result)
 
     def fset(self: Component, value: str | None):
         """Set the property."""
@@ -1166,8 +1168,8 @@ def multi_text_property(name: str, docs: str) -> property:
         if descriptions is None:
             return []
         if not isinstance(descriptions, SEQUENCE_TYPES):
-            return [descriptions]
-        return descriptions
+            return [to_nfc(descriptions)]
+        return to_nfc_list(descriptions)
 
     def fset(self: Component, values: str | Sequence[str] | None):
         """Set the values."""
