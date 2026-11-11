@@ -301,6 +301,27 @@ class TestConsolidatedPropertyGetters:
         assert end == datetime(2026, 1, 1, 15, 0)
         assert duration is None
 
+    def test_duration_and_end_do_not_match(self) -> None:
+        """Reject conflicting DTEND and DURATION values.
+
+        See https://github.com/collective/icalendar/issues/1796.
+        """
+        event = Event()
+        event.add("UID", "test-both-mismatch")
+        event.add("DTSTART", datetime(2026, 1, 1, 12, 0))
+        event.add("DTEND", datetime(2026, 1, 1, 15, 0))
+        event.add("DURATION", timedelta(hours=2))
+
+        with pytest.raises(
+            InvalidCalendar, match="DTEND and DURATION specify different end times"
+        ):
+            get_start_end_duration_with_validation(
+                event,
+                "DTSTART",
+                "DTEND",
+                "VEVENT",
+            )
+
     def test_get_start_end_duration_validation_errors(self) -> None:
         """Test get_start_end_duration_with_validation error cases."""
         # Matching DTEND and DURATION are accepted, with DURATION effective.
