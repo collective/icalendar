@@ -303,11 +303,9 @@ class Alarm(Component):
     class Triggers(NamedTuple):
         """Group computed trigger times by the point they are relative to.
 
-        Attributes:
-            start: Relative offsets measured from the parent event or to-do
-                start.
-            end: Relative offsets measured from the parent event or to-do end.
-            absolute: Absolute trigger datetimes in UTC.
+        The ``start`` and ``end`` fields store relative ``timedelta`` offsets
+        from the parent event or to-do. The ``absolute`` field stores absolute
+        trigger ``datetime`` values in UTC.
         """
 
         start: tuple[timedelta]
