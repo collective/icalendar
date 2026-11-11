@@ -337,13 +337,12 @@ language = string_parameter(
     "LANGUAGE",
     """Specify the language for text values in a property or property parameter.
 
-Description:
-    This parameter identifies the language of the text in
-    the property value and of all property parameter values of the
-    property.  The value of the "LANGUAGE" property parameter is that
-    defined in :rfc:`Formatting of Language Tags <5646#section-2.1.1>`.
+This parameter identifies the language of the text in the property value
+and of all property parameter values of the property.  The value of the
+LANGUAGE property parameter is that defined in
+:rfc:`Formatting of Language Tags <5646#section-2.1.1>`.
 
-    The parameter is deleted when set to ``None`` or when using ``del``.
+The parameter is deleted when set to ``None`` or when using ``del``.
 
 Returns:
     ``None`` if no language is set, or a string with only ``a-z``, ``A-Z``,
