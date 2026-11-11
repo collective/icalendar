@@ -172,12 +172,16 @@ def test_xml_property_from_xcal_reads_what_to_xcal_writes():
     "properties",
     [
         # case C: an element in another namespace inside of a property
-        "<new-property><parameters/>"
-        '<custom xmlns="http://example.com/ns">Hello</custom></new-property>',
+        (
+            "<new-property><parameters/>"
+            '<custom xmlns="http://example.com/ns">Hello</custom></new-property>'
+        ),
         # case D: an element in another namespace inside of an unknown value type
-        "<new-property><parameters/>"
-        '<custom><root xmlns="http://example.com/ns">Hello</root></custom>'
-        "</new-property>",
+        (
+            "<new-property><parameters/>"
+            '<custom><root xmlns="http://example.com/ns">Hello</root></custom>'
+            "</new-property>"
+        ),
     ],
 )
 def test_xml_property_from_xcal_only_directly_in_properties(properties):
@@ -738,3 +742,22 @@ def test_xml_property_is_removed(empty):
     event.XML = XML
     event.XML = empty
     assert "XML" not in event
+
+
+def test_vxml_bytes_property():
+    """vXml exposes a bytes property returning the UTF-8 bytes representation."""
+    raw_xml = '<test xmlns="http://example.com/ns">content with unicode: \u20ac</test>'
+    v = vXml(raw_xml)
+    assert isinstance(v.bytes, bytes)
+    assert v.bytes == raw_xml.encode("utf-8")
+
+
+def test_vxml_and_vbinary_bytes_interface_consistency():
+    """vXml and vBinary both provide a .bytes property holding raw binary data."""
+    raw_bytes = b'<custom xmlns="http://example.org">binary payload</custom>'
+    v_bin = vBinary(raw_bytes)
+    v_xml = vXml(raw_bytes.decode("utf-8"))
+
+    assert isinstance(v_bin.bytes, bytes)
+    assert isinstance(v_xml.bytes, bytes)
+    assert v_bin.bytes == v_xml.bytes == raw_bytes
