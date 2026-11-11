@@ -15,7 +15,7 @@ import pytest
 REPOSITORY_ROOT = Path(__file__).parents[3]
 VERSION_DIRECTIVE = re.compile(
     r"^\s*\.\.\s+"
-    r"(?:version-?added|version-?changed|version-?removed|version-?deprecated|deprecated)"
+    r"(?:version-?added|version-?changed|version-?removed|version-deprecated|deprecated)"
     r"::\s*(\S+)"
 )
 RELEASE_BRANCH = re.compile(r"^(?:main|\d+\.x)$")
