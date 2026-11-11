@@ -81,6 +81,7 @@ def test_ical_value_returns_datetime():
 
     assert value.ical_value == dt
     assert isinstance(value.ical_value, datetime)
+    assert value.ical_value.tzinfo is None
 
 
 def test_ical_value_keeps_timezone():
