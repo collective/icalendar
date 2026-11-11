@@ -134,6 +134,45 @@ class Component(CaselessDict):
     subcomponents: list[Component]
     """All subcomponents of this component."""
 
+    errors: list[tuple[str | None, str]]
+    """The errors that occurred while parsing this component.
+
+    Each entry is a ``(name, message)`` tuple.
+    ``name`` is the name of the property whose value could not be parsed, or
+    ``None`` if a whole content line was unparseable and therefore skipped.
+    ``message`` is the description of the problem.
+
+    Errors are recorded instead of raised only when the component sets
+    :attr:`ignore_exceptions` to ``True``, as :class:`~icalendar.cal.event.Event`
+    does, or when the property is an unregistered ``X-`` property.
+    A property with an unparseable value is kept as a
+    :class:`~icalendar.prop.broken.vBroken` value, so :meth:`to_ical` writes it
+    back unchanged.
+
+    Errors are recorded per component: this list stays empty when only a
+    subcomponent is affected. Use :meth:`walk` to collect all of them.
+
+    Example:
+
+        ..  code-block:: pycon
+
+            >>> from icalendar import Calendar, Event
+            >>> event = Calendar.example("broken_dtstart").events[0]
+            >>> event.errors
+            [('DTSTART', "Expected datetime, date, or time. Got: 'INVALID-DATE'")]
+
+        A content line that cannot be split into a name, parameters, and a value
+        is recorded without a property name:
+
+        ..  code-block:: pycon
+
+            >>> Event.example("issue_104_mark_events_broken").errors
+            [(None, "Content line could not be parsed into parts: 'X': Invalid content line")]
+
+    See also:
+        :attr:`ignore_exceptions`, :meth:`walk`, :doc:`/how-to/parse-errors`
+    """
+
     @classmethod
     def _get_component_factory(cls) -> ComponentFactory:
         """Get the component factory."""
@@ -227,10 +266,7 @@ class Component(CaselessDict):
         super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents: list[Component] = []  # Components can be nested.
-        self.errors: list[
-            tuple[str | None, str]
-        ] = []  # If we ignored exception(s) while
-        # parsing a property, contains error strings
+        self.errors: list[tuple[str | None, str]] = []
 
     def __bool__(self) -> bool:
         """Returns True, CaselessDict would return False if it had no items."""
@@ -258,23 +294,18 @@ class Component(CaselessDict):
     def _encode(cls, name, value, parameters=None, encode=1):
         """Encode values to icalendar property values.
 
-        :param name: Name of the property.
-        :type name: string
+        Parameters:
+            name (str): Required. Name of the property.
+            value (obj): Required. Value of the property. Either a native Python type or
+                any of icalendar's own property types.
+            encode (bool): ``True`` if the value should be encoded to one of
+                icalendar's own property types (falls back to ``vText``),
+                or ``False`` if not.
+            parameters (dict or None): Property parameter dictionary for the value.
+                Only used if ``encode`` is set to ``True``.
 
-        :param value: Value of the property. Either of a basic Python type of
-                      any of the icalendar's own property types.
-        :type value: Python native type or icalendar property type.
-
-        :param parameters: Property parameter dictionary for the value. Only
-                           available, if encode is set to True.
-        :type parameters: Dictionary
-
-        :param encode: True, if the value should be encoded to one of
-                       icalendar's own property types (Fallback is "vText")
-                       or False, if not.
-        :type encode: Boolean
-
-        :returns: icalendar property value
+        Returns:
+            The encoded icalendar property value.
         """
         if not encode:
             return value
@@ -462,14 +493,21 @@ class Component(CaselessDict):
         name: str | None = None,
         select: callable[[Component], bool] = lambda _: True,
     ) -> list[Component]:
-        """Recursively traverses component and subcomponents. Returns sequence
-        of same. If name is passed, only components with name will be returned.
+        """Return this component and its subcomponents that match the filters.
 
-        :param name: The name of the component or None such as ``VEVENT``.
-        :param select: A function that takes the component as first argument
-          and returns True/False.
-        :returns: A list of components that match.
-        :rtype: list[Component]
+        A component is kept only if it matches both ``name`` and ``select``.
+        The name match is case-insensitive, so ``"vevent"`` finds ``VEVENT``
+        components.
+
+        Parameters:
+            name: Component name to keep, such as ``"VEVENT"``; ``None`` keeps
+                every name.
+            select: Function that takes a component and returns ``True`` to
+                keep it. By default, every component is kept.
+
+        Returns:
+            list[Component]: The matching components, starting with this one
+                if it matches.
         """
         if name is not None:
             name = name.upper()
@@ -1357,6 +1395,7 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
         raise JCalParsingError(
             "The name must be a string.", starting_cls, path=[0], value=name
         )
+    JCalParsingError.validate_jcal_token(name, "component name", starting_cls, [0])
     if name.upper() != starting_cls.name:
         # delegate to correct component class
         component_cls = starting_cls.get_component_class(name.upper())
