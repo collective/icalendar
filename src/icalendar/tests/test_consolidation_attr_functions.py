@@ -182,7 +182,6 @@ class TestConsolidatedSetters:
         assert event1.duration == event2.duration
 
 
-
 def test_matching_duration_and_end_normalize_pytz_across_dst() -> None:
     """Matching DTEND and DURATION must account for pytz DST normalization."""
     pytz = pytest.importorskip("pytz")
