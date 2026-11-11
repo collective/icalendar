@@ -10,7 +10,7 @@ from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import to_unicode
-from icalendar.prop.text import vText
+from icalendar.prop.text import to_nfc, vText
 
 
 class vCategory:
@@ -22,7 +22,7 @@ class vCategory:
     ) -> None:
         if not hasattr(c_list, "__iter__") or isinstance(c_list, str):
             c_list = [c_list]
-        self.cats: list[vText | str] = [vText(c) for c in c_list]
+        self.cats: list[vText | str] = [vText(to_nfc(c)) for c in c_list]
         self.params = Parameters(params)
 
     def __iter__(self) -> Iterator[vText | str]:
