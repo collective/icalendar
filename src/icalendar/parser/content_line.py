@@ -295,8 +295,10 @@ class Contentline(str):
         """Unfold the content lines in an iCalendar into long content lines."""
         if isinstance(ical, bytes):
             # unfold before decoding, so a fold inside a multi-byte UTF-8
-            # character can be rejoined instead of being replaced
-            ical = UFOLD_BYTES.sub(b"", ical)
+            # character can be rejoined instead of being replaced; folds
+            # cannot reappear during decoding, so the str unfold below is
+            # unnecessary for bytes input
+            return cls(to_unicode(UFOLD_BYTES.sub(b"", ical)), strict=strict)
         ical = to_unicode(ical)
         # a fold is carriage return followed by either a space or a tab
         return cls(UFOLD.sub("", ical), strict=strict)
@@ -323,12 +325,16 @@ class Contentlines(list[Contentline]):
         """Parses a string into content lines."""
         if isinstance(st, bytes):
             # unfold before decoding, so a fold inside a multi-byte UTF-8
-            # character can be rejoined instead of being replaced
-            st = UFOLD_BYTES.sub(b"", st)
-        st = to_unicode(st)
-        try:
+            # character can be rejoined instead of being replaced; folds
+            # cannot reappear during decoding, so the str unfold below is
+            # unnecessary for bytes input
+            st = to_unicode(UFOLD_BYTES.sub(b"", st))
+            unfolded = st
+        else:
+            st = to_unicode(st)
             # a fold is carriage return followed by either a space or a tab
             unfolded = UFOLD.sub("", st)
+        try:
             lines = cls(Contentline(line) for line in NEWLINE.split(unfolded) if line)
             lines.append("")  # '\r\n' at the end of every content line
         except Exception as e:
