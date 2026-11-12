@@ -529,15 +529,15 @@ def single_string_property(
     """Create a property to access a single string value.
 
     Parameters:
-        name (Required): The iCalendar property name (e.g. ``"UID"``).
-        docs (Required): Documentation string for the generated property.
-        other_name (Optional): Alias name(s) to fall back on when the primary
-            *name* is not present in the component.
-        default (Optional): Value returned when the property is not set.
-        validate (Optional): Callable that receives the string form of the value
-            and raises an exception if it does not conform to the expected
-            format. It is called on set, before any existing value is removed,
-            and must not modify the value.
+                docs: Required. Documentation string for the generated property.
+        name: Required. The iCalendar property name (e.g. ``"UID"``).
+        default: Value returned when the property is not set.
+        other_name: Alias name(s) to fall back on when the primary *name*
+            is not present in the component.
+        validate: Callable that receives the string form of the value and
+            raises an exception if it does not conform to the expected
+            format. It is called on set, before any existing value is
+            removed, and must not modify the value.
     """
     other_names = (
         []
