@@ -6,6 +6,7 @@ the parameter value MUST be preserved.
 """
 
 from typing import TYPE_CHECKING
+from xml.etree.ElementTree import Element
 
 import pytest
 
@@ -199,3 +200,23 @@ def test_parameters_with_values_as_list(
     event = calendar.events[event_index]
     parameter = event.to_jcal()[1]
     assert expected_value in parameter
+
+
+
+def test_tuple_parameter_values_are_serialized_to_jcal():
+    """Tuple-valued parameters must use the same array representation as lists."""
+    params = Parameters({"MEMBER": ("mailto:group@example.com",)})
+
+    assert params.to_jcal() == {"member": ["mailto:group@example.com"]}
+
+
+def test_tuple_parameter_values_are_serialized_to_xcal():
+    """Tuple-valued parameters must be iterated as individual xCal values."""
+    params = Parameters({"MEMBER": ("mailto:group@example.com",)})
+    element = Element("attendee")
+
+    params.to_xcal(element)
+
+    member = element.find("./parameters/member/cal-address")
+    assert member is not None
+    assert member.text == "mailto:group@example.com"
