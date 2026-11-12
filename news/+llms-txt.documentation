@@ -1,0 +1,1 @@
+Added configuration for Sphinx extension :program:`sphinx-llms-txt` to exclude automatically generated files for the documentation. @stevepiercy
