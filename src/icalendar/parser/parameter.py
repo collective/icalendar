@@ -298,7 +298,7 @@ def _single_string_parameter(upper: bool = False):
 single_string_parameter = deprecate_for_version_9(_single_string_parameter)
 
 
-class Parameters(CaselessDict[str | list[str]]):
+class Parameters(CaselessDict[str | list[str] | tuple[str, ...]]):
     """Parser and generator of Property parameter strings.
 
     It knows nothing of datatypes.
@@ -482,7 +482,7 @@ class Parameters(CaselessDict[str | list[str]]):
         """
 
     def _parameter_value_to_jcal(
-        self, value: str | float | list | VPROPERTY
+        self, value: str | float | list | tuple | VPROPERTY
     ) -> str | int | float | list[str] | list[int] | list[float]:
         """Convert a parameter value to jCal format.
 
