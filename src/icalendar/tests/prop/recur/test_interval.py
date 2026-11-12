@@ -4,7 +4,7 @@ import pytest
 
 from icalendar.error import InvalidCalendar
 from icalendar.prop import vRecur
-from icalendar.prop.integer import vNonNegativeInt
+from icalendar.prop.integer import vPositiveInt
 
 
 def test_interval_returns_none_when_absent():
@@ -25,12 +25,12 @@ def test_interval_returns_none_when_value_is_an_empty_list():
     assert recur.interval is None
 
 
-def test_setting_interval_stores_a_registered_non_negative_int():
+def test_setting_interval_stores_a_registered_positive_int():
     recur = vRecur.from_ical("FREQ=DAILY")
     recur.interval = 3
 
     assert recur.interval == 3
-    assert isinstance(recur["INTERVAL"][0], vNonNegativeInt)
+    assert isinstance(recur["INTERVAL"][0], vPositiveInt)
     assert recur.to_ical() == b"FREQ=DAILY;INTERVAL=3"
 
 
@@ -86,8 +86,15 @@ def test_setting_interval_to_non_positive_value_raises_invalid_calendar(value):
         recur.interval = value
 
 
-def test_zero_interval_is_rejected_when_read():
-    recur = vRecur.from_ical("FREQ=DAILY;INTERVAL=0")
+@pytest.mark.parametrize("value", ["0", "-1"])
+def test_parsing_non_positive_interval_raises_value_error(value):
+    with pytest.raises(ValueError):
+        vRecur.from_ical(f"FREQ=DAILY;INTERVAL={value}")
+
+
+def test_directly_assigned_non_positive_interval_raises_invalid_calendar():
+    recur = vRecur.from_ical("FREQ=DAILY")
+    recur["INTERVAL"] = [-1]
     with pytest.raises(InvalidCalendar, match="INTERVAL must be >= 1"):
         recur.interval
 
