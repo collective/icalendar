@@ -132,7 +132,7 @@ class Timezone(Component):
         return is_dst, transitions
 
     @staticmethod
-    def _make_unique_tzname(tzname, tznames):
+    def _make_unique_tzname(tzname: str, tznames: set[str]) -> str:
         """
         :param tzname: Candidate tzname
         :param tznames: Other tznames
