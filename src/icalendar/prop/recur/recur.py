@@ -436,8 +436,8 @@ class vRecur(CaselessDict):
                 less than ``1``.
             TypeError: when setting a value that is not an :class:`int`.
 
-        Parsing an invalid INTERVAL value raises ``ValueError`` before the
-        accessor can be read.
+        Parsing an invalid iCalendar RRULE value raises ``ValueError`` before
+        the accessor can be read.
 
         Example:
             ..  code-block:: pycon
