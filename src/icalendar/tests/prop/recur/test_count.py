@@ -1,6 +1,6 @@
 import pytest
 
-from icalendar.error import InvalidCalendar
+from icalendar.error import ICalParsingError, InvalidCalendar
 from icalendar.prop import vRecur
 
 
@@ -96,8 +96,11 @@ def test_setting_count_to_negative_raises_invalid_calendar():
 def test_non_numeric_count_cannot_be_parsed_at_all():
     """A non-numeric COUNT is rejected while parsing, before the accessor is
     ever reached, so it cannot arrive in a vRecur through from_ical."""
-    with pytest.raises(ValueError, match="Expected int, got: abc"):
-        vRecur.from_ical("FREQ=DAILY;COUNT=abc")
+    value = "FREQ=DAILY;COUNT=abc"
+    with pytest.raises(ICalParsingError) as exc_info:
+        vRecur.from_ical(value)
+
+    assert exc_info.value.value == value
 
 
 @pytest.mark.parametrize("stored", ["abc", "", ["abc"]])

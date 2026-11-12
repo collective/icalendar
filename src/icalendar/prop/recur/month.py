@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 from xml.etree.ElementTree import Element, SubElement
 
-from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
@@ -78,7 +78,18 @@ class vMonth(int):
 
     @classmethod
     def from_ical(cls, ical: str):
-        return cls(ical)
+        """Parse an iCalendar month value.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid month.
+        """
+        try:
+            return cls(ical)
+        except ValueError as e:
+            raise ICalParsingError(
+                "Expected month number",
+                value=ical,
+            ) from e
 
     @property
     def leap(self) -> bool:
