@@ -123,3 +123,16 @@ def test_setting_interval_matches_parsed_vrecur():
     assert assigned == parsed
     assert assigned["INTERVAL"] == parsed["INTERVAL"]
     assert assigned.to_ical() == parsed.to_ical()
+
+
+@pytest.mark.parametrize("value", ["0", "-1"])
+def test_parsing_non_positive_interval_raises_value_error(value):
+    with pytest.raises(ValueError):
+        vRecur.from_ical(f"FREQ=DAILY;INTERVAL={value}")
+
+
+def test_directly_assigned_non_positive_interval_raises_invalid_calendar():
+    recur = vRecur.from_ical("FREQ=DAILY")
+    recur["INTERVAL"] = [-1]
+    with pytest.raises(InvalidCalendar, match="INTERVAL must be >= 1"):
+        recur.interval
