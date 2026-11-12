@@ -4,7 +4,6 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-
 from icalendar import Alarm, Event, Todo
 from icalendar.attr import (
     get_duration_property,
