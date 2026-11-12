@@ -1,0 +1,1 @@
+Add :meth:`~icalendar.prop.cal_address.vCalAddress.has_email` to match either the calendar address or its ``EMAIL`` parameter, ignoring case and an optional ``mailto:`` prefix. I used OpenAI Codex to assist with this change. @bohuis686-creator

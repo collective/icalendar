@@ -13,18 +13,50 @@ You are invited to read it to help you decide whether you would enjoy being a pa
 Examples of how to contribute
 -----------------------------
 
+There are many ways you can contribute to icalendar.
+If you have questions or want to get in touch before you begin, see the :ref:`Community <contribute-community>` section below.
+
+
+Code contributions
+``````````````````
+
 -   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
 -   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
+-   Submit pull requests from your fork of the icalendar repository.
+
+
+Triage and review
+`````````````````
+
 -   Comment on and resolve issues.
 -   Triage open issues and `pull requests <https://github.com/collective/icalendar/pulls>`_.
 -   Review, comment on, and make suggestions to change a pull request.
     See the GitHub documentation `Reviewing proposed changes in a pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request>`_.
--   Submit pull requests from your fork of the icalendar repository.
--   Extend the :doc:`documentation/index`.
+-   Reproduce an issue and add a comment with your findings.
+
+Documentation
+`````````````
+
+-   Write guides, tutorials, or usage examples to expand the :doc:`documentation/index`.
+-   Fix typos, improve clarity, or suggest improvements to the documentation.
+
+.. _contribute-community:
+
+Community
+`````````
+
+-   Join the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_ to access all community channels.
 -   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
--   Join a live chat with icalendar team members in the `icalendar room <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or its parent organization in the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_.
 -   Write a blog post about icalendar.
+-   Star or watch us on `GitHub <https://github.com/collective/icalendar>`_.
+-   Follow us on `Mastodon <https://fosstodon.org/@pycal>`_.
+-   Follow us on `LinkedIn <https://www.linkedin.com/company/pycal/>`_.
 -   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
+
+
+Financial support
+`````````````````
+
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
 
@@ -110,10 +142,14 @@ If you use AI in your work:
         Prompt: Generate tests for compliance with RFC123 messages.
         Output: (this commit)
 
-    You can automate this by using the :program:`ai-prompt-auto-commit` pre-commit hook.
-    See :ref:`AI prompt automation <pre-commit-ai-prompts>` for setup instructions.
+    You can automate this by using the :program:`ai-prompt-auto-commit` prek hook.
+    See :ref:`AI prompt automation <prek-ai-prompts>` for setup instructions.
 -   You must disclose that you used AI in your change log entry.
-    This may be a brief disclosure, not as detailed as the git commit messages, such as, "I used AI to assist me with this change."
+    This may be a brief disclosure, not as detailed as the git commit messages.
+
+    ..  code-block:: text
+
+        I used [AI-AGENT v#.#] to do [THINGS I DID] for [PURPOSE].
 -   You must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
 -   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
 -   You are expected to understand and be able to explain design and code decisions.
@@ -270,11 +306,11 @@ Write a good change log entry
 The content of this file must be on a single line and include the following.
 
 -   A *brief* message that summarizes the changes in your contribution.
--   Use :ref:`reStructuredText markup <markup-examples>` to link to relevant RFCs, API usage, and other references.
+-   Use :ref:`reStructuredText markup cross-references <markup-examples>` to link to relevant RFCs, API usage and Python objects, and other references.
 -   A *brief* disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
 -   An attribution to yourself, in the format of ``@github_username``, at the end of the entry.
 
-You can write a good change log entry with the following guidance.
+Write a good change log entry with the following guidance.
 
 -   Use a narrative format, in the past tense, proper English spelling and grammar, and inline markup as needed.
 -   Write your change log entry for its appropriate audience.
@@ -286,6 +322,12 @@ You can write a good change log entry with the following guidance.
     You should not write *how* you fixed it.
 -   If you add or change a feature or public API, write a summary of previous behavior, what it does now, and how to use it.
 -   Refer to narrative documentation as needed.
+-   After opening a pull request and the CI check :guilabel:`docs/readthedocs.org:icalendar` succeeds, inspect the rendered change log for accuracy and functional links.
+
+    -   Click the link :guilabel:`docs/readthedocs.org:icalendar` in the list of CI checks.
+    -   Navigate to :menuselection:`Reference guides --> Change log`.
+    -   Look for your rendered change log entry and inspect it.
+        Read the Docs' `visual diff <https://docs.readthedocs.com/platform/stable/visual-diff.html>`_ feature might help find what you've changed.
 
 The following text is an example of a good change log entry, placed inside :file:`/news/1360.feature`.
 
