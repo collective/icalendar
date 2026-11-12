@@ -1,7 +1,7 @@
 """Test the sequence and other int properies.
 
 https://www.rfc-editor.org/rfc/rfc5545#section-3.8.7.4
-https://github.com/collective/icalendar/issues/802
+https://github.com/PyCalendar/icalendar/issues/802
 
 """
 

@@ -24,9 +24,9 @@ This chapter describes how to build and check the quality of documentation.
 File locations
 --------------
 
-Narrative documentation files are located in the `docs <https://github.com/collective/icalendar/tree/main/docs>`_ directory.
+Narrative documentation files are located in the `docs <https://github.com/PyCalendar/icalendar/tree/main/docs>`_ directory.
 
-:doc:`API reference documentation files </reference/api/icalendar>` are located in the `src <https://github.com/collective/icalendar/tree/main/docs>`_ directory.
+:doc:`API reference documentation files </reference/api/icalendar>` are located in the `src <https://github.com/PyCalendar/icalendar/tree/main/docs>`_ directory.
 
 
 .. _documentation-make-commands:
