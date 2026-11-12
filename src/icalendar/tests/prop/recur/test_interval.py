@@ -86,8 +86,8 @@ def test_setting_interval_to_non_positive_value_raises_invalid_calendar(value):
         recur.interval = value
 
 
-@pytest.mark.parametrize("value", ["0", "-1"])
-def test_parsing_non_positive_interval_raises_value_error(value):
+@pytest.mark.parametrize("value", ["0", "-1", "True", "abc"])
+def test_parsing_invalid_interval_raises_value_error(value):
     with pytest.raises(ValueError):
         vRecur.from_ical(f"FREQ=DAILY;INTERVAL={value}")
 
