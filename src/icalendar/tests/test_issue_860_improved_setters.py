@@ -1,7 +1,7 @@
 """Tests for issue #860: Improved setters for start/duration/end.
 
 This test suite defines the desired behavior for the improved setter implementations
-as described in https://github.com/collective/icalendar/issues/860
+as described in https://github.com/PyCalendar/icalendar/issues/860
 
 The tests ensure RFC 5545 compliance, proper property locking mechanisms,
 and backward compatibility with existing code.

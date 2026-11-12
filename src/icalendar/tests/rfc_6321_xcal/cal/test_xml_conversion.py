@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 # BEGIN:VCALENDAR
 # VERSION:2.0
-# PRODID:-//collective//icalendar//7.3.1.dev270//EN
+# PRODID:-//PyCalendar//icalendar//7.3.1.dev270//EN
 # UID:664546b1-5828-49a9-adc5-80d108fb4f13
 # END:VCALENDAR
 MINIMAL_CALENDAR_XCAL_PRETTY = b"""<?xml version="1.0" encoding="UTF-8"?>
@@ -21,7 +21,7 @@ MINIMAL_CALENDAR_XCAL_PRETTY = b"""<?xml version="1.0" encoding="UTF-8"?>
         <text>2.0</text>
       </version>
       <prodid>
-        <text>-//collective//icalendar//7.3.1.dev270//EN</text>
+        <text>-//PyCalendar//icalendar//7.3.1.dev270//EN</text>
       </prodid>
       <uid>
         <text>664546b1-5828-49a9-adc5-80d108fb4f13</text>

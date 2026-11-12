@@ -3,7 +3,7 @@
 CATEGORIES property
 
 See
-- https://github.com/collective/icalendar/issues/655
+- https://github.com/PyCalendar/icalendar/issues/655
 - https://www.rfc-editor.org/rfc/rfc7529.html
 """
 

@@ -8,8 +8,8 @@ The issue occurs because the code assumes it can find a non-DST (STANDARD)
 transition to calculate the dst_offset, but when only DAYLIGHT exists, this
 assumption fails.
 
-Original issue: https://github.com/collective/icalendar/issues/321
-Original PR with test case: https://github.com/collective/icalendar/pull/379
+Original issue: https://github.com/PyCalendar/icalendar/issues/321
+Original PR with test case: https://github.com/PyCalendar/icalendar/pull/379
 Test case by: @niccokunzmann
 Fix by: @SashankBhamidi
 """

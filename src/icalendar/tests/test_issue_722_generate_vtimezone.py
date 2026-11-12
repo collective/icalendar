@@ -8,7 +8,7 @@ When we generate VTIMEZONE from actual tzinfo instances of
 Then, we cannot assume that the future information stays the same but
 we should be able to create tests that work for the past.
 
-See https://github.com/collective/icalendar/issues/722
+See https://github.com/PyCalendar/icalendar/issues/722
 """
 
 import zoneinfo

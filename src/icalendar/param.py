@@ -5,7 +5,7 @@ Related:
 - :rfc:`5545`, Section 3.2. Property Parameters
 - :rfc:`7986`, Section 6. Property Parameters
 - :rfc:`9253`
-- https://github.com/collective/icalendar/issues/798
+- https://github.com/PyCalendar/icalendar/issues/798
 """
 
 from __future__ import annotations
