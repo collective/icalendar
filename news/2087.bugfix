@@ -1,0 +1,1 @@
+Reject periods whose end is equal to their start, including zero-duration periods; AI was used to assist with this change. @aspire488
