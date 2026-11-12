@@ -161,6 +161,17 @@ class vTime(TimeBase):
         """Whether this time is UTC."""
         return self.params.is_utc() or is_utc(self.dt)
 
+    @property
+    def ical_value(self) -> time:
+        """Return the time of day as a :class:`datetime.time`.
+
+        .. seealso::
+
+            :rfc:`5545#section-3.3.12` for the ``TIME`` value type.
+
+        """
+        return self.dt
+
     @staticmethod
     def from_ical(ical: str, timezone: str | None | tzinfo = None) -> time:
         """Convert an ical string into a time.
