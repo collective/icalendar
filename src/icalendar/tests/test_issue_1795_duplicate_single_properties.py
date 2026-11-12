@@ -1,6 +1,6 @@
 """Duplicated singleton UTC properties return the earliest valid value.
 
-See https://github.com/collective/icalendar/issues/1795
+See https://github.com/PyCalendar/icalendar/issues/1795
 """
 
 from datetime import datetime, timezone

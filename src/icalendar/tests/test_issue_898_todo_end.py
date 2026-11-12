@@ -8,7 +8,7 @@ For Todos with only DTSTART:
 - date: end = start (NOT start + 1 day)
 - datetime: end = start
 
-See https://github.com/collective/icalendar/issues/898
+See https://github.com/PyCalendar/icalendar/issues/898
 """
 
 from datetime import date, datetime

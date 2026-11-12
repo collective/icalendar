@@ -40,7 +40,7 @@ def test_get_new_component_class():
 def test_text_from_jcal_does_not_add_backslashes():
     """It is possible that backslashes are added.
 
-    see https://github.com/collective/icalendar/pull/979#issuecomment-3568261726
+    see https://github.com/PyCalendar/icalendar/pull/979#issuecomment-3568261726
     """
     v_text = vText.from_jcal(["name", {}, "unknown", "8 backslash \\\\\\\\"])
     assert v_text.ical_value == "8 backslash \\\\\\\\"

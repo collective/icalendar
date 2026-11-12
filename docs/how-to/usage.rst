@@ -275,7 +275,7 @@ After loading the example file, edit and save it.
     >>> print(calendar.to_ical()[:121])  # save modification
     BEGIN:VCALENDAR
     VERSION:2.0
-    PRODID:collective/icalendar
+    PRODID:PyCalendar/icalendar
     CALSCALE:GREGORIAN
     METHOD:PUBLISH
     NAME:My Modified Calendar
@@ -545,13 +545,13 @@ Examples in source code
 
 The docstrings in the :mod:`icalendar` package API documentation provide other usage examples.
 
-The `tests <https://github.com/collective/icalendar/tree/main/src/icalendar/tests>`_ of icalendar also have more examples.
+The `tests <https://github.com/PyCalendar/icalendar/tree/main/src/icalendar/tests>`_ of icalendar also have more examples.
 
 Miscellaneous examples
 ----------------------
 
 This section describes how to solve specific usage issues with icalendar.
-Post your usage question to the `icalendar discussion Q&A category <https://github.com/collective/icalendar/discussions/categories/q-a>`_.
+Post your usage question to the `icalendar discussion Q&A category <https://github.com/PyCalendar/icalendar/discussions/categories/q-a>`_.
 You may :doc:`contribute answered questions to this section of the documentation <../contribute/documentation/index>` through a pull request, too.
 
 Convert iCalendar to JSON

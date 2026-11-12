@@ -4,7 +4,7 @@ RFC 5545, section 3.3.9, builds a period from datetimes only. A period
 written with dates used to parse without error and then raise an
 ``AttributeError`` from ``to_ical()``.
 
-See https://github.com/collective/icalendar/issues/1633
+See https://github.com/PyCalendar/icalendar/issues/1633
 """
 
 from datetime import date, datetime, timedelta, timezone

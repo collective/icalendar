@@ -39,32 +39,32 @@ src"
 
 if [ "$ROOT_ENTRIES" != "$EXPECTED_ROOT_ENTRIES" ]; then
   echo "ERROR: Source distribution root entries differ from the reviewed allowlist."
-  echo "       See https://github.com/collective/icalendar/issues/1695"
+  echo "       See https://github.com/PyCalendar/icalendar/issues/1695"
   diff -u <(printf '%s\n' "$EXPECTED_ROOT_ENTRIES") <(printf '%s\n' "$ROOT_ENTRIES") || true
   exit 1
 fi
 
 if echo "$FILES" | grep -q '^/src/icalendar/fuzzing'; then
   echo "ERROR: Fuzzing files are included in the release."
-  echo "       See https://github.com/collective/icalendar/pull/569"
+  echo "       See https://github.com/PyCalendar/icalendar/pull/569"
   exit 1
 fi
 
 if ! echo "$FILES" | grep -q '^/docs/'; then
   echo "ERROR: The documentation is not included in the release, but should be."
-  echo "       See https://github.com/collective/icalendar/issues/712"
+  echo "       See https://github.com/PyCalendar/icalendar/issues/712"
   exit 1
 fi
 
 if ! echo "$FILES" | grep -q '/funding.json$'; then
   echo "ERROR: Funding files need to be included in the release files."
-  echo "       See https://github.com/collective/icalendar/issues/1493"
+  echo "       See https://github.com/PyCalendar/icalendar/issues/1493"
   exit 1
 fi
 
 if ! echo "$FILES" | grep -q '^/scripts/generate_windows_to_olson_mapping\.py$'; then
   echo "ERROR: The Windows to Olson generator is not included in the release."
-  echo "       Source distribution tests require it; see https://github.com/collective/icalendar/pull/1770"
+  echo "       Source distribution tests require it; see https://github.com/PyCalendar/icalendar/pull/1770"
   exit 1
 fi
 

@@ -13,8 +13,8 @@ Currently the maintainers are the following people.
 
 Maintainers need the following permissions.
 
-``Admin`` access to the `repository <https://github.com/collective/icalendar>`_.
-    These can be enabled by a current maintainer or a GitHub organization administrator in the `settings <https://github.com/collective/icalendar/settings/access>`_.
+``Admin`` access to the `repository <https://github.com/PyCalendar/icalendar>`_.
+    These can be enabled by a current maintainer or a GitHub organization administrator in the `settings <https://github.com/PyCalendar/icalendar/settings/access>`_.
 ``Maintainer`` or ``Owner`` access to the `PyPI project <https://pypi.org/project/icalendar/>`_.
     Each owner and maintainer needs a PyPI account.
     All PyPI accounts require two-factor authentication (2FA) enabled.
@@ -22,7 +22,7 @@ Maintainers need the following permissions.
 ``Maintainer`` access to the `Read the Docs project <https://app.readthedocs.org/projects/icalendar/>`_.
     Existing maintainers can invite another maintainer through the `Maintainers <https://app.readthedocs.org/dashboard/icalendar/users/create/>`_ page.
 ``Environments/Configure PyPI`` access for GitHub Workflows to grant new releases from tags.
-    Organization owners and repository administrators can grant this access in :menuselection:`Settings --> Environments --> PyPI`, or at https://github.com/collective/icalendar/settings/environments/674266024/edit, by adding their GitHub username to the list of :guilabel:`Required Reviewers`.
+    Organization owners and repository administrators can grant this access in :menuselection:`Settings --> Environments --> PyPI`, or at https://github.com/PyCalendar/icalendar/settings/environments/674266024/edit, by adding their GitHub username to the list of :guilabel:`Required Reviewers`.
 ``Owner`` or ``Manager`` access to ``icalendar-coc@googlegroups.com``
     This Google Group is used for managing `Code of Conduct <https://pycal.org/code-of-conduct/>`_ infringement reports.
     ``Manager``\ s may manage and moderate messages, whereas ``Owner``\ s may also manage members.
@@ -39,21 +39,21 @@ Maintainers need the following permissions.
 
     .. seealso::
 
-        -   `Discussion about how to be added to OSS Fuzz <https://github.com/collective/icalendar/pull/574#issuecomment-1790554766>`_
+        -   `Discussion about how to be added to OSS Fuzz <https://github.com/PyCalendar/icalendar/pull/574#issuecomment-1790554766>`_
         -   :issue:`562`
 Maintainer in :file:`pyproject.toml`
-    Maintainers should be mentioned with or without email address in the :file:`pyproject.toml` file's `maintainers' section <https://github.com/collective/icalendar/blob/7ca9db18c0847d1530520e01baf75f8ab8f4fa06/pyproject.toml#L32>`_.
+    Maintainers should be mentioned with or without email address in the :file:`pyproject.toml` file's `maintainers' section <https://github.com/PyCalendar/icalendar/blob/7ca9db18c0847d1530520e01baf75f8ab8f4fa06/pyproject.toml#L32>`_.
 Coveralls
-    Create an account on `Coveralls <https://coveralls.io/github/collective/icalendar>`_.
+    Create an account on `Coveralls <https://coveralls.io/github/PyCalendar/icalendar>`_.
     This will allow you to see the results of Coveralls runs over time.
 
     It doesn't grant you permission to configure the Coveralls GitHub app.
-    That requires Owner permission in the GitHub organization Collective.
-    To configure the Coveralls app for icalendar, either contact @stevepiercy or `create an issue <https://github.com/collective/Collective/issues/new?template=BLANK_ISSUE>`_ in ``collective/Collective``.
+    That requires Owner permission in the GitHub organization PyCalendar.
+    To configure the Coveralls app for icalendar, contact an `owner of the PyCalendar organization <https://github.com/orgs/PyCalendar/people?query=role%3Aowner>`_.
 
     .. seealso::
 
-        `Generate test coverage report before approval of pull request <https://github.com/collective/icalendar/issues/1556>`_
+        `Generate test coverage report before approval of pull request <https://github.com/PyCalendar/icalendar/issues/1556>`_
 
 
 Collaborators
@@ -176,9 +176,9 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git add CHANGES.rst news/ docs/conf.py
         git add .github/workflows/tests.yml  # Only for a new major release
         git commit -m"version $VERSION"
-        git push  # to collective/icalendar
+        git push  # to PyCalendar/icalendar
 
-#.  See if the `CI tests <https://github.com/collective/icalendar/actions>`_ are running on the commit.
+#.  See if the `CI tests <https://github.com/PyCalendar/icalendar/actions>`_ are running on the commit.
     If they are not running, no new release can be issued.
     If the CI passes, go ahead.
 
@@ -218,20 +218,20 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
             .. code-block:: shell
 
-                git push -u upstream 7.x  # to collective/icalendar
+                git push -u upstream 7.x  # to PyCalendar/icalendar
 
         -   For a minor or patch release, just push.
 
             .. code-block:: shell
 
-                git push  # to collective/icalendar
+                git push  # to PyCalendar/icalendar
 
     #.  Next create a tag, and push the tag.
 
         .. code-block:: shell
 
             git tag "v$VERSION"
-            git push upstream "v$VERSION" # to collective/icalendar
+            git push upstream "v$VERSION" # to PyCalendar/icalendar
 
         .. warning::
 
@@ -239,11 +239,11 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
             This creates issues for downstream repositories.
             See :issue:`1033`.
 
-#.  Once the tag is pushed and its `CI tests`_ pass, check the `GitHub Actions <https://github.com/collective/icalendar/actions>`_, and wait for maintainers to get an email:
+#.  Once the tag is pushed and its `CI tests`_ pass, check the `GitHub Actions <https://github.com/PyCalendar/icalendar/actions>`_, and wait for maintainers to get an email:
 
     .. code-block:: text
 
-        Subject: Deployment review in collective/icalendar
+        Subject: Deployment review in PyCalendar/icalendar
 
         tests: PyPI is waiting for your review
 
@@ -319,7 +319,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
             git add docs/_static/version-switcher.json
             git commit -m "Update version switcher for $VERSION"
-            git push  # to collective/icalendar
+            git push  # to PyCalendar/icalendar
 
 #.  Revert the change in the :ref:`earlier step <hide-version-warning-banner>` by updating the Sphinx configuration file :file:`docs/conf.py` to show the version warning banner on the ``main`` branch, which is "latest" on Read the Docs.
 
@@ -338,7 +338,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         git add docs/conf.py
         git commit -m "Restore version warning banner for 'latest' on Read the Docs"
-        git push  # to collective/icalendar
+        git push  # to PyCalendar/icalendar
 
 #.  If you cut a new *major* release version, update the Sphinx configuration file :file:`docs/conf.py` on the *previous* numbered major release branch to show the version warning banner.
     For example, when releasing 7.0.0, checkout ``6.x``, and update it as shown.
@@ -358,7 +358,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         git add docs/conf.py
         git commit -m "Show version warning banner for previous major version 6.x on Read the Docs"
-        git push  # to collective/icalendar
+        git push  # to PyCalendar/icalendar
 
 #.  Manually trigger the "latest" version on `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
     To the right in the row for "latest," click the ellipsis :guilabel:`…`, and from the pop-up menu select :guilabel:`Rebuild version`.
@@ -376,10 +376,10 @@ Links
 
 This section contains useful links for maintainers and collaborators.
 
--   To remove private information from an iCalendar file for bug reports, use `icalendar-anonymizer <https://github.com/pycalendar/icalendar-anonymizer>`_ either through its `website <https://icalendar-anonymizer.com/>`_ or `install it locally <https://docs.icalendar-anonymizer.com/latest/installation.html>`_.
+-   To remove private information from an iCalendar file for bug reports, use `icalendar-anonymizer <https://github.com/PyCalendar/icalendar-anonymizer>`_ either through its `website <https://icalendar-anonymizer.com/>`_ or `install it locally <https://docs.icalendar-anonymizer.com/latest/installation.html>`_.
 -   `Python Calendaring Ecosystem <https://pycal.org/>`_
--   `Future of icalendar, looking for maintainer #360 <https://github.com/collective/icalendar/discussions/360>`_
--   `Comment on the Plone tests running with icalendar <https://github.com/collective/icalendar/pull/447#issuecomment-1277643634>`_
+-   `Future of icalendar, looking for maintainer #360 <https://github.com/PyCalendar/icalendar/discussions/360>`_
+-   `Comment on the Plone tests running with icalendar <https://github.com/PyCalendar/icalendar/pull/447#issuecomment-1277643634>`_
 
 
 Updating Python versions
@@ -399,7 +399,7 @@ When adding support for a new Python version, or removing support for an old one
     Update the compatibility information.
 :file:`docs/maintenance.rst`
     Update this list if any new files need to be modified.
-`Branch Protection Rules <https://github.com/collective/icalendar/settings/branch_protection_rules>`_
+`Branch Protection Rules <https://github.com/PyCalendar/icalendar/settings/branch_protection_rules>`_
     Update the branch protection rules so that they match the required test names.
 
 Remember to write tests that completely cover the changes, and update any documentation that mentions supported Python versions.

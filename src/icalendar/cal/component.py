@@ -1241,7 +1241,7 @@ class Component(CaselessDict):
                         <text>2.0</text>
                       </version>
                       <prodid>
-                        <text>-//collective//icalendar//7.0.0//EN</text>
+                        <text>-//PyCalendar//icalendar//7.0.0//EN</text>
                       </prodid>
                       <uid>
                         <text>d755cef5-2311-46ed-a0e1-6733c9e15c63</text>

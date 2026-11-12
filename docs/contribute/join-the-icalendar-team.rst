@@ -49,7 +49,7 @@ Apply
 
 If you're interested in applying to join the team, you may:
 
--   Create a new `Discussion topic <https://github.com/collective/icalendar/discussions/categories/collaborator-nominations>`_ under the Collaborator nominations category.
+-   Create a new `Discussion topic <https://github.com/PyCalendar/icalendar/discussions/categories/collaborator-nominations>`_ under the Collaborator nominations category.
 -   Post a message to the `Matrix icalendar chat <https://matrix.to/#/#pycal:chat.pycal.org>`_.
 
 Additionally, the icalendar team may contact you to encourage you to apply.

@@ -126,7 +126,7 @@ MULTI_VALUE = [
     ("byday", "FR", "FR"),
     ("byday", "-1SU", "-1SU"),
     # BYWEEKDAY does not exist
-    # see https://github.com/collective/icalendar/issues/1854
+    # see https://github.com/PyCalendar/icalendar/issues/1854
 ]
 
 mark_single_value = pytest.mark.parametrize(

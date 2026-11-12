@@ -1,6 +1,6 @@
 """This tests the properties of components and their types.
 
-See https://github.com/collective/icalendar/issues/662
+See https://github.com/PyCalendar/icalendar/issues/662
 """
 
 from __future__ import annotations
@@ -364,7 +364,7 @@ def test_event_duration_one_day():
 def test_event_new_datetime_no_dtend_implicit_zero_duration():
     """Event.new() with a naive datetime and no end/duration: implicit zero duration.
 
-    See https://github.com/collective/icalendar/issues/1275
+    See https://github.com/PyCalendar/icalendar/issues/1275
 
     RFC 5545 §3.6.1: "For cases where a VEVENT specifies a DTSTART with a
     DATE-TIME value type but no DTEND property, the event ends on the same
@@ -380,7 +380,7 @@ def test_event_new_datetime_no_dtend_implicit_zero_duration():
 def test_event_new_datetime_tzaware_no_dtend_implicit_zero_duration(tzp):
     """Event.new() with a timezone-aware datetime and no end/duration: implicit zero duration.
 
-    See https://github.com/collective/icalendar/issues/1275
+    See https://github.com/PyCalendar/icalendar/issues/1275
 
     This is the exact case reported in the issue: timezone-aware DTSTART with
     neither DTEND nor DURATION should yield zero duration, not raise an error.
@@ -395,7 +395,7 @@ def test_event_new_datetime_tzaware_no_dtend_implicit_zero_duration(tzp):
 def test_event_new_date_no_dtend_implicit_one_day():
     """Event.new() with a date and no end/duration: implicit one-day duration.
 
-    See https://github.com/collective/icalendar/issues/1275
+    See https://github.com/PyCalendar/icalendar/issues/1275
 
     RFC 5545 §3.6.1: "For cases where a VEVENT specifies a DTSTART with a
     DATE value type but no DTEND nor DURATION property, the event's duration
