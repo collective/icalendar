@@ -243,4 +243,17 @@ class vNonNegativeInt(vInt):
     XCAL_TYPE = "xsd:nonNegativeInteger"
 
 
-__all__ = ["vInt", "vNonNegativeInt"]
+class vPositiveInt(vInt):
+    """This is an integer that is supposed to be at least 1."""
+
+    min: ClassVar[int] = 1
+
+    @classmethod
+    def examples(cls) -> list[vInt]:
+        """Examples of vPositiveInt."""
+        return [cls(1000), cls(1)]
+
+    XCAL_TYPE = "xsd:positiveInteger"
+
+
+__all__ = ["vInt", "vNonNegativeInt", "vPositiveInt"]
