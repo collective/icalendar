@@ -54,8 +54,8 @@ def main(
     if we mix timezone implementations.
     """
     unsorted_tzids = available_timezones()
-    unsorted_tzids.remove("localtime")
-    unsorted_tzids.remove("Factory")
+    unsorted_tzids.discard("localtime")
+    unsorted_tzids.discard("Factory")
 
     class TZ(NamedTuple):
         tz: tzinfo
