@@ -424,8 +424,9 @@ class vRecur(CaselessDict):
         instead so callers can distinguish an omitted value from an explicit
         one.
 
-        If multiple values are present, only the first one is returned. If the
-        value is missing or an empty sequence, ``None`` is returned. Assigning
+        If multiple values are present (although RFC 5545 permits only one),
+        only the first one is returned. If the value is missing or an empty
+        sequence, ``None`` is returned. Assigning
         ``None`` or deleting the property removes the entire INTERVAL entry,
         including all values in a multi-value entry.
 
@@ -445,8 +446,6 @@ class vRecur(CaselessDict):
                 >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2").interval
                 2
                 >>> vRecur(FREQ=["DAILY"], INTERVAL=[2, 3]).interval
-                2
-                >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2,3").interval
                 2
                 >>> vRecur.from_ical("FREQ=DAILY").interval is None
                 True
