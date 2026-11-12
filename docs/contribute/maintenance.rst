@@ -49,7 +49,7 @@ Coveralls
 
     It doesn't grant you permission to configure the Coveralls GitHub app.
     That requires Owner permission in the GitHub organization PyCalendar.
-    To configure the Coveralls app for icalendar, contact an owner of the PyCalendar organization, such as @stevepiercy.
+    To configure the Coveralls app for icalendar, contact an `owner of the PyCalendar organization <https://github.com/orgs/PyCalendar/people?query=role%3Aowner>`_.
 
     .. seealso::
 
