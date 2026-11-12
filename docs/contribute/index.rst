@@ -306,11 +306,11 @@ Write a good change log entry
 The content of this file must be on a single line and include the following.
 
 -   A *brief* message that summarizes the changes in your contribution.
--   Use :ref:`reStructuredText markup <markup-examples>` to link to relevant RFCs, API usage, and other references.
+-   Use :ref:`reStructuredText markup cross-references <markup-examples>` to link to relevant RFCs, API usage and Python objects, and other references.
 -   A *brief* disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
 -   An attribution to yourself, in the format of ``@github_username``, at the end of the entry.
 
-You can write a good change log entry with the following guidance.
+Write a good change log entry with the following guidance.
 
 -   Use a narrative format, in the past tense, proper English spelling and grammar, and inline markup as needed.
 -   Write your change log entry for its appropriate audience.
@@ -322,6 +322,12 @@ You can write a good change log entry with the following guidance.
     You should not write *how* you fixed it.
 -   If you add or change a feature or public API, write a summary of previous behavior, what it does now, and how to use it.
 -   Refer to narrative documentation as needed.
+-   After opening a pull request and the CI check :guilabel:`docs/readthedocs.org:icalendar` succeeds, inspect the rendered change log for accuracy and functional links.
+
+    -   Click the link :guilabel:`docs/readthedocs.org:icalendar` in the list of CI checks.
+    -   Navigate to :menuselection:`Reference guides --> Change log`.
+    -   Look for your rendered change log entry and inspect it.
+        Read the Docs' `visual diff <https://docs.readthedocs.com/platform/stable/visual-diff.html>`_ feature might help find what you've changed.
 
 The following text is an example of a good change log entry, placed inside :file:`/news/1360.feature`.
 
