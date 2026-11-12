@@ -161,8 +161,8 @@ class vPeriod(TimeBase):
         else:
             end = end_or_duration
             duration = normalize_pytz(end - start)
-        if start > end:
-            raise ValueError("Start time is greater than end time")
+        if start >= end:
+            raise ValueError("Start time is not before end time")
 
         self.params = Parameters(params or {"value": "PERIOD"})
         # set the timezone identifier
