@@ -51,15 +51,17 @@ DURATION_0 = (timedelta(days=0, hours=0), "P0D")
 
 PERIODS_DURATION_UTC = [
     (START_UTC, DURATION_POSITIVE),
-    (START_UTC, DURATION_0),
 ]
 PERIODS_DURATION_FLOATING = [
     (START_FLOATING, DURATION_POSITIVE),
-    (START_FLOATING, DURATION_0),
 ]
 PERIODS_DURATION_INVALID = [
     (START_FLOATING, DURATION_NEGATIVE),
     (START_UTC, DURATION_NEGATIVE),
+    # RFC 5545 requires a positive duration, so a zero duration is as
+    # invalid as a negative one (#2087).
+    (START_FLOATING, DURATION_0),
+    (START_UTC, DURATION_0),
 ]
 PERIODS_END_UTC = [
     (START_UTC, END_UTC),

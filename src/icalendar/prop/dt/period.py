@@ -334,7 +334,7 @@ class vPeriod(TimeBase):
             if duration_element is None:
                 raise XCalParsingError("Expected <end> or <duration>", None, element)
             end = vDuration.from_xcal(duration_element).td
-            if end < timedelta(0):
+            if end <= timedelta(0):
                 raise XCalParsingError(
                     "Expected positive duration",
                     duration_element.get_xsd_token(),
