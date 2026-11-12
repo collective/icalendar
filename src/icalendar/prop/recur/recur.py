@@ -12,7 +12,7 @@ from icalendar.parser import Parameters
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
-from icalendar.prop.integer import vInt, vNonNegativeInt
+from icalendar.prop.integer import vInt, vNonNegativeInt, vPositiveInt
 from icalendar.prop.recur.frequency import vFrequency
 from icalendar.prop.recur.month import vMonth
 from icalendar.prop.recur.skip import vSkip
@@ -170,7 +170,7 @@ class vRecur(CaselessDict):
     ] = CaselessDict(
         {
             "COUNT": vNonNegativeInt,
-            "INTERVAL": vNonNegativeInt,
+            "INTERVAL": vPositiveInt,
             "BYSECOND": vNonNegativeInt,
             "BYMINUTE": vNonNegativeInt,
             "BYHOUR": vNonNegativeInt,
@@ -419,20 +419,24 @@ class vRecur(CaselessDict):
         """The INTERVAL part of the recurrence rule.
 
         This is the positive integer interval between occurrences of the
-        recurrence frequency. When omitted, RFC 5545 defines the default as
-        1; this accessor returns None so callers can distinguish an omitted
-        value from an explicit one.
+        recurrence frequency. When omitted, :rfc:`5545#section-3.3.10`
+        defines the default as ``1``, but this accessor returns ``None``
+        instead so callers can distinguish an omitted value from an explicit
+        one.
 
-        If multiple values are present, the first one is returned. If the
-        value is missing or an empty sequence, None is returned. Assigning
-        None or deleting the property removes the entire INTERVAL entry,
+        If multiple values are present, only the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned. Assigning
+        ``None`` or deleting the property removes the entire INTERVAL entry,
         including all values in a multi-value entry.
 
         Raises:
-            InvalidCalendar: if a stored value cannot be read as an int or is
-                less than one.
-            InvalidCalendar: when setting a value less than one.
-            TypeError: when setting a value that is not an int.
+            InvalidCalendar: if a directly stored value cannot be read as an
+                :class:`int` or is less than ``1``, or when setting a value
+                less than ``1``.
+            TypeError: when setting a value that is not an :class:`int`.
+
+        Parsing an invalid INTERVAL value raises ``ValueError`` before the
+        accessor can be read.
 
         Example:
             ..  code-block:: pycon
@@ -441,6 +445,8 @@ class vRecur(CaselessDict):
                 >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2").interval
                 2
                 >>> vRecur(FREQ=["DAILY"], INTERVAL=[2, 3]).interval
+                2
+                >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2,3").interval
                 2
                 >>> vRecur.from_ical("FREQ=DAILY").interval is None
                 True
@@ -461,7 +467,7 @@ class vRecur(CaselessDict):
 
     @interval.setter
     def interval(self, value: int | None) -> None:
-        """Set the INTERVAL part of the recurrence rule, or delete it if None."""
+        """Set the INTERVAL part of the recurrence rule, or delete it if ``None``."""
         if value is None:
             del self.interval
             return
@@ -469,7 +475,7 @@ class vRecur(CaselessDict):
             raise TypeError(f"interval must be an int, got {value!r}")
         if value < 1:
             raise InvalidCalendar(f"INTERVAL must be >= 1, got {value}")
-        self["INTERVAL"] = [vNonNegativeInt(value)]
+        self["INTERVAL"] = [vPositiveInt(value)]
 
     @interval.deleter
     def interval(self) -> None:
