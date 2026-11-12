@@ -705,6 +705,22 @@ Example:
 
 
 FORMAT_START = re.compile(rb"(?:\xef\xbb\xbf|\xff\xfe|\xfe\xff)?[\s\x00]*([Bb\[<])")
+"""Find the first character of calendar data, which tells its format.
+
+:func:`parse` uses this to detect the format without decoding or changing the data.
+The expression skips the following before the first character:
+
+-   An optional byte order mark: UTF-8 (``EF BB BF``), UTF-16 little endian
+    (``FF FE``), or UTF-16 big endian (``FE FF``).
+-   Whitespace and null bytes. UTF-16 stores each ASCII character with a null
+    byte, so skipping null bytes lets UTF-16 data match too.
+
+The first group is the first character: ``B`` or ``b`` for iCalendar, ``[``
+for jCal, or ``<`` for xCal.
+
+The expression is based on the one suggested in the review of
+`pull request 1977 <https://github.com/collective/icalendar/pull/1977#discussion_r4336042948>`_.
+"""
 
 
 @overload
@@ -726,11 +742,10 @@ def parse(
     whitespace and a byte order mark: ``B`` or ``b`` for iCalendar
     (:rfc:`5545`), ``[`` for jCal (:rfc:`7265`), and ``<`` for xCal (:rfc:`6321`).
     The data is passed to the parser unchanged.
-    See :ref:`how-to-parse` for more examples.
 
     Parameters:
-        source: The data to parse, as :class:`bytes`, a :class:`~pathlib.Path`
-            to a file, or a file opened in binary mode.
+        source: The data to parse, as either :class:`bytes`, a
+            :class:`~pathlib.Path` to a file, or a file opened in binary mode.
         multiple: If ``True``, returns a list of calendars.
             If ``False``, returns a single calendar.
 
@@ -767,6 +782,9 @@ def parse(
             >>> calendars = parse(ical + ical, multiple=True)
             >>> len(calendars)
             2
+
+        ..  seealso::
+            :doc:`/how-to/parse`
     """
     if isinstance(source, (bytes, str)):
         data = source
@@ -789,14 +807,14 @@ def parse(
         calendars = Calendar.from_xcal(data)
     else:
         raise UnknownCalendarFormat(
-            f"Could not detect the calendar format: expected iCal, jCal or xCal data, "
+            f"Could not detect the calendar format: expected iCal, jCal, or xCal data, "
             f"but the data starts with {data[:10]!r}."
         )
     if multiple:
         return calendars
     if len(calendars) > 1:
         raise CalendarInformationLost(
-            "There are multiple calendars, please use multiple=True."
+            "There are multiple calendars. Use multiple=True."
         )
     if len(calendars) == 0:
         raise NoCalendarsFound("No calendars found.")

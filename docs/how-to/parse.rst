@@ -4,7 +4,7 @@
 Parse any calendar format
 =========================
 
-This chapter describes how to parse calendar data when you do not know in advance whether it is :term:`iCalendar`, :term:`jCal`, or :term:`xCal`.
+This chapter describes how to parse calendar data when you don't know in advance whether it's :term:`iCalendar`, :term:`jCal`, or :term:`xCal`.
 
 icalendar supports three calendar formats, each with its own parser:
 
@@ -36,14 +36,14 @@ The format is detected from the first character, ignoring whitespace and a byte 
 
 The data is passed to the parser unchanged, so :func:`~icalendar.cal.calendar.parse` accepts what the matching parser accepts.
 
-If the format cannot be detected, :func:`~icalendar.cal.calendar.parse` raises :class:`~icalendar.error.UnknownCalendarFormat`.
+If the format can't be detected, :func:`~icalendar.cal.calendar.parse` raises :class:`~icalendar.error.UnknownCalendarFormat`.
 
 .. code-block:: pycon
 
     >>> parse(b"not a calendar")
     Traceback (most recent call last):
       ...
-    icalendar.error.UnknownCalendarFormat: Could not detect the calendar format: expected iCal, jCal or xCal data, but the data starts with b'not a cale'.
+    icalendar.error.UnknownCalendarFormat: Could not detect the calendar format: expected iCal, jCal, or xCal data, but the data starts with b'not a cale'.
 
 
 Parse a file
@@ -58,7 +58,7 @@ Pass a :class:`~pathlib.Path` to read and parse a file.
     >>> len(calendar.events)
     3
 
-You can also pass a file that you opened in binary mode.
+Alternatively, pass a file opened in binary mode.
 
 .. code-block:: pycon
 

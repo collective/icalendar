@@ -68,7 +68,7 @@ class BrokenCalendarProperty(InvalidCalendar):
 class UnknownCalendarFormat(InvalidCalendar):
     """The data is not in a calendar format that icalendar can detect.
 
-    The supported formats are iCalendar, jCal and xCal.
+    The supported formats are iCalendar, jCal, and xCal.
     """
 
 

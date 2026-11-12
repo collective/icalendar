@@ -1,4 +1,4 @@
-"""Tests for icalendar.parse, which detects iCal, jCal and xCal automatically.
+"""Tests for icalendar.parse, which detects iCal, jCal, and xCal automatically.
 
 See https://github.com/collective/icalendar/issues/1917
 """
