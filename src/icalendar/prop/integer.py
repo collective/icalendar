@@ -255,5 +255,17 @@ class vPositiveInt(vInt):
 
     XCAL_TYPE = "xsd:positiveInteger"
 
+    @classmethod
+    def from_xcal_element(cls, element: ElementAdapter, params: Parameters) -> Self:
+        """Parse a positive integer from xCal."""
+        value = super().from_xcal_element(element, params)
+        if value < cls.min:
+            raise XCalParsingError(
+                f"Expected {cls.XCAL_TYPE}",
+                element.get_xsd_token(),
+                element,
+            )
+        return value
+
 
 __all__ = ["vInt", "vNonNegativeInt", "vPositiveInt"]
