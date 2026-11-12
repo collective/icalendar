@@ -492,7 +492,7 @@ class Parameters(CaselessDict[str | list[str]]):
         Returns:
             The jCal representation of the parameter value
         """
-        if isinstance(value, list):
+        if isinstance(value, SEQUENCE_TYPES):
             return [self._parameter_value_to_jcal(v) for v in value]
         if hasattr(value, "to_jcal"):
             # proprty values respond to this
@@ -689,9 +689,9 @@ class Parameters(CaselessDict[str | list[str]]):
             Do not modify the list. This is only for iteration.
         """
         result = self.get(key, [])
-        if not isinstance(result, list):
+        if not isinstance(result, SEQUENCE_TYPES):
             return [result]
-        return result
+        return list(result)
 
 
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
