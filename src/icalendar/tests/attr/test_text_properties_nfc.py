@@ -73,8 +73,8 @@ def test_round_trip_keeps_original_bytes():
     cal = Calendar.from_ical(raw_ics)
     event = cal.events[0]
 
-    # O getter retorna NFC para consumo em Python:
+    # The getter returns NFC for consumption in Python:
     assert event.summary == NFC
 
-    # Mas o to_ical() preserva os bytes brutos NFD originais do arquivo:
+    # But to_ical() preserves the original raw NFD bytes from the file:
     assert NFD.encode("utf-8") in cal.to_ical()
