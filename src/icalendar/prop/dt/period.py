@@ -96,7 +96,7 @@ class vPeriod(TimeBase):
     Raises:
         TypeError: If the start is not a date or a datetime, or if the end is
             not a date, a datetime, or a duration.
-        ValueError: If the start is after the end.
+        ValueError: If the start is not before the end.
 
     Examples:
         A period from 18:00:00 UTC on January 1, 1997 to 07:00:00 UTC on
@@ -161,8 +161,8 @@ class vPeriod(TimeBase):
         else:
             end = end_or_duration
             duration = normalize_pytz(end - start)
-        if start > end:
-            raise ValueError("Start time is greater than end time")
+        if start >= end:
+            raise ValueError("Start time must be before end time")
 
         self.params = Parameters(params or {"value": "PERIOD"})
         # set the timezone identifier
