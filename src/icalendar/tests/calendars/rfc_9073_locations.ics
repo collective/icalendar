@@ -1,0 +1,39 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//icalendar//RFC 9073 locations//EN
+BEGIN:VEVENT
+UID:conference@example.com
+DTSTAMP:20260101T120000Z
+DTSTART:20260115T120000Z
+SUMMARY:Conference
+LOCATION:Hotel Sol
+BEGIN:VLOCATION
+UID:hotel@example.com
+NAME;LANGUAGE=pt-BR:Hotel Sol\, Centro
+DESCRIPTION:Recepção no térreo.\nUse a entrada principal.
+GEO:-22.97;-43.23
+LOCATION-TYPE:hotel,restaurant
+X-ENTRANCE:North\, side
+END:VLOCATION
+BEGIN:VLOCATION
+UID:parking@example.com
+NAME:Car park
+LOCATION-TYPE:parking
+END:VLOCATION
+END:VEVENT
+BEGIN:VTODO
+UID:deliveries@example.com
+DTSTAMP:20260101T120000Z
+SUMMARY:Deliver conference supplies
+BEGIN:VLOCATION
+UID:office@example.com
+NAME:Office
+LOCATION-TYPE:office
+END:VLOCATION
+BEGIN:VLOCATION
+UID:restaurant@example.com
+NAME:Restaurant
+LOCATION-TYPE:restaurant
+END:VLOCATION
+END:VTODO
+END:VCALENDAR

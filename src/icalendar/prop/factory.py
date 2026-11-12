@@ -145,6 +145,8 @@ class TypesFactory(CaselessDict):
             "description": "text",
             "geo": "geo",
             "location": "text",
+            "location-type": "categories",  # RFC 9073
+            "name": "text",  # RFC 7986 and RFC 9073
             "percent-complete": "integer",
             "priority": "integer",
             "resources": "text",

@@ -155,8 +155,10 @@ class LazySubcomponent:
         """
         if not isinstance(name, str):
             raise TypeError("name must be a string.")
-        if name == self.name or (
-            self._parser and self._parser.contains_component(name)
+        if (
+            self.is_parsed()
+            or name == self.name
+            or (self._parser and self._parser.contains_component(name))
         ):
             return self.parse().walk(name)
         return []
