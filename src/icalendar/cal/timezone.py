@@ -384,7 +384,7 @@ class Timezone(Component):
         first_date: date = DEFAULT_FIRST_DATE,
         last_date: date = DEFAULT_LAST_DATE,
     ) -> Timezone:
-        """Create a VTIMEZONE from a tzid like ``"Europe/Berlin"``.
+        """Create a VTIMEZONE from a tzid, such as ``"Europe/Berlin"``.
 
         Parameters:
             tzid: The id of the timezone.
