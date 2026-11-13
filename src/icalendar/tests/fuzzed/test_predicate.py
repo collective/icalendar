@@ -1,6 +1,6 @@
 """Test the predicates that decide which exceptions the fuzzer ignores.
 
-See https://github.com/collective/icalendar/issues/1759
+See https://github.com/PyCalendar/icalendar/issues/1759
 """
 
 import pytest

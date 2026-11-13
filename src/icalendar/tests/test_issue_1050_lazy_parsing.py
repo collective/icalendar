@@ -1,6 +1,6 @@
 """Test lazy parsing of calendar components.
 
-See https://github.com/collective/icalendar/issues/1050
+See https://github.com/PyCalendar/icalendar/issues/1050
 """
 
 from typing import TYPE_CHECKING
@@ -225,7 +225,7 @@ def test_uid_is_present_but_not_in_the_uid_property(calendars):
     """Check that even if the UID is present somewhere the component is not
     returned.
 
-    See https://github.com/collective/icalendar/pull/1201/changes#r2869287074
+    See https://github.com/PyCalendar/icalendar/pull/1201/changes#r2869287074
     """
     components = calendars.issue_1050_all_components.with_uid("alarm")
     assert len(components) == 0

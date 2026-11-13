@@ -1,6 +1,6 @@
 """Tests for validating integer properties with a minimum value.
 
-See https://github.com/collective/icalendar/issues/1594
+See https://github.com/PyCalendar/icalendar/issues/1594
 """
 
 from datetime import timedelta

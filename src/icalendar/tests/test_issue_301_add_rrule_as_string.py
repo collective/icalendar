@@ -1,6 +1,6 @@
 """We want to add rrule as a string for convenience.
 
-See https://github.com/collective/icalendar/issues/301
+See https://github.com/PyCalendar/icalendar/issues/301
 """
 
 from icalendar.cal.event import Event

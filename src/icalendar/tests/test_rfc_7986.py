@@ -289,6 +289,6 @@ def test_attributes_from_calendar(calendars, get_calendar):
     assert calendar.description == "We want a lot of RFC 7986 parameters in here!"
     assert (
         calendar.source
-        == "https://github.com/collective/icalendar/tree/main/src/icalendar/tests/calendars/rfc_7986_properties.ics"
+        == "https://github.com/PyCalendar/icalendar/tree/main/src/icalendar/tests/calendars/rfc_7986_properties.ics"
     )
     assert isinstance(calendar.source, vUri)

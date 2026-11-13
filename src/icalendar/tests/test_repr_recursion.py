@@ -1,6 +1,6 @@
 """Regression test for repr() RecursionError on deeply-nested calendars.
 
-See https://github.com/collective/icalendar/issues/1370.
+See https://github.com/PyCalendar/icalendar/issues/1370.
 
 A crafted ``.ics`` payload of only ~13 KB nesting ``BEGIN:VEVENT``
 many levels deep used to make ``repr()`` / ``str()`` / ``f"{cal}"``

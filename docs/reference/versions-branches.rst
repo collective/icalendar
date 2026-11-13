@@ -23,30 +23,30 @@ Branches
 This section describes the branches used in icalendar development.
 
 ``main``
-    The `main <https://github.com/collective/icalendar/tree/main/>`_ branch receives the latest updates and features.
+    The `main <https://github.com/PyCalendar/icalendar/tree/main/>`_ branch receives the latest updates and features.
     Active development takes place on this branch.
     It's compatible with Python versions 3.10 - 3.14, and PyPy3.10, subject to change because it's an active development branch.
 
 ``7.x``
-    icalendar version 7 is on the branch `7.x <https://github.com/collective/icalendar/tree/7.x/>`_.
+    icalendar version 7 is on the branch `7.x <https://github.com/PyCalendar/icalendar/tree/7.x/>`_.
     It's compatible with Python versions 3.10 - 3.14, and PyPy3.10.
     Security updates, bug fixes, and new features that are not breaking changes are continuously backported from `main` and released on this branch.
 
 ``6.x``
-    icalendar version 6 is on the branch `6.x <https://github.com/collective/icalendar/tree/6.x/>`_.
+    icalendar version 6 is on the branch `6.x <https://github.com/PyCalendar/icalendar/tree/6.x/>`_.
     It is compatible with Python versions 3.8 - 3.13, and PyPy3.9.
     Security updates and bug fixes can be backported and added to ``6.x`` on request.
 
 ``5.x``
-    icalendar version 5 is on the branch `5.x <https://github.com/collective/icalendar/tree/5.x/>`_.
+    icalendar version 5 is on the branch `5.x <https://github.com/PyCalendar/icalendar/tree/5.x/>`_.
     It is compatible with Python versions 3.7 - 3.11, and PyPy3.9.
     Security updates and bug fixes can be backported and added to ``5.x`` on request.
 
 ``4.x``
-    icalendar version 4 is on the branch `4.x <https://github.com/collective/icalendar/tree/4.x/>`_.
+    icalendar version 4 is on the branch `4.x <https://github.com/PyCalendar/icalendar/tree/4.x/>`_.
     It is compatible with Python versions 2.7, 3.4 - 3.10, and PyPy2.7 and PyPy3.9.
     Security updates and bug fixes can be backported and added to ``4.x`` on request.
 
 .. seealso::
 
-    `icalendar security policy <https://github.com/collective/icalendar/security/policy>`_.
+    `icalendar security policy <https://github.com/PyCalendar/icalendar/security/policy>`_.

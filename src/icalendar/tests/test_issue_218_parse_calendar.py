@@ -1,6 +1,6 @@
 """Parse the calendar and make sure the timezone is used.
 
-See https://github.com/collective/icalendar/issues/218
+See https://github.com/PyCalendar/icalendar/issues/218
 """
 
 from __future__ import annotations

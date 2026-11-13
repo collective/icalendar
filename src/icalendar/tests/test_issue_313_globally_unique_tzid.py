@@ -6,7 +6,7 @@ unique" TZID form ``/<vendor>/<Olson/Name>`` (for example
 prefix stopped the timezone from being identified, so the value was parsed as
 timezone-naive and the UTC offset was silently lost.
 
-See https://github.com/collective/icalendar/issues/313
+See https://github.com/PyCalendar/icalendar/issues/313
 """
 
 from datetime import timedelta
@@ -84,7 +84,7 @@ def test_cached_guess_warns_on_every_lookup(tzp):
     The first lookup stores the guessed timezone in the TZID cache. The
     second lookup is served from the cache and must still emit
     GloballyUniqueTZIDGuessed: the result is a guess no matter where it
-    comes from. See https://github.com/collective/icalendar/issues/1660
+    comes from. See https://github.com/PyCalendar/icalendar/issues/1660
     """
     tzid = "/mozilla.org/20070129_1/America/New_York"
     with pytest.warns(GloballyUniqueTZIDGuessed):

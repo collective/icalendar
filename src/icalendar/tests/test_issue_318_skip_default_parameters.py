@@ -8,7 +8,7 @@ Example:
        DTSTART;VALUE=DATE-TIME:20190616T050000Z
 equals DTSTART:20190616T050000Z
 
-See https://github.com/collective/icalendar/issues/318
+See https://github.com/PyCalendar/icalendar/issues/318
 """
 
 from datetime import datetime
