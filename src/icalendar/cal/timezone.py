@@ -387,7 +387,7 @@ class Timezone(Component):
         """Create a VTIMEZONE from a tzid, such as ``"Europe/Berlin"``.
 
         Parameters:
-            tzid: The id of the timezone.
+            tzid: The ID of the timezone.
             tzp: The timezone provider.
             first_date: A date that is earlier than anything that happens in the calendar.
             last_date: A date that is later than anything that happens in the calendar.
