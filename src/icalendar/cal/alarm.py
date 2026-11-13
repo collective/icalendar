@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-import datetime
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple
 
 from icalendar.attr import (
@@ -206,8 +205,8 @@ class Alarm(Component):
     TRIGGER = create_single_property(
         "TRIGGER",
         "dt",
-        (datetime.datetime, timedelta),
-        timedelta | datetime.datetime | None,
+        (datetime, timedelta),
+        timedelta | datetime | None,
         """The time at which this alarm fires, per :rfc:`5545#section-3.8.6.3`.
 
     The value is either a :class:`~datetime.timedelta` (relative trigger) or a
@@ -294,9 +293,9 @@ class Alarm(Component):
         absolute - triggers at a datetime in UTC
         """
 
-        start: tuple[datetime.timedelta, ...]
-        end: tuple[datetime.timedelta, ...]
-        absolute: tuple[datetime.datetime, ...]
+        start: tuple[timedelta]
+        end: tuple[timedelta]
+        absolute: tuple[datetime]
 
     @property
     def triggers(self):
@@ -392,7 +391,7 @@ class Alarm(Component):
         cls,
         /,
         action: str | None = None,
-        trigger: timedelta | datetime.datetime | None = None,
+        trigger: timedelta | datetime | None = None,
         attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: ATTENDEE_TYPE_SETTER = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
@@ -470,7 +469,7 @@ class Alarm(Component):
     def new_display(
         cls,
         description: str,
-        trigger: timedelta | datetime.datetime,
+        trigger: timedelta | datetime,
         duration: timedelta | None = None,
         repeat: int | None = None,
         uid: str | uuid.UUID | None = None,
@@ -565,7 +564,7 @@ class Alarm(Component):
     @classmethod
     def new_audio(
         cls,
-        trigger: timedelta | datetime.datetime,
+        trigger: timedelta | datetime,
         attachments: str | bytes | vUri | vBinary | None = None,
         duration: timedelta | None = None,
         repeat: int | None = None,
@@ -647,7 +646,7 @@ class Alarm(Component):
         cls,
         summary: str,
         description: str,
-        trigger: timedelta | datetime.datetime,
+        trigger: timedelta | datetime,
         attendees: ATTENDEE_TYPE_SETTER,
         attachments: ATTACHMENTS_TYPE_SETTER = None,
         duration: timedelta | None = None,
