@@ -339,6 +339,32 @@ def test_cannot_mix_utc_and_tzid_times(dts):
         )
 
 
+@pytest.mark.parametrize("property_name", ["rdate", "exdate"])
+@pytest.mark.parametrize("reverse", [False, True], ids=["winter-first", "summer-first"])
+def test_tzid_dates_can_span_daylight_saving_time(property_name, reverse, tzp):
+    """One TZID can have different UTC offsets within the same date list."""
+    values = [
+        ["date-time", "2025-01-08T09:00:00"],
+        ["date-time", "2025-07-08T09:00:00"],
+    ]
+    offsets = [timedelta(hours=1), timedelta(hours=2)]
+    if reverse:
+        values.reverse()
+        offsets.reverse()
+    xml = list2xml(
+        [
+            property_name,
+            ["parameters", ["tzid", ["text", "Europe/Berlin"]]],
+            *values,
+        ]
+    )
+
+    result = vDDDLists.from_xcal(xml)
+
+    assert result.params["TZID"] == "Europe/Berlin"
+    assert [value.dt.utcoffset() for value in result.dts] == offsets
+
+
 def test_get_empty_dts():
     """We should not error if empty"""
     assert vDDDLists.from_xcal(list2xml(["x-prop"])).dts == []

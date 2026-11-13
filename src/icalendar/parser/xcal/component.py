@@ -8,6 +8,7 @@ from icalendar.error import InvalidToken, XCalParsingError
 from icalendar.parser.xcal.adapter import ElementAdapter
 from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.property import XCalPropertiesParser
+from icalendar.timezone import tzp
 
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
@@ -116,30 +117,37 @@ class XCalComponentParser(XCalParser):
                 parse anything.
 
         """
+        return self._parse_component(self.child)
+
+    def _parse_component(self, element: ElementAdapter) -> Component:
+        """Parse a component, completing timezone children before their siblings."""
         try:
-            component_class = self._component_factory.get_component_class(
-                self.child.tag
-            )
+            component_class = self._component_factory.get_component_class(element.tag)
         except InvalidToken as error:
             raise XCalParsingError(
                 "The component name must be a valid iCalendar token",
-                self.child.tag,
-                self.child,
+                element.tag,
+                element,
             ) from error
         component = component_class()
-        properties = self.child.get_child_with_tag("properties")
+        properties = element.get_child_with_tag("properties")
         if properties is not None:
             properties_parser = XCalPropertiesParser(
                 properties, component, self._types_factory
             )
             properties_parser.parse_properties()
-        components = self.child.get_child_with_tag("components")
+        components = element.get_child_with_tag("components")
         if components is not None:
-            components_parser = XCalComponentParser(
-                components, self._component_factory, self._types_factory
-            )
-            while not components_parser.is_finished():
-                component.add_component(components_parser.parse_component())
+            children = components.children
+            parsed = {}
+            for i in sorted(
+                range(len(children)), key=lambda i: children[i].tag != "vtimezone"
+            ):
+                parsed[i] = self._parse_component(children[i])
+            for i in range(len(children)):
+                component.add_component(parsed[i])
+        if component.name == "VTIMEZONE" and "TZID" in component:
+            tzp.cache_timezone_component(component)
         return component
 
 
