@@ -1,4 +1,4 @@
-"""Tests for Issue https://github.com/collective/icalendar/issues/1237"""
+"""Tests for Issue https://github.com/PyCalendar/icalendar/issues/1237"""
 
 from datetime import datetime
 

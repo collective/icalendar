@@ -1,7 +1,7 @@
 """Tests for GHSA-qjcq-q7h7-r74v.
 
 A crafted REPEAT value on a VALARM component could exhaust memory or CPU.
-See https://github.com/collective/icalendar/security/advisories/GHSA-qjcq-q7h7-r74v
+See https://github.com/PyCalendar/icalendar/security/advisories/GHSA-qjcq-q7h7-r74v
 """
 
 from datetime import datetime, timedelta, timezone

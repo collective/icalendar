@@ -1,6 +1,6 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//collective//icalendar//EN
+PRODID:-//PyCalendar//icalendar//EN
 BEGIN:VEVENT
 UID:issue-1426
 DTSTART;VALUE=DATE:19970101

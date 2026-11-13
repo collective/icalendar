@@ -173,7 +173,7 @@ def test_invalid_request_status_does_not_error_with_code():
 def test_jcal_invaild_request_status():
     """The request status can have an unexpected length.
 
-    See https://github.com/collective/icalendar/pull/1792#discussion_r4040271630
+    See https://github.com/PyCalendar/icalendar/pull/1792#discussion_r4040271630
     """
     r = vRequestStatus.from_jcal(
         ["request-status", {}, "text", ["2.0", "Success", "data1", "data2"]]
