@@ -1,6 +1,6 @@
 """This tests the UID property.
 
-See https://github.com/collective/icalendar/issues/740
+See https://github.com/PyCalendar/icalendar/issues/740
 """
 
 from icalendar.cal.alarm import Alarm

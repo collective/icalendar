@@ -1,6 +1,6 @@
 """Issue #27 - multiple periods
 
-https://github.com/collective/icalendar/issues/27
+https://github.com/PyCalendar/icalendar/issues/27
 """
 
 

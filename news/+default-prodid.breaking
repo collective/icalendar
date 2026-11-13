@@ -1,0 +1,1 @@
+Changed the default ``PRODID`` from ``-//collective//icalendar//<version>//EN`` to ``-//PyCalendar//icalendar//<version>//EN`` to match the repository's new home. @SashankBhamidi

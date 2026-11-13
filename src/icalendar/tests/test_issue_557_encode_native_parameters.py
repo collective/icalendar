@@ -4,7 +4,7 @@ TL;DR: Component._encode lost given parameters
 if the object to encode was already of native type,
 making its behavior unexpected.
 
-see https://github.com/collective/icalendar/issues/557
+see https://github.com/PyCalendar/icalendar/issues/557
 """
 
 import unittest

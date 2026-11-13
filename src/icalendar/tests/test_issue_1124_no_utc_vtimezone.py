@@ -3,7 +3,7 @@
 Per :rfc:`5545#section-3.2.19`, the TZID parameter MUST NOT be applied to
 DATE-TIME or TIME properties whose time values are specified in UTC.
 
-See https://github.com/collective/icalendar/issues/1124
+See https://github.com/PyCalendar/icalendar/issues/1124
 """
 
 from datetime import datetime, timezone

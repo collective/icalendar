@@ -75,7 +75,7 @@ _value_error_matches = [
 ]
 
 # The current check: a ValueError or TypeError with one of the substrings above.
-# See https://github.com/collective/icalendar/issues/1759
+# See https://github.com/PyCalendar/icalendar/issues/1759
 _value_error_message = Predicate(
     lambda e: (
         isinstance(e, (ValueError, TypeError))

@@ -8,7 +8,7 @@ and it turned a copied caller docstring into a wrong one: ``DTEND`` inherited
 ``DTSTART``'s "Start of the component." and was documented as the start of the
 component.
 
-Part of https://github.com/collective/icalendar/issues/1650
+Part of https://github.com/PyCalendar/icalendar/issues/1650
 """
 
 from datetime import datetime, timezone

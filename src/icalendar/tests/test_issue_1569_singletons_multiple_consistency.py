@@ -5,7 +5,7 @@
 property in both lists is contradictory. This guards the whole component
 registry against that mistake.
 
-See https://github.com/collective/icalendar/issues/1569
+See https://github.com/PyCalendar/icalendar/issues/1569
 """
 
 from __future__ import annotations

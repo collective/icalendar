@@ -20,8 +20,8 @@ If you have questions or want to get in touch before you begin, see the :ref:`Co
 Code contributions
 ``````````````````
 
--   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
--   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
+-   Report security issues per the `Security Policy <https://github.com/PyCalendar/icalendar/blob/main/SECURITY.md>`_.
+-   Report all other issues in the `issue tracker <https://github.com/PyCalendar/icalendar/issues>`_.
 -   Submit pull requests from your fork of the icalendar repository.
 
 
@@ -29,7 +29,7 @@ Triage and review
 `````````````````
 
 -   Comment on and resolve issues.
--   Triage open issues and `pull requests <https://github.com/collective/icalendar/pulls>`_.
+-   Triage open issues and `pull requests <https://github.com/PyCalendar/icalendar/pulls>`_.
 -   Review, comment on, and make suggestions to change a pull request.
     See the GitHub documentation `Reviewing proposed changes in a pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request>`_.
 -   Reproduce an issue and add a comment with your findings.
@@ -46,9 +46,9 @@ Community
 `````````
 
 -   Join the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_ to access all community channels.
--   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
+-   Create or comment on a topic in `Discussions <https://github.com/PyCalendar/icalendar/discussions>`_.
 -   Write a blog post about icalendar.
--   Star or watch us on `GitHub <https://github.com/collective/icalendar>`_.
+-   Star or watch us on `GitHub <https://github.com/PyCalendar/icalendar>`_.
 -   Follow us on `Mastodon <https://fosstodon.org/@pycal>`_.
 -   Follow us on `LinkedIn <https://www.linkedin.com/company/pycal/>`_.
 -   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
@@ -85,7 +85,7 @@ Accordingly, you may request of the maintainers in your pull request that you wo
 
         .. grid-item::
 
-            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22
+            .. button-link:: https://github.com/PyCalendar/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22
                 :color: primary
                 :shadow:
 
@@ -93,7 +93,7 @@ Accordingly, you may request of the maintainers in your pull request that you wo
 
         .. grid-item::
 
-            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22doc%22
+            .. button-link:: https://github.com/PyCalendar/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22doc%22
                 :color: success
                 :shadow:
 
@@ -101,7 +101,7 @@ Accordingly, you may request of the maintainers in your pull request that you wo
 
         .. grid-item::
 
-            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3Ahacktoberfest
+            .. button-link:: https://github.com/PyCalendar/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3Ahacktoberfest
                 :color: warning
                 :shadow:
 
@@ -185,7 +185,7 @@ Issue requirements
 
 An issue should precede a pull request.
 
-When `creating a new issue <https://github.com/collective/icalendar/issues/new/choose>`_, you'll be presented with an issue selector.
+When `creating a new issue <https://github.com/PyCalendar/icalendar/issues/new/choose>`_, you'll be presented with an issue selector.
 Follow the templates guidance as much as practical.
 
 It might be helpful to include an iCalendar file to help reproduce your issue and to use in a test to ensure a bug fix actually resolves your issue.
@@ -279,7 +279,7 @@ Change log types
 
 ``security``
     For security fixes.
-    These must go through the `security report protocol <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
+    These must go through the `security report protocol <https://github.com/PyCalendar/icalendar/blob/main/SECURITY.md>`_.
 
 ``documentation``
     For changes to the documentation, docstrings, spelling dictionary, or any other documentation matter.

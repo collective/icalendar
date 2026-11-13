@@ -1,6 +1,6 @@
 """We would like to be able to get the right timezone names.
 
-See https://github.com/collective/icalendar/issues/336
+See https://github.com/PyCalendar/icalendar/issues/336
 
 It appears that the timezone Brazil/DeNoronha is actually America/Noronha.
 """

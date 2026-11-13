@@ -47,8 +47,8 @@ def _strip_unsafe_text_chars(value: object) -> str:
     .. seealso::
 
         :func:`~icalendar.parser.xcal.string._to_valid_xml_string`
-        `Issue 1712 <https://github.com/collective/icalendar/issues/1712>`_,
-        `Issue 1888 <https://github.com/collective/icalendar/issues/1888>`_,
+        `Issue 1712 <https://github.com/PyCalendar/icalendar/issues/1712>`_,
+        `Issue 1888 <https://github.com/PyCalendar/icalendar/issues/1888>`_,
     """
     if not isinstance(value, str):
         value = str(value)
