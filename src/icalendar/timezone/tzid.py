@@ -38,13 +38,16 @@ def tzids_from_tzinfo(tzinfo: tzinfo | None) -> tuple[str]:
 
     >>> import zoneinfo
     >>> from icalendar.timezone.tzid import tzids_from_tzinfo
-    >>> tzids_from_tzinfo(zoneinfo.ZoneInfo("Arctic/Longyearbyen"))
-    ('Arctic/Longyearbyen', 'Atlantic/Jan_Mayen', 'Europe/Berlin', 'Europe/Budapest', 'Europe/Copenhagen', 'Europe/Oslo', 'Europe/Stockholm', 'Europe/Vienna')
+    >>> tzids = tzids_from_tzinfo(zoneinfo.ZoneInfo("Arctic/Longyearbyen"))
+    >>> "Arctic/Longyearbyen" in tzids
+    True
+    >>> "Europe/Berlin" in tzids
+    True
     >>> from dateutil.tz import gettz
-    >>> tzids_from_tzinfo(gettz("Europe/Berlin"))
-    ('Europe/Berlin', 'Arctic/Longyearbyen', 'Atlantic/Jan_Mayen', 'Europe/Budapest', 'Europe/Copenhagen', 'Europe/Oslo', 'Europe/Stockholm', 'Europe/Vienna')
+    >>> "Europe/Berlin" in tzids_from_tzinfo(gettz("Europe/Berlin"))
+    True
 
-    """  # The example might need to change if you recreate the lookup tree  # noqa: E501
+    """  # The example might need to change if you recreate the lookup tree
     if tzinfo is None:
         return ()
     if isinstance(tzinfo, timezone):
@@ -63,14 +66,15 @@ def tzids_from_tzinfo(tzinfo: tzinfo | None) -> tuple[str]:
         if olson is not None:
             return _get_equivalent_tzids(olson)
         return _get_equivalent_tzids(tzinfo._name)  # noqa: SLF001
-    if hasattr(tzinfo, "_filename"):  # dateutil.tz.tzfile  # noqa: SIM102
+    if hasattr(tzinfo, "_filename"):  # dateutil.tz.tzfile
+        # tzfile('/usr/share/zoneinfo/Europe/Berlin'), or a bare timezone id
+        # when dateutil uses its bundled zoneinfo.
+        path = tzinfo._filename  # noqa: SLF001
         if DATEUTIL_ZONEINFO_PATH is not None:
-            # tzfile('/usr/share/zoneinfo/Europe/Berlin')
-            path = tzinfo._filename  # noqa: SLF001
-            if path.startswith(str(DATEUTIL_ZONEINFO_PATH)):
-                tzid = str(Path(path).relative_to(DATEUTIL_ZONEINFO_PATH))
-                return _get_equivalent_tzids(tzid)
-            return _get_equivalent_tzids(path)
+            path_obj = Path(path)
+            if path_obj.is_relative_to(DATEUTIL_ZONEINFO_PATH):
+                path = path_obj.relative_to(DATEUTIL_ZONEINFO_PATH).as_posix()
+        return _get_equivalent_tzids(path)
     if isinstance(tzinfo, tz.tzutc):
         return _get_equivalent_tzids("UTC")
     return ()

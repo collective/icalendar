@@ -1,0 +1,26 @@
+services:
+  alpine:
+    image: alpine:3.24.4
+    working_dir: /tmp
+    volumes:
+      - ../..:/src:ro
+    command:
+      - sh
+      - -eu
+      - -c
+      - |
+        apk add --no-cache \
+          py3-coverage \
+          py3-dateutil \
+          py3-hypothesis \
+          py3-pytest \
+          py3-tox \
+          py3-tz \
+          py3-tzdata
+
+        mkdir -p /tmp/icalendar
+        tar -C /src --exclude=.git --exclude=.venv --exclude=.tox -cf - . \
+          | tar -C /tmp/icalendar -xf -
+
+        cd /tmp/icalendar
+        tox -e alpine

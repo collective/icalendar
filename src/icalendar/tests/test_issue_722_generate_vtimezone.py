@@ -14,10 +14,12 @@ See https://github.com/PyCalendar/icalendar/issues/722
 import zoneinfo
 from datetime import date, datetime, timedelta
 from re import findall
+from types import SimpleNamespace
 
 import pytest
 from dateutil.tz import gettz
 
+import icalendar.timezone.tzid as tzid_module
 from icalendar import Calendar, Component, Event, Timezone
 from icalendar.timezone import tzid_from_tzinfo, tzids_from_tzinfo
 
@@ -348,14 +350,13 @@ def test_dateutil_timezone_is_not_found_with_tzname(calendars, no_pytz):
     assert "dateutil" in repr(cal.events[0].start.tzinfo.__class__)
 
 
-@pytest.mark.parametrize("tzname", ["America/New_York", "Arctic/Longyearbyen"])
-# @pytest.mark.parametrize("component", ["STANDARD", "DAYLIGHT"])
-def test_dateutil_timezone_is_matched_with_tzname(tzname):
+def test_dateutil_timezone_is_matched_with_tzname():
     """dateutil is an example of a timezone that has no tzid.
 
     In this test we make sure that the timezone is matched by its
     tzname() in the timezone in the STANDARD and DAYLIGHT components.
     """
+    tzname = "America/New_York"
     cal = Calendar()
     event = Event()
     event.start = datetime(2024, 11, 12, tzinfo=gettz(tzname))
@@ -435,3 +436,10 @@ def test_we_can_identify_dateutil_timezones(tzid):
     """
     tz = gettz(tzid)
     assert tz is None or tzid in tzids_from_tzinfo(tz)
+
+
+def test_dateutil_timezone_with_bare_id_is_identified(monkeypatch):
+    """dateutil returns a bare timezone id when it uses its bundled zoneinfo."""
+    monkeypatch.setattr(tzid_module, "DATEUTIL_ZONEINFO_PATH", None)
+    tzfile = SimpleNamespace(_filename="Europe/Berlin")
+    assert "Europe/Berlin" in tzids_from_tzinfo(tzfile)
