@@ -46,6 +46,8 @@ jobs:
       run: echo "Skipped ${{ matrix.test_name }} (not required for this trigger)"
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       if: ${{ !matrix.skip }}
+      with:
+        fetch-tags: true
     - name: Install uv and Python ${{ matrix.python_version }}
       if: ${{ !matrix.skip }}
       uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
@@ -54,7 +56,7 @@ jobs:
         enable-cache: true
         # UV_VERSION can be set in the repository settings:
         # Settings -> Secrets and variables -> Actions or click here:
-        # https://github.com/collective/icalendar/settings/variables/actions
+        # https://github.com/PyCalendar/icalendar/settings/variables/actions
         # -> Variables -> UV_VERSION
         version: "${{ vars.UV_VERSION }}"
         python-version: ${{ matrix.python_version }}
@@ -132,7 +134,7 @@ jobs:
         enable-cache: false
         # UV_VERSION can be set in the repository settings:
         # Settings -> Secrets and variables -> Actions or click here:
-        # https://github.com/collective/icalendar/settings/variables/actions
+        # https://github.com/PyCalendar/icalendar/settings/variables/actions
         # -> Variables -> UV_VERSION
         version: "${{ vars.UV_VERSION }}"
         python-version: "3.14"

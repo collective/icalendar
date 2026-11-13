@@ -1,7 +1,7 @@
 """These tests make sure that we have some coverage on the usage of the PERIOD value type.
 
 See
-- https://github.com/collective/icalendar/issues/156
+- https://github.com/PyCalendar/icalendar/issues/156
 - https://github.com/pimutils/khal/issues/152#issuecomment-933635248
 """
 

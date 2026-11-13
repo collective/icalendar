@@ -28,9 +28,9 @@ Contributors
 
 Become part of the list of :doc:`contributors <index>`.
 
-.. image:: https://contrib.rocks/image?repo=collective/icalendar&max=120&columns=10
+.. image:: https://contrib.rocks/image?repo=PyCalendar/icalendar&max=120&columns=10
     :alt: icalendar contributors
-    :target: https://github.com/collective/icalendar/graphs/contributors
+    :target: https://github.com/PyCalendar/icalendar/graphs/contributors
     :loading: lazy
 
 

@@ -13,18 +13,50 @@ You are invited to read it to help you decide whether you would enjoy being a pa
 Examples of how to contribute
 -----------------------------
 
--   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
--   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
+There are many ways you can contribute to icalendar.
+If you have questions or want to get in touch before you begin, see the :ref:`Community <contribute-community>` section below.
+
+
+Code contributions
+``````````````````
+
+-   Report security issues per the `Security Policy <https://github.com/PyCalendar/icalendar/blob/main/SECURITY.md>`_.
+-   Report all other issues in the `issue tracker <https://github.com/PyCalendar/icalendar/issues>`_.
+-   Submit pull requests from your fork of the icalendar repository.
+
+
+Triage and review
+`````````````````
+
 -   Comment on and resolve issues.
--   Triage open issues and `pull requests <https://github.com/collective/icalendar/pulls>`_.
+-   Triage open issues and `pull requests <https://github.com/PyCalendar/icalendar/pulls>`_.
 -   Review, comment on, and make suggestions to change a pull request.
     See the GitHub documentation `Reviewing proposed changes in a pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request>`_.
--   Submit pull requests from your fork of the icalendar repository.
--   Extend the :doc:`documentation/index`.
--   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
--   Join a live chat with icalendar team members in the `icalendar room <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or its parent organization in the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_.
+-   Reproduce an issue and add a comment with your findings.
+
+Documentation
+`````````````
+
+-   Write guides, tutorials, or usage examples to expand the :doc:`documentation/index`.
+-   Fix typos, improve clarity, or suggest improvements to the documentation.
+
+.. _contribute-community:
+
+Community
+`````````
+
+-   Join the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_ to access all community channels.
+-   Create or comment on a topic in `Discussions <https://github.com/PyCalendar/icalendar/discussions>`_.
 -   Write a blog post about icalendar.
+-   Star or watch us on `GitHub <https://github.com/PyCalendar/icalendar>`_.
+-   Follow us on `Mastodon <https://fosstodon.org/@pycal>`_.
+-   Follow us on `LinkedIn <https://www.linkedin.com/company/pycal/>`_.
 -   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
+
+
+Financial support
+`````````````````
+
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
 
@@ -53,7 +85,7 @@ Accordingly, you may request of the maintainers in your pull request that you wo
 
         .. grid-item::
 
-            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22
+            .. button-link:: https://github.com/PyCalendar/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22
                 :color: primary
                 :shadow:
 
@@ -61,7 +93,7 @@ Accordingly, you may request of the maintainers in your pull request that you wo
 
         .. grid-item::
 
-            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22doc%22
+            .. button-link:: https://github.com/PyCalendar/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22doc%22
                 :color: success
                 :shadow:
 
@@ -69,7 +101,7 @@ Accordingly, you may request of the maintainers in your pull request that you wo
 
         .. grid-item::
 
-            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3Ahacktoberfest
+            .. button-link:: https://github.com/PyCalendar/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3Ahacktoberfest
                 :color: warning
                 :shadow:
 
@@ -153,7 +185,7 @@ Issue requirements
 
 An issue should precede a pull request.
 
-When `creating a new issue <https://github.com/collective/icalendar/issues/new/choose>`_, you'll be presented with an issue selector.
+When `creating a new issue <https://github.com/PyCalendar/icalendar/issues/new/choose>`_, you'll be presented with an issue selector.
 Follow the templates guidance as much as practical.
 
 It might be helpful to include an iCalendar file to help reproduce your issue and to use in a test to ensure a bug fix actually resolves your issue.
@@ -247,7 +279,7 @@ Change log types
 
 ``security``
     For security fixes.
-    These must go through the `security report protocol <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
+    These must go through the `security report protocol <https://github.com/PyCalendar/icalendar/blob/main/SECURITY.md>`_.
 
 ``documentation``
     For changes to the documentation, docstrings, spelling dictionary, or any other documentation matter.
@@ -274,11 +306,11 @@ Write a good change log entry
 The content of this file must be on a single line and include the following.
 
 -   A *brief* message that summarizes the changes in your contribution.
--   Use :ref:`reStructuredText markup <markup-examples>` to link to relevant RFCs, API usage, and other references.
+-   Use :ref:`reStructuredText markup cross-references <markup-examples>` to link to relevant RFCs, API usage and Python objects, and other references.
 -   A *brief* disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
 -   An attribution to yourself, in the format of ``@github_username``, at the end of the entry.
 
-You can write a good change log entry with the following guidance.
+Write a good change log entry with the following guidance.
 
 -   Use a narrative format, in the past tense, proper English spelling and grammar, and inline markup as needed.
 -   Write your change log entry for its appropriate audience.
@@ -290,6 +322,12 @@ You can write a good change log entry with the following guidance.
     You should not write *how* you fixed it.
 -   If you add or change a feature or public API, write a summary of previous behavior, what it does now, and how to use it.
 -   Refer to narrative documentation as needed.
+-   After opening a pull request and the CI check :guilabel:`docs/readthedocs.org:icalendar` succeeds, inspect the rendered change log for accuracy and functional links.
+
+    -   Click the link :guilabel:`docs/readthedocs.org:icalendar` in the list of CI checks.
+    -   Navigate to :menuselection:`Reference guides --> Change log`.
+    -   Look for your rendered change log entry and inspect it.
+        Read the Docs' `visual diff <https://docs.readthedocs.com/platform/stable/visual-diff.html>`_ feature might help find what you've changed.
 
 The following text is an example of a good change log entry, placed inside :file:`/news/1360.feature`.
 

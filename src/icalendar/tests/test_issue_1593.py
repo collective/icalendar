@@ -1,4 +1,4 @@
-"""Tests for https://github.com/collective/icalendar/issues/1593."""
+"""Tests for https://github.com/PyCalendar/icalendar/issues/1593."""
 
 from icalendar import Event, vCalAddress
 

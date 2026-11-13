@@ -29,7 +29,7 @@ MINIMAL_CALENDAR_JSON_PRETTY = """[
       "prodid",
       {},
       "text",
-      "-//collective//icalendar//7.3.1.dev270//EN"
+      "-//PyCalendar//icalendar//7.3.1.dev270//EN"
     ],
     [
       "uid",

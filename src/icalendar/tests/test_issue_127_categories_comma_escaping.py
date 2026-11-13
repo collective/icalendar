@@ -1,7 +1,7 @@
 """Issue #127 - CATEGORIES comma escaping bug
 
 Tests for categories containing commas.
-See https://github.com/collective/icalendar/issues/127
+See https://github.com/PyCalendar/icalendar/issues/127
 """
 
 from icalendar import Calendar, Event

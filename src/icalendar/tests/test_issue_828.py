@@ -1,6 +1,6 @@
 """Events differ although their times are equal.
 
-See https://github.com/collective/icalendar/issues/828
+See https://github.com/PyCalendar/icalendar/issues/828
 """
 
 import contextlib

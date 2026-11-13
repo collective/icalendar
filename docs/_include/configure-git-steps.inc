@@ -1,4 +1,4 @@
-#.  Start by `forking icalendar's repository <https://github.com/collective/icalendar/fork>`_ to your account through the GitHub interface.
+#.  Start by `forking icalendar's repository <https://github.com/PyCalendar/icalendar/fork>`_ to your account through the GitHub interface.
 
     .. seealso::
 
