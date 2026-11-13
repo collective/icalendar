@@ -1,0 +1,37 @@
+["vcalendar",
+  [],
+  [
+    ["vtimezone",
+      [
+        ["tzid", {}, "text", "Custom"]
+      ],
+      [
+        ["standard",
+          [
+            ["dtstart", {}, "date-time", "1970-01-01T00:00:00"],
+            ["rrule", {}, "recur", {"freq": "SECONDLY"}],
+            ["tzoffsetfrom", {}, "utc-offset", "+01:00"],
+            ["tzoffsetto", {}, "utc-offset", "+00:00"]
+          ],
+          []
+        ],
+        ["daylight",
+          [
+            ["dtstart", {}, "date-time", "1970-06-01T00:00:00"],
+            ["rrule", {}, "recur", {"freq": "YEARLY"}],
+            ["tzoffsetfrom", {}, "utc-offset", "+00:00"],
+            ["tzoffsetto", {}, "utc-offset", "+01:00"]
+          ],
+          []
+        ]
+      ]
+    ],
+    ["vevent",
+      [
+        ["uid", {}, "text", "a"],
+        ["dtstart", {"tzid": "Custom"}, "date-time", "2025-01-01T12:00:00"]
+      ],
+      []
+    ]
+  ]
+]

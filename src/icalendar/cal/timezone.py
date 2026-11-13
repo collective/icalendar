@@ -4,12 +4,10 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
-from itertools import islice, takewhile
 
 import dateutil.rrule
 import dateutil.tz
 
-from icalendar import config
 from icalendar.attr import (
     create_single_property,
     exdates_property,
@@ -133,47 +131,26 @@ class Timezone(Component):
             is_dst = 1
         return is_dst, transitions
 
-    def _check_transitions(self) -> None:
-        """Check that the RRULEs of the timezone components are not too frequent.
+    def _check_rrule_frequency(self) -> None:
+        """Check that the timezone components only repeat yearly.
+
+        Timezones created from a VTIMEZONE expand its RRULE from DTSTART,
+        so an RRULE such as ``FREQ=SECONDLY`` could exhaust memory and CPU.
 
         Raises:
-            ValueError: If an ``RRULE`` produces more than
-                :data:`~icalendar.config.MAX_TIMEZONE_TRANSITIONS_PER_YEAR`
-                transitions within a year after its first transition.
+            ValueError: If an RRULE has a frequency other than ``YEARLY``.
         """
-        limit = config.MAX_TIMEZONE_TRANSITIONS_PER_YEAR
-        if limit < 0:
-            return
         for component in self.walk():
-            if isinstance(component, Timezone) or "DTSTART" not in component:
+            if isinstance(component, Timezone):
                 continue
             ical_rrules = component.get("RRULE", [])
             if not isinstance(ical_rrules, list):
                 ical_rrules = [ical_rrules]
             for ical_rrule in ical_rrules:
-                try:
-                    rrule = dateutil.rrule.rrulestr(
-                        ical_rrule.to_ical().decode("utf-8"),
-                        dtstart=to_datetime(component.DTSTART).replace(tzinfo=None),
-                        ignoretz=True,
-                    )
-                    first = next(iter(rrule), None)
-                except ValueError:
-                    # The timezone provider reports invalid rules.
-                    continue
-                if first is None:
-                    continue
-                # A period of a rule is at most a year long, so the year after
-                # the first transition shows how many transitions a year it has.
-                try:
-                    end = first + timedelta(days=400)
-                except OverflowError:
-                    end = datetime.max  # noqa: DTZ901, the rule is floating
-                transitions_in_year = takewhile(lambda dt, end=end: dt < end, rrule)
-                if len(list(islice(transitions_in_year, limit + 1))) > limit:
+                if ical_rrule.get("FREQ") != ["YEARLY"]:
                     raise ValueError(
-                        f"Invalid iCalendar VTIMEZONE: RRULE {ical_rrule.to_ical().decode()}"
-                        f" produces more than {limit} transitions within a year."
+                        "Invalid iCalendar VTIMEZONE: expected an RRULE with"
+                        f" FREQ=YEARLY, got {ical_rrule.to_ical().decode()!r}."
                     )
 
     @staticmethod
@@ -202,7 +179,7 @@ class Timezone(Component):
             tz = tzp.timezone(self.tz_name)
             if tz is not None:
                 return tz
-        self._check_transitions()
+        self._check_rrule_frequency()
         return tzp.create_timezone(self)
 
     @property
@@ -226,7 +203,7 @@ class Timezone(Component):
         - transition_info = [(TZOFFSETTO, dts_offset, tzname)]
 
         """
-        self._check_transitions()
+        self._check_rrule_frequency()
         zone = self.tz_name
         transitions = []
         dst = {}

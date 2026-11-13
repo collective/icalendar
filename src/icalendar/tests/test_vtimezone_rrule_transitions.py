@@ -1,16 +1,13 @@
-"""A VTIMEZONE RRULE with too many transitions is invalid.
+"""A VTIMEZONE RRULE must repeat yearly.
 
 Timezones created from a VTIMEZONE expand its RRULE from DTSTART.
-A frequent RRULE could exhaust memory or CPU.
+An RRULE such as FREQ=SECONDLY could exhaust memory or CPU.
 """
-
-from datetime import datetime
 
 import dateutil.rrule
 import pytest
 
-import icalendar.config as cfg
-from icalendar import Calendar, Timezone
+from icalendar import vRecur
 
 # Far more than any test here needs, small enough to stop in seconds.
 MAX_EXPANDED_TRANSITIONS = 10_000
@@ -32,99 +29,45 @@ def bounded_rrule_expansion(monkeypatch):
     monkeypatch.setattr(dateutil.rrule.rrule, "_iter", bounded_expand)
 
 
-VTIMEZONE = """BEGIN:VTIMEZONE
-TZID:{tzid}
-BEGIN:STANDARD
-DTSTART:20370101T000000
-RRULE:{rrule}
-TZOFFSETFROM:+0100
-TZOFFSETTO:+0000
-END:STANDARD
-BEGIN:DAYLIGHT
-DTSTART:20370601T000000
-RRULE:FREQ=YEARLY
-TZOFFSETFROM:+0000
-TZOFFSETTO:+0100
-END:DAYLIGHT
-END:VTIMEZONE
-"""
-
-CALENDAR = """BEGIN:VCALENDAR
-{vtimezone}BEGIN:VEVENT
-UID:transitions
-DTSTART;TZID={tzid}:20370701T120000
-END:VEVENT
-END:VCALENDAR
-"""
+SECONDLY_ICAL = "pr_2047_vtimezone_secondly_rrule_ical.ics"
+SECONDLY_JCAL = "pr_2047_vtimezone_secondly_rrule_jcal.jcal"
+SECONDLY_XCAL = "pr_2047_vtimezone_secondly_rrule_xcal.xml"
 
 
-def calendar(tzid: str, rrule: str) -> str:
-    vtimezone = VTIMEZONE.format(tzid=tzid, rrule=rrule)
-    return CALENDAR.format(vtimezone=vtimezone, tzid=tzid).replace("\n", "\r\n")
+def test_secondly_rrule_from_1970_is_invalid(calendars):
+    """Reading the offset of an event in a SECONDLY timezone fails fast.
+
+    Without the check, this exhausts memory.
+    """
+    with pytest.raises(ValueError, match="FREQ=YEARLY"):
+        calendars[SECONDLY_ICAL].events[0].DTSTART.utcoffset()
+
+
+@pytest.mark.parametrize("source", [SECONDLY_ICAL, SECONDLY_JCAL, SECONDLY_XCAL])
+@pytest.mark.parametrize("method", ["to_tz", "get_transitions"])
+def test_secondly_rrule_is_invalid_in_all_formats(calendars, tzp, source, method):
+    """iCalendar, jCal and xCal reject the timezone."""
+    with pytest.raises(ValueError, match="FREQ=YEARLY"):
+        timezone = calendars[source].timezones[0]
+        if method == "to_tz":
+            timezone.to_tz(tzp, lookup_tzid=False)
+        else:
+            timezone.get_transitions()
 
 
 @pytest.mark.parametrize(
-    "rrule",
-    [
-        "FREQ=SECONDLY",
-        "FREQ=MINUTELY",
-        "FREQ=HOURLY",
-        "FREQ=DAILY",
-        "FREQ=YEARLY;BYMONTH=1,2,3,4,5,6,7,8,9,10,11,12;BYHOUR=0,1,2,3,4,5,6,7,8,9",
-    ],
+    "freq", ["SECONDLY", "MINUTELY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY"]
 )
-def test_frequent_rrule_is_invalid(tzp, rrule):
-    """Parsing a VTIMEZONE with too many transitions fails fast."""
-    tzid = f"transitions-{tzp.name}-{rrule}"
-    with pytest.raises(ValueError, match="transitions within a year"):
-        Calendar.from_ical(calendar(tzid, rrule))
+def test_rrule_that_does_not_repeat_yearly_is_invalid(timezones, tzp, freq):
+    """Only a yearly RRULE is valid in a timezone."""
+    timezone = timezones.pacific_fiji
+    timezone.standard[0]["RRULE"] = vRecur.from_ical(f"FREQ={freq}")
+    with pytest.raises(ValueError, match="FREQ=YEARLY"):
+        timezone.to_tz(tzp, lookup_tzid=False)
+    with pytest.raises(ValueError, match="FREQ=YEARLY"):
+        timezone.get_transitions()
 
 
-@pytest.mark.parametrize("rrule", ["FREQ=YEARLY", "FREQ=MONTHLY", "FREQ=WEEKLY"])
-def test_rrule_within_limit_is_used(tzp, rrule):
-    """Timezones with few transitions a year still work."""
-    tzid = f"transitions-{tzp.name}-{rrule}"
-    event = Calendar.from_ical(calendar(tzid, rrule)).events[0]
-    assert event.DTSTART == datetime(2037, 7, 1, 12, tzinfo=event.DTSTART.tzinfo)
-    assert event.DTSTART.tzinfo is not None
-
-
-def test_limit_can_be_disabled(tzp, monkeypatch):
-    """Trusted input can use more transitions."""
-    monkeypatch.setattr(cfg, "MAX_TIMEZONE_TRANSITIONS_PER_YEAR", -1)
-    vtimezone = VTIMEZONE.format(tzid="transitions-disabled", rrule="FREQ=DAILY")
-    timezone = Timezone.from_ical(vtimezone.replace("\n", "\r\n"))
-    assert timezone.to_tz(tzp, lookup_tzid=False) is not None
-
-
-PR_EXAMPLE = """BEGIN:VCALENDAR
-BEGIN:VTIMEZONE
-TZID:Custom
-BEGIN:STANDARD
-DTSTART:19700101T000000
-RRULE:FREQ=SECONDLY
-TZOFFSETFROM:+0100
-TZOFFSETTO:+0000
-END:STANDARD
-BEGIN:DAYLIGHT
-DTSTART:19700601T000000
-RRULE:FREQ=YEARLY
-TZOFFSETFROM:+0000
-TZOFFSETTO:+0100
-END:DAYLIGHT
-END:VTIMEZONE
-BEGIN:VEVENT
-UID:a
-DTSTART;TZID=Custom:20250101T120000
-END:VEVENT
-END:VCALENDAR
-""".replace("\n", "\r\n")
-
-
-def test_secondly_rrule_from_1970_is_invalid(tzp):
-    """Reading the offset of an event in a SECONDLY timezone fails fast.
-
-    Without the limit, this exhausts memory.
-    """
-    with pytest.raises(ValueError, match="transitions within a year"):
-        Calendar.from_ical(PR_EXAMPLE).events[0].DTSTART.utcoffset()
+def test_yearly_rrule_is_used(timezones, tzp):
+    """A yearly RRULE with BYxxx parts still works."""
+    assert timezones.pacific_fiji.to_tz(tzp, lookup_tzid=False) is not None
