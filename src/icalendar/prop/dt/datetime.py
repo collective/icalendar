@@ -299,9 +299,9 @@ class vDatetime(TimeBase):
             The datetime of the property. If its ``tzinfo`` was set, then it's timezone-aware, else it's naive and set to ``None``.
 
         Examples:
-           The following represents a datetime where ``tzinfo`` is set to ``None``:
+            The following represents a datetime where ``tzinfo`` is set to ``None``:
 
-            .. code-block:: pycon
+            ..  code-block:: pycon
 
                 >>> from datetime import datetime, timezone
                 >>> from icalendar import vDatetime
@@ -313,7 +313,7 @@ class vDatetime(TimeBase):
 
             The following represents a datetime where ``tzinfo`` is set to ``timezone.utc``:
 
-            .. code-block:: pycon
+            ..  code-block:: pycon
 
                 >>> aware = vDatetime(datetime(2025, 11, 10, 16, 52, tzinfo=timezone.utc))
                 >>> aware.ical_value
