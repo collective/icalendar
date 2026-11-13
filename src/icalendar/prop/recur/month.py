@@ -76,6 +76,14 @@ class vMonth(int):
         """The ical representation."""
         return str(self).encode("utf-8")
 
+    @property
+    def ical_value(self) -> int:
+        """Returns the month number as an int, for example, ``5``.
+
+        The :rfc:`7529` leap flag is not included. Use :attr:`leap` for it.
+        """
+        return int(self)
+
     @classmethod
     def from_ical(cls, ical: str):
         return cls(ical)
