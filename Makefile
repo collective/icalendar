@@ -149,6 +149,10 @@ docs-all: .venv clean vale doctest docstring html linkcheckbroken  ## Clean docs
 test: .venv  ## Run code tests and coverage
 	@uv run tox
 
+.PHONY: test-alpine
+test-alpine:  ## Run the tests on Alpine Linux with system packages
+	docker compose -f scripts/docker/compose.yaml run --rm alpine
+
 .PHONY: test-dist
 test-dist:  ## Build and test the distribution files
 	@src/icalendar/tests/test_create_release.sh

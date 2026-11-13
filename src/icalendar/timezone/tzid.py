@@ -70,10 +70,10 @@ def tzids_from_tzinfo(tzinfo: tzinfo | None) -> tuple[str]:
         # tzfile('/usr/share/zoneinfo/Europe/Berlin'), or a bare timezone id
         # when dateutil uses its bundled zoneinfo.
         path = tzinfo._filename  # noqa: SLF001
-        if DATEUTIL_ZONEINFO_PATH is not None and path.startswith(
-            str(DATEUTIL_ZONEINFO_PATH)
-        ):
-            path = str(Path(path).relative_to(DATEUTIL_ZONEINFO_PATH))
+        if DATEUTIL_ZONEINFO_PATH is not None:
+            path_obj = Path(path)
+            if path_obj.is_relative_to(DATEUTIL_ZONEINFO_PATH):
+                path = path_obj.relative_to(DATEUTIL_ZONEINFO_PATH).as_posix()
         return _get_equivalent_tzids(path)
     if isinstance(tzinfo, tz.tzutc):
         return _get_equivalent_tzids("UTC")
