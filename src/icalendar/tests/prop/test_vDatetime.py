@@ -75,7 +75,8 @@ def test_transition(tzp):
 
 
 def test_ical_value_returns_datetime():
-    """Verifies that ical_value returns the datetime object."""
+    """Verifies that ical_value returns the datetime object and it's naive.
+    """
     dt = datetime(2025, 11, 10, 16, 52, 0)
     value = vDatetime(dt)
 
