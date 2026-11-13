@@ -4,7 +4,7 @@ date     -> datetime
 datetime -> datetime
 time     -> time
 
-See https://github.com/collective/icalendar/issues/1802
+See https://github.com/PyCalendar/icalendar/issues/1802
 """
 
 from datetime import date, datetime, time

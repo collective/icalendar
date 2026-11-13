@@ -1,6 +1,6 @@
 """Issue #165 - Problem parsing a file with event recurring on weekdays
 
-https://github.com/collective/icalendar/issues/165
+https://github.com/PyCalendar/icalendar/issues/165
 """
 
 

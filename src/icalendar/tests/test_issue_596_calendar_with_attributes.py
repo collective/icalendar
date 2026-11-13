@@ -1,6 +1,6 @@
 """Create a new method for the Calendar class.
 
-See https://github.com/collective/icalendar/issues/596
+See https://github.com/PyCalendar/icalendar/issues/596
 """
 
 import pytest
@@ -13,7 +13,7 @@ from icalendar import Calendar, __version__
     [
         ("name", None),
         ("description", None),
-        ("prodid", f"-//collective//icalendar//{__version__}//EN"),
+        ("prodid", f"-//PyCalendar//icalendar//{__version__}//EN"),
         ("version", "2.0"),
         ("calscale", None),
         ("method", None),
@@ -49,7 +49,7 @@ def test_default_getters():
     assert c.calendar_name is None
     assert c.description is None
     assert c.version == "2.0"
-    assert c.prodid == f"-//collective//icalendar//{__version__}//EN"
+    assert c.prodid == f"-//PyCalendar//icalendar//{__version__}//EN"
     assert c.calscale == "GREGORIAN"
     assert c.method == ""
     assert c.color == ""

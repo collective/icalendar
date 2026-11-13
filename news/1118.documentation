@@ -1,0 +1,1 @@
+Documented the constructor parameters of :class:`~icalendar.prop.boolean.vBoolean` and clarified the difference between constructor values and :meth:`~icalendar.prop.boolean.vBoolean.from_ical`. AI (DeepSeek-V4.1-Flash-1017) was used to assist with drafting and reviewing the documentation. @TheresaYuki

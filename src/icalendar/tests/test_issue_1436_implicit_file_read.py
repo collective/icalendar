@@ -10,8 +10,8 @@ never read from disk. These tests pin down that boundary:
 * a missing :class:`pathlib.Path` raises ``FileNotFoundError`` like
   :meth:`pathlib.Path.read_bytes`.
 
-See issue: https://github.com/collective/icalendar/issues/1436
-Related: https://github.com/collective/icalendar/issues/756
+See issue: https://github.com/PyCalendar/icalendar/issues/1436
+Related: https://github.com/PyCalendar/icalendar/issues/756
 """
 
 from pathlib import Path

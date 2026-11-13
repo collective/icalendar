@@ -726,7 +726,7 @@
 2025-11-22T11:53:16.6792365Z #7 0.483 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
 2025-11-22T11:53:16.8295291Z #7 DONE 0.6s
 2025-11-22T11:53:16.8295592Z 
-2025-11-22T11:53:16.8296610Z #6 [3/5] RUN git clone --depth 1 https://github.com/collective/icalendar.git icalendar         && cp icalendar/src/icalendar/fuzzing/build.sh /src/
+2025-11-22T11:53:16.8296610Z #6 [3/5] RUN git clone --depth 1 https://github.com/PyCalendar/icalendar.git icalendar         && cp icalendar/src/icalendar/fuzzing/build.sh /src/
 2025-11-22T11:53:16.8298488Z #6 sha256:1ce645bade339311a700240bf8dceae9d2f49a643956634f6414e199f4d024a8
 2025-11-22T11:53:16.9801175Z #6 0.120 Cloning into 'icalendar'...
 2025-11-22T11:53:17.1037107Z #6 DONE 0.4s
@@ -748,7 +748,7 @@
 2025-11-22T11:53:19.5653387Z #9 DONE 2.3s
 2025-11-22T11:53:19.8012211Z 2025-11-22 11:53:19,800 - root - INFO - Docker container: 58b4c2d3cbfb.
 2025-11-22T11:53:19.8014747Z 2025-11-22 11:53:19,800 - helper - INFO - Running: docker run --privileged --shm-size=2g --platform linux/amd64 --rm -e FUZZING_ENGINE=libfuzzer -e CIFUZZ=True -e SANITIZER=address -e ARCHITECTURE=x86_64 -e FUZZING_LANGUAGE=python -e OUT=/github/workspace/build-out --volumes-from 58b4c2d3cbfb gcr.io/oss-fuzz/icalendar /bin/bash -c 'cp -r /src/icalendar /github/workspace/storage/icalendar'.
-2025-11-22T11:53:20.7534525Z 2025-11-22 11:53:20,752 - root - DEBUG - Stderr of command "git fetch origin refs/pull/979/merge" is: From https://github.com/collective/icalendar
+2025-11-22T11:53:20.7534525Z 2025-11-22 11:53:20,752 - root - DEBUG - Stderr of command "git fetch origin refs/pull/979/merge" is: From https://github.com/PyCalendar/icalendar
 2025-11-22T11:53:20.7535823Z  * branch            refs/pull/979/merge -> FETCH_HEAD
 2025-11-22T11:53:20.7536407Z .
 2025-11-22T11:53:20.7881380Z 2025-11-22 11:53:20,787 - root - DEBUG - Stderr of command "git checkout -f FETCH_HEAD" is: Note: switching to 'FETCH_HEAD'.
@@ -901,7 +901,7 @@
 2025-11-22T11:53:45.0077202Z + chmod +x /github/workspace/build-out/ical_fuzzer
 2025-11-22T11:53:45.0091364Z + zip -q /github/workspace/build-out/ical_fuzzer_seed_corpus.zip /src/corpus/Index_Error.ics /src/corpus/Type_Error.ics /src/corpus/america_new_york.ics /src/corpus/calendar_with_unicode.ics /src/corpus/event_with_escaped_character1.ics /src/corpus/event_with_escaped_character2.ics /src/corpus/event_with_escaped_character3.ics /src/corpus/event_with_escaped_character4.ics /src/corpus/event_with_escaped_characters.ics /src/corpus/event_with_recurrence.ics /src/corpus/event_with_recurrence_exdates_on_different_lines.ics /src/corpus/event_with_rsvp.ics /src/corpus/event_with_unicode_fields.ics /src/corpus/event_with_unicode_organizer.ics /src/corpus/issue_100_transformed_doctests_into_unittests.ics /src/corpus/issue_101_icalendar_chokes_on_umlauts_in_organizer.ics /src/corpus/issue_104_mark_events_broken.ics /src/corpus/issue_112_missing_tzinfo_on_exdate.ics /src/corpus/issue_156_RDATE_with_PERIOD.ics /src/corpus/issue_156_RDATE_with_PERIOD_list.ics /src/corpus/issue_157_removes_trailing_semicolon.ics /src/corpus/issue_184_broken_representation_of_period.ics /src/corpus/issue_464_invalid_rdate.ics /src/corpus/issue_53_description_parsed_properly.ics /src/corpus/issue_64_event_with_ascii_summary.ics /src/corpus/issue_64_event_with_non_ascii_summary.ics /src/corpus/issue_70_rrule_causes_attribute_error.ics /src/corpus/issue_82_expected_output.ics /src/corpus/pacific_fiji.ics /src/corpus/time.ics /src/corpus/timezone_rdate.ics /src/corpus/timezone_same_start.ics /src/corpus/timezone_same_start_and_offset.ics /src/corpus/timezoned.ics
 2025-11-22T11:53:45.1604227Z 2025-11-22 11:53:45,160 - root - INFO - Removing unaffected fuzz targets.
-2025-11-22T11:53:45.2952968Z 2025-11-22 11:53:45,294 - root - DEBUG - Stderr of command "git fetch origin main:main" is: From https://github.com/collective/icalendar
+2025-11-22T11:53:45.2952968Z 2025-11-22 11:53:45,294 - root - DEBUG - Stderr of command "git fetch origin main:main" is: From https://github.com/PyCalendar/icalendar
 2025-11-22T11:53:45.2954841Z  * [new tag]         2.2                         -> 2.2
 2025-11-22T11:53:45.2955718Z  * [new tag]         3.0.1b1                     -> 3.0.1b1
 2025-11-22T11:53:45.2956609Z  * [new tag]         3.0.1b2                     -> 3.0.1b2
@@ -2908,7 +2908,7 @@
 2025-11-22T11:57:25.4258223Z Finalizing artifact upload
 2025-11-22T11:57:25.5231286Z Artifact artifacts.zip successfully finalized. Artifact ID 4648702157
 2025-11-22T11:57:25.5232676Z Artifact artifacts has been successfully uploaded! Final size is 6621 bytes. Artifact ID is 4648702157
-2025-11-22T11:57:25.5239481Z Artifact download URL: https://github.com/collective/icalendar/actions/runs/19595066705/artifacts/4648702157
+2025-11-22T11:57:25.5239481Z Artifact download URL: https://github.com/PyCalendar/icalendar/actions/runs/19595066705/artifacts/4648702157
 2025-11-22T11:57:25.5406029Z ##[group]Run github/codeql-action/upload-sarif@v4
 2025-11-22T11:57:25.5406318Z with:
 2025-11-22T11:57:25.5406510Z   sarif_file: cifuzz-sarif/results.sarif

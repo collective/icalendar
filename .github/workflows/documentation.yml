@@ -38,7 +38,7 @@ jobs:
         with:
           # UV_VERSION can be set in the repository settings:
           # Settings -> Secrets and variables -> Actions or click here:
-          # https://github.com/collective/icalendar/settings/variables/actions
+          # https://github.com/PyCalendar/icalendar/settings/variables/actions
           # -> Variables -> UV_VERSION
           version: "${{ vars.UV_VERSION }}"
 

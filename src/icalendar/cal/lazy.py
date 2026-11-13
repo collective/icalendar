@@ -347,7 +347,7 @@ class LazyCalendar(Calendar):
 
         .. note:: If you believe the calendar parses more subcomponents than
             it should, please `open an issue
-            <https://github.com/collective/icalendar/issues/new?template=bug_report.md>`_.
+            <https://github.com/PyCalendar/icalendar/issues/new?template=bug_report.md>`_.
 
         Returns:
             ``True`` if subcomponent parsing is deferred.

@@ -1,6 +1,6 @@
 """This tests decoding categories.
 
-See issue https://github.com/collective/icalendar/issues/279.
+See issue https://github.com/PyCalendar/icalendar/issues/279.
 """
 
 from icalendar import Event, Todo
