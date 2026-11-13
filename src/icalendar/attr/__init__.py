@@ -113,7 +113,7 @@ def _get_rdates(
         ``rdates`` for the relevant component or use
         :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
-        `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
+        `Related Projects <https://github.com/PyCalendar/icalendar/blob/main/README.rst#related-projects>`_.
 
     """
     result = []
@@ -220,7 +220,7 @@ def _get_exdates(self: Component) -> list[date | datetime]:
         ``exdates`` for the relevant component or use
         :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
-        `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
+        `Related Projects <https://github.com/PyCalendar/icalendar/blob/main/README.rst#related-projects>`_.
 
     """
     result = []
@@ -355,7 +355,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
         Use :meth:`Component.add <icalendar.cal.component.Component.add>` to add values.
 
         If you want to compute recurrences, have a look at
-        `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
+        `Related Projects <https://github.com/PyCalendar/icalendar/blob/main/README.rst#related-projects>`_.
 
     """  # noqa: E501
     rrules = self.get("RRULE", [])

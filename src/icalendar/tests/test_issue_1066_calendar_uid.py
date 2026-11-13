@@ -1,6 +1,6 @@
 """Tests for issue #1066: Calendar.new() should auto-generate UID.
 
-See https://github.com/collective/icalendar/issues/1066
+See https://github.com/PyCalendar/icalendar/issues/1066
 """
 
 import uuid

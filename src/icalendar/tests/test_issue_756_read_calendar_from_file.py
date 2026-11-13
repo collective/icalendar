@@ -1,6 +1,6 @@
 """Test reading a calendar from a file.
 
-See issue: https://github.com/collective/icalendar/issues/756
+See issue: https://github.com/PyCalendar/icalendar/issues/756
 """
 
 from pathlib import Path

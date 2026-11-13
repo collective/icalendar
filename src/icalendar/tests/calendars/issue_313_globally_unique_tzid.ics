@@ -1,6 +1,6 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//collective//icalendar//issue 313//EN
+PRODID:-//PyCalendar//icalendar//issue 313//EN
 BEGIN:VEVENT
 UID:libical-evolution@issue-313
 SUMMARY:libical / Evolution globally unique TZID

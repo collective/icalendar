@@ -31,7 +31,7 @@ class ZONEINFO(TZProvider):
     name = "zoneinfo"
     # Use lazy initialization via properties to avoid import-time failures
     # in environments without timezone data (e.g., Pyodide/WebAssembly).
-    # See https://github.com/collective/icalendar/issues/1073
+    # See https://github.com/PyCalendar/icalendar/issues/1073
     _utc: zoneinfo.ZoneInfo | None = None
     _available_timezones_cache: set | None = None
     # Class-level lock is intentional: caches are shared by all instances.

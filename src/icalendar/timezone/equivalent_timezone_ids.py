@@ -86,7 +86,7 @@ def main(
             offsets: dict[timedelta, list[TZ]] = defaultdict(list)
             try:
                 # if we are around a timezone change, we must move on
-                # see https://github.com/collective/icalendar/issues/776
+                # see https://github.com/PyCalendar/icalendar/issues/776
                 around_tz_change = not all(
                     tz.tz.utcoffset(start)
                     == tz.tz.utcoffset(start - DISTANCE_FROM_TIMEZONE_CHANGE)

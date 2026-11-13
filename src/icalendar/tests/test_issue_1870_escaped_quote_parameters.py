@@ -1,6 +1,6 @@
 r"""Escaped double quotes inside quoted parameter values.
 
-See https://github.com/collective/icalendar/issues/1870
+See https://github.com/PyCalendar/icalendar/issues/1870
 
 A content line such as ``ATTENDEE;CN="Qu\\"ote":mailto:x@y.z`` used to be
 dropped silently: the quote tracking toggled on every double quote, so the

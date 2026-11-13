@@ -9,8 +9,8 @@ For small edits to the documentation, use the GitHub web interface.
 #.  On every page in documentation, on the right-hand side, there is a link :guilabel:`Edit on GitHub`.
     When you click that link, you'll be taken to GitHub's web interface where you can edit files.
 
-    Alternatively, for narrative documentation files, you can navigate into the `docs <https://github.com/collective/icalendar/tree/main/docs>`_ directory to find the source file to edit.
-    For :doc:`API reference documentation files </reference/api/icalendar>`, you can instead navigate into the `src <https://github.com/collective/icalendar/tree/main/docs>`_ directory.
+    Alternatively, for narrative documentation files, you can navigate into the `docs <https://github.com/PyCalendar/icalendar/tree/main/docs>`_ directory to find the source file to edit.
+    For :doc:`API reference documentation files </reference/api/icalendar>`, you can instead navigate into the `src <https://github.com/PyCalendar/icalendar/tree/main/docs>`_ directory.
     For either file type, you can then click the :guilabel:`pencil icon` to edit the file in the browser.
 
     .. image:: /_static/edit-pencil-icon.png
