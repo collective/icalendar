@@ -149,7 +149,7 @@ class vDDDTypes(TimeBase):
         return self.to_property_type().to_jcal(name)
 
     @classmethod
-    def parse_jcal_value(cls, jcal: str | list) -> timedelta:
+    def parse_jcal_value(cls, jcal: str | list) -> DT_TYPE:
         """Parse a jCal value.
 
         Raises:
@@ -161,11 +161,14 @@ class vDDDTypes(TimeBase):
         JCalParsingError.validate_value_type(jcal, str, cls)
         if "/" in jcal:
             return vPeriod.parse_jcal_value(jcal)
-        for jcal_type in (vDatetime, vDate, vTime, vDuration):
-            try:
-                return jcal_type.parse_jcal_value(jcal)
-            except JCalParsingError:
-                pass
+        if jcal.startswith(("P", "-P", "+P")):
+            return vDuration.parse_jcal_value(jcal)
+        if "T" in jcal:
+            return vDatetime.parse_jcal_value(jcal)
+        if ":" in jcal:
+            return vTime.parse_jcal_value(jcal)
+        if "-" in jcal:
+            return vDate.parse_jcal_value(jcal)
         raise JCalParsingError(
             "Cannot parse date, time, date-time, duration, or period.", cls, value=jcal
         )

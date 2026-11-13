@@ -12,11 +12,11 @@ icalendar supports multiple timezone implementations, including `zoneinfo <https
 ----
 
 :Homepage: https://icalendar.readthedocs.io/en/stable/
-:Discussions: https://github.com/collective/icalendar/discussions
-:Issues: https://github.com/collective/icalendar/issues
-:Code: https://github.com/collective/icalendar
+:Discussions: https://github.com/PyCalendar/icalendar/discussions
+:Issues: https://github.com/PyCalendar/icalendar/issues
+:Code: https://github.com/PyCalendar/icalendar
 :Dependencies: `python-dateutil <https://pypi.org/project/python-dateutil/>`_ and `tzdata <https://pypi.org/project/tzdata/>`_.
-:License: `2-Clause BSD License <https://github.com/collective/icalendar/blob/main/LICENSE.rst>`_
+:License: `2-Clause BSD License <https://github.com/PyCalendar/icalendar/blob/main/LICENSE.rst>`_
 :Contribute: `Contribute to icalendar <https://icalendar.readthedocs.io/en/latest/contribute/index.html>`_
 :Funding: `Open Collective <https://opencollective.com/python-icalendar>`_
 :icalendar chat: https://matrix.to/#/%23icalendar:chat.pycal.org
@@ -29,7 +29,7 @@ icalendar supports multiple timezone implementations, including `zoneinfo <https
     :target: https://pypi.org/project/icalendar/
     :alt: Python package version on PyPI
 
-.. image:: https://img.shields.io/github/v/release/collective/icalendar
+.. image:: https://img.shields.io/github/v/release/PyCalendar/icalendar
     :target: https://pypi.org/project/icalendar/#history
     :alt: Latest release
 
@@ -41,16 +41,16 @@ icalendar supports multiple timezone implementations, including `zoneinfo <https
     :target: https://pypistats.org/packages/icalendar
     :alt: Downloads from PyPI
 
-.. image:: https://img.shields.io/github/actions/workflow/status/collective/icalendar/tests.yml?branch=main&label=main&logo=github
-    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3Amain
+.. image:: https://img.shields.io/github/actions/workflow/status/PyCalendar/icalendar/tests.yml?branch=main&label=main&logo=github
+    :target: https://github.com/PyCalendar/icalendar/actions/workflows/tests.yml?query=branch%3Amain
     :alt: GitHub Actions build status for main
 
 .. image:: https://readthedocs.org/projects/icalendar/badge/?version=latest
     :target: https://icalendar.readthedocs.io/en/latest/
     :alt: Documentation status
 
-.. image:: https://coveralls.io/repos/github/collective/icalendar/badge.svg?branch=main
-    :target: https://coveralls.io/github/collective/icalendar?branch=main
+.. image:: https://coveralls.io/repos/github/PyCalendar/icalendar/badge.svg?branch=main
+    :target: https://coveralls.io/github/PyCalendar/icalendar?branch=main
     :alt: Test coverage
 
 .. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json

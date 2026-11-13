@@ -1,7 +1,7 @@
 """If the duration property exists, and it's not a ``default`` object but a
 ``timedelta`` instance, then it should return a ``duration``, not ``None``.
 
-See https://github.com/collective/icalendar/issues/884
+See https://github.com/PyCalendar/icalendar/issues/884
 """
 
 from datetime import timedelta

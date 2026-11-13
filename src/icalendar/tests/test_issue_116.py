@@ -3,8 +3,8 @@ import icalendar.cal.event
 
 def test_issue_116():
     """Issue #116/#117 - How to add 'X-APPLE-STRUCTURED-LOCATION'
-    https://github.com/collective/icalendar/issues/116
-    https://github.com/collective/icalendar/issues/117
+    https://github.com/PyCalendar/icalendar/issues/116
+    https://github.com/PyCalendar/icalendar/issues/117
     """
     event = icalendar.cal.event.Event()
     event.add(

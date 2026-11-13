@@ -78,7 +78,7 @@ def parameter_value_expected(request):
 def test_component_is_too_short_or_too_long(length):
     """Test that a component has not enough values.
 
-    See https://github.com/collective/icalendar/pull/979/#discussion_r2529703982
+    See https://github.com/PyCalendar/icalendar/pull/979/#discussion_r2529703982
 
     """
     with pytest.raises(

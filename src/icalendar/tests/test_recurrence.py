@@ -106,7 +106,7 @@ def test_list_exdate_to_ical_is_inverse_of_from_ical(
             b"BEGIN:VEVENT\r\nSUMMARY:Event MONTHLY -5SA\r\nDTSTART;VALUE=DATE:20531101\r\nRRULE:FREQ=MONTHLY;BYDAY=-5SA\r\nEND:VEVENT\r\n",
         ),
         # Specifically test examples from the report of Issue #518
-        # https://github.com/collective/icalendar/issues/518
+        # https://github.com/PyCalendar/icalendar/issues/518
         (
             "YEARLY",
             "9MO",

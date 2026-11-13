@@ -1,6 +1,6 @@
 """Test the property parameters.
 
-See https://github.com/collective/icalendar/issues/798
+See https://github.com/PyCalendar/icalendar/issues/798
 """
 
 from datetime import datetime

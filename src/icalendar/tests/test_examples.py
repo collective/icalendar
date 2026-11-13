@@ -43,7 +43,7 @@ def test_creating_calendar_with_unicode_fields(calendars, utc):
     cal.add_component(event1)
 
     # test_unicode_parameter_name
-    # test for issue #80 https://github.com/collective/icalendar/issues/80
+    # test for issue #80 https://github.com/PyCalendar/icalendar/issues/80
     event2 = Event()
     event2.add("DESCRIPTION", "äöüßÄÖÜ")
     cal.add_component(event2)
