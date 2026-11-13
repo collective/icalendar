@@ -76,7 +76,7 @@ You can automate this by using the :program:`ai-prompt-auto-commit` hooks.
 
 If you use :program:`Claude Code`, recording is automatic, once the repository is prepared.
 For other AI tools, you may need to manually record prompts or instruct the AI to do so.
-Consider adding support for your AI tool in the `project repository <https://github.com/pycalendar/ai-prompt-auto-commit>`_.
+Consider adding support for your AI tool in the `project repository <https://github.com/PyCalendar/ai-prompt-auto-commit>`_.
 
 Contributors to icalendar are encouraged to use prek.
 Any issues that would be caught by prek shall be caught by GitHub workflows when you push commits to a pull request for icalendar.
@@ -92,14 +92,15 @@ You can use the ``--no-verify`` flag for the ``git commit`` command.
 Alternatively, configure your editor to use ``--no-verify`` for all commits.
 The screenshot below shows how to configure PyCharm to disable prek by searching for "git commit hooks" in its settings.
 
-.. card::
+..  card::
 
-    .. image:: ../_static/contributing/development-disable-prek.png
+    ..  image:: ../_static/contributing/development-disable-prek.png
         :alt: Disable prek in PyCharm settings
         :target: ../_static/contributing/development-disable-prek.png
 
-    +++
-    *Disable prek in PyCharm settings*
+    ..  card-footer::
+
+        *Disable prek in PyCharm settings*
 
 
 Run tests
@@ -263,3 +264,40 @@ To verify installation, launch a Python interpreter, and issue the following sta
     >>> import icalendar
     >>> icalendar.Calendar()
     VCALENDAR({})
+
+
+.. _manage-dependencies:
+
+Manage dependencies
+-------------------
+
+Use uv to manage dependencies.
+
+
+Check package updates
+'''''''''''''''''''''
+
+The following command shows all of icalendar's dependencies that are installed in your local project.
+You can use the output to compare against :file:`pyproject.toml`.
+
+..  code-block:: shell
+
+    uv tree --all-groups --outdated --depth=1 --python-version 3.11
+
+..  seealso::
+
+    `uv tree <https://docs.astral.sh/uv/reference/cli/#uv-tree>`_
+
+
+Add or upgrade dependencies
+'''''''''''''''''''''''''''
+
+To add or upgrade a specific dependency within a given group, use the following command.
+
+..  code-block:: shell
+
+    uv add --group <GROUP> --upgrade-package <UPGRADE_PACKAGE>
+
+..  seealso::
+
+    `uv add <https://docs.astral.sh/uv/reference/cli/#uv-add>`_

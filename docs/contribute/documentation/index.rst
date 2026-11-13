@@ -25,7 +25,7 @@ Find open issues to work on by clicking either button below.
 
     .. grid-item::
 
-        .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22doc%22
+        .. button-link:: https://github.com/PyCalendar/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22doc%22
             :color: success
             :shadow:
 
@@ -33,7 +33,7 @@ Find open issues to work on by clicking either button below.
 
     .. grid-item::
 
-        .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22
+        .. button-link:: https://github.com/PyCalendar/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22
             :color: primary
             :shadow:
 

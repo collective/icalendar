@@ -1,6 +1,6 @@
 """Tests for copying components.
 
-See https://github.com/collective/icalendar/issues/899
+See https://github.com/PyCalendar/icalendar/issues/899
 """
 
 import pytest

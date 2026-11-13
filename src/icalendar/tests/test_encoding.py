@@ -26,7 +26,7 @@ def test_calendar_from_ical_respects_unicode(field, expected_value, calendars):
         ),
         ("event_with_unicode_fields", "LOCATION", "Tribstrül"),
         # Non-unicode characters in summary
-        # https://github.com/collective/icalendar/issues/64
+        # https://github.com/PyCalendar/icalendar/issues/64
         ("issue_64_event_with_non_ascii_summary", "SUMMARY", "åäö"),
         # Unicode characters in summary
         ("issue_64_event_with_ascii_summary", "SUMMARY", "abcdef"),
@@ -41,7 +41,7 @@ def test_event_from_ical_respects_unicode(test_input, field, expected_value, eve
     ("test_input", "expected_output"),
     [
         # chokes on umlauts in ORGANIZER
-        # https://github.com/collective/icalendar/issues/101
+        # https://github.com/PyCalendar/icalendar/issues/101
         ("issue_101_icalendar_chokes_on_umlauts_in_organizer", "acme, ädmin"),
         ("event_with_unicode_organizer", "Джон Доу"),
     ],
@@ -52,7 +52,7 @@ def test_events_parameter_unicoded(events, test_input, expected_output):
 
 def test_parses_event_with_non_ascii_tzid_issue_237(calendars, in_timezone):
     """Issue #237 - Fail to parse timezone with non-ascii TZID
-    see https://github.com/collective/icalendar/issues/237
+    see https://github.com/PyCalendar/icalendar/issues/237
     """
     start = calendars.issue_237_fail_to_parse_timezone_with_non_ascii_tzid.walk(
         "VEVENT"
@@ -64,7 +64,7 @@ def test_parses_event_with_non_ascii_tzid_issue_237(calendars, in_timezone):
 
 def test_parses_timezone_with_non_ascii_tzid_issue_237(timezones):
     """Issue #237 - Fail to parse timezone with non-ascii TZID
-    see https://github.com/collective/icalendar/issues/237
+    see https://github.com/PyCalendar/icalendar/issues/237
     """
     assert timezones.issue_237_brazilia_standard["tzid"] == "(UTC-03:00) Brasília"
 
@@ -72,7 +72,7 @@ def test_parses_timezone_with_non_ascii_tzid_issue_237(timezones):
 @pytest.mark.parametrize("timezone_name", ["standard", "daylight"])
 def test_parses_timezone_with_non_ascii_tzname_issue_273(timezones, timezone_name):
     """Issue #237 - Fail to parse timezone with non-ascii TZID
-    see https://github.com/collective/icalendar/issues/237
+    see https://github.com/PyCalendar/icalendar/issues/237
     """
     assert (
         timezones.issue_237_brazilia_standard.walk(timezone_name)[0]["TZNAME"]
