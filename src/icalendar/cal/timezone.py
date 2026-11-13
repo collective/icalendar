@@ -161,7 +161,7 @@ class Timezone(Component):
         return tzname
 
     def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):
-        """convert this VTIMEZONE component to a timezone object
+        """Convert this VTIMEZONE component to a timezone object.
 
         Parameters:
             tzp: Timezone provider to use.
