@@ -1,5 +1,6 @@
 """Test the enums for values."""
 
+import inspect
 import pickle
 
 import pytest
@@ -39,8 +40,13 @@ def test_all_enums_are_public(enum_name):
 
 
 def test_enum_has_description(enum):
-    """We should have a docstring."""
-    assert "Description:" in enum.__doc__
+    """Each enum documents itself with a summary and a description."""
+    doc = enum.__dict__.get("__doc__")
+    assert doc, f"{enum.__name__} has no docstring"
+    summary, separator, description = inspect.cleandoc(doc).partition("\n\n")
+    assert summary.strip(), f"{enum.__name__} has no summary"
+    assert separator, f"{enum.__name__} has no description paragraph"
+    assert description.strip(), f"{enum.__name__} has an empty description"
 
 
 def test_enum_can_be_pickled(enum):
@@ -113,3 +119,33 @@ def test_constructor_still_raises_for_invalid_value():
     """Calling the enum directly still raises ValueError for an unknown value."""
     with pytest.raises(ValueError):
         enums.PARTSTAT("no-value")
+
+
+@pytest.mark.parametrize("value", ["PENDING", "FAILED"])
+def test_rfc_10051_todo_status(value):
+    """RFC 10051 task statuses can be set and read back from iCalendar."""
+    status = enums.STATUS(value)
+    assert getattr(enums.STATUS, value) is status
+
+    todo = icalendar.Todo()
+    todo.status = status
+    serialized = todo.to_ical()
+    assert f"STATUS:{value}\r\n".encode() in serialized
+    assert icalendar.Todo.from_ical(serialized).status is status
+
+
+def test_rfc_10051_todo_participant_status():
+    """RFC 10051 participants can report a failed task after a round trip."""
+    status = enums.PARTSTAT("FAILED")
+    assert status is enums.PARTSTAT.FAILED
+    assert enums.PARTSTAT.get("failed") is status
+
+    attendee = icalendar.vCalAddress("mailto:person@example.com")
+    attendee.PARTSTAT = status
+    todo = icalendar.Todo()
+    todo.add("attendee", attendee)
+
+    serialized = todo.to_ical()
+    assert b"ATTENDEE;PARTSTAT=FAILED:mailto:person@example.com\r\n" in serialized
+    parsed = icalendar.Todo.from_ical(serialized)
+    assert parsed["ATTENDEE"].PARTSTAT is status

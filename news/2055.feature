@@ -1,0 +1,1 @@
+Added ``PENDING`` and ``FAILED`` task statuses from :rfc:`10051#section-11.2` to :class:`~icalendar.enums.STATUS`, and the ``FAILED`` participant status from :rfc:`10051#section-9.1` to :class:`~icalendar.enums.PARTSTAT`. I used OpenAI Codex to assist with this change. @bohuis686-creator

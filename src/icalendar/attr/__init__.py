@@ -1505,24 +1505,49 @@ status_property = single_string_enum_property(
     "STATUS",
     STATUS,
     "",
-    """STATUS defines the overall status or confirmation for the calendar component.
+    r"""STATUS defines the overall status or confirmation for the calendar component.
 
-Returns:
-    :class:`icalendar.enums.STATUS`
+In a group-scheduled calendar component, this property is used by the Organizer
+to provide information about the status of an
+:class:`~icalendar.cal.event.Event`, :class:`~icalendar.cal.todo.Todo`, or
+:class:`~icalendar.cal.journal.Journal`.
 
 The default value is ``""``.
 
-Description:
-    In a group-scheduled calendar component, the property
-    is used by the "Organizer" to provide a confirmation of the event
-    to the "Attendees".  For example in a "VEVENT" calendar component,
-    the "Organizer" can indicate that a meeting is tentative,
-    confirmed, or cancelled.  In a "VTODO" calendar component, the
-    "Organizer" can indicate that an action item needs action, is
-    completed, is in process or being worked on, or has been
-    cancelled.  In a "VJOURNAL" calendar component, the "Organizer"
-    can indicate that a journal entry is draft, final, or has been
-    cancelled or removed.
+Possible values for :class:`~icalendar.cal.event.Event` include the
+following:
+
+-   :attr:`~icalendar.enums.STATUS.CONFIRMED`
+-   :attr:`~icalendar.enums.STATUS.TENTATIVE`
+-   :attr:`~icalendar.enums.STATUS.CANCELLED`
+
+Possible values for :class:`~icalendar.cal.todo.Todo` include the
+following:
+
+-   :attr:`~icalendar.enums.STATUS.NEEDS_ACTION`
+-   :attr:`~icalendar.enums.STATUS.COMPLETED`
+-   :attr:`~icalendar.enums.STATUS.IN_PROCESS`
+-   :attr:`~icalendar.enums.STATUS.CANCELLED`
+-   :attr:`~icalendar.enums.STATUS.PENDING`
+-   :attr:`~icalendar.enums.STATUS.FAILED`
+
+Possible values for :class:`~icalendar.cal.journal.Journal` include the
+following:
+
+-   :attr:`~icalendar.enums.STATUS.DRAFT`
+-   :attr:`~icalendar.enums.STATUS.FINAL`
+-   :attr:`~icalendar.enums.STATUS.CANCELLED`
+
+..  version-changed:: 0.0.0
+
+    Added two task statuses according to :rfc:`10051#section-11.2`\ :
+    :attr:`~icalendar.enums.STATUS.PENDING` for a task that has been accepted
+    but has not started, and :attr:`~icalendar.enums.STATUS.FAILED` for a task
+    that has failed.
+
+Returns:
+    :class:`icalendar.enums.STATUS`.
+
 """,
 )
 
