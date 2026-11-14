@@ -532,7 +532,7 @@ def single_string_property(
         docs: Required. Documentation string for the generated property.
         name: Required. The iCalendar property name, such as UID.
         default: Value returned when the property is not set.
-        other_name: Alias name(s) to fall back on when the primary *name*
+        other_name: One or more alias names to fall back on when the primary name
             is not present in the component.
         validate: Callable that receives the string form of the value and
             raises an exception if it does not conform to the expected
