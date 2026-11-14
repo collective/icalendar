@@ -1,0 +1,1 @@
+Locked the GitHub Actions workflows: every workflow pins its actions by version tag, with the tag-to-commit mapping recorded in ``.github/workflows/actions.lock`` and verified in CI by ``gh actions-lock --verify`` (`Issue #2096 <https://github.com/collective/icalendar/issues/2096>`_). @rahul05ranjan
