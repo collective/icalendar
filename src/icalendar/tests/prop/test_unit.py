@@ -3,6 +3,7 @@ from datetime import date, datetime, time, timedelta
 
 import pytest
 
+from icalendar.error import CalendarDecodeError
 from icalendar.parser import Parameters
 from icalendar.prop.factory import TypesFactory
 
@@ -228,13 +229,9 @@ class TestProp(unittest.TestCase):
         ).parts()
         assert vText.from_ical(value) == "A string with; some\\ characters in\\it"
 
-        # We are forgiving to utf-8 encoding errors:
-        # We intentionally use a string with unexpected encoding
-        #
-        assert vText.from_ical(b"Ol\xe9") == "Ol�"
-
-        # Notice how accented E character, encoded with latin-1, got replaced
-        # with the official U+FFFD REPLACEMENT CHARACTER.
+        # Bytes with an unexpected encoding are not replaced, see issue 1793.
+        with pytest.raises(CalendarDecodeError):
+            vText.from_ical(b"Ol\xe9")
 
     def test_prop_vTime(self):
         from icalendar.prop import vTime
