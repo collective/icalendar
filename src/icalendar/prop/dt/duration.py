@@ -177,6 +177,11 @@ class vDuration(TimeBase):
         """The time delta for compatibility."""
         return self.td
 
+    @property
+    def ical_value(self) -> timedelta:
+        """Duration as a :class:`~datetime.timedelta` according to :rfc:`5545#section-3.3.6`."""
+        return self.td
+
     @classmethod
     def examples(cls) -> list[Self]:
         """Examples of vDuration."""
