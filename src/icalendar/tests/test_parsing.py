@@ -312,6 +312,29 @@ def test_unescape_char():
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
+        # a literal backslash before "n"/"N" must survive: the escaped-backslash
+        # pair is consumed as a unit before the next character is considered
+        (r"C:\\numbers", "C:" + chr(92) + "numbers"),
+        (r"C:\\Numbers", "C:" + chr(92) + "Numbers"),
+        # double-escaped backslash then an escaped newline
+        ("a" + chr(92) * 3 + "n b", "a" + chr(92) + "\n b"),
+    ],
+)
+def test_unescape_char_keeps_backslash_before_n(value, expected):
+    r""" "unescaped backslashes are consumed as pairs, never combined with a later escape."""
+    assert _unescape_char(value) == expected
+    assert _unescape_char(value.encode()) == expected.encode()
+
+
+def test_unescape_char_round_trip():
+    r"""_unescape_char must reverse _escape_char for text with backslashes."""
+    original = "Read C:" + chr(92) + "numbers.csv first"
+    assert _unescape_char(_escape_char(original)) == original
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
         ("a\rb", r"a\nb"),
         ("a\r\nb", r"a\nb"),
         ("a\nb", r"a\nb"),
