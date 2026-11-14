@@ -2,6 +2,7 @@
 """Utility program that allows user to preview calendar's events"""
 
 import argparse
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -10,6 +11,22 @@ from typing import cast
 from icalendar import __version__, vCalAddress
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.event import Event
+
+# C0 controls except tab and newline, DEL, and C1 controls
+_CONTROL_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f-\x9f]")
+
+
+def _escape_control_chars(text: str) -> str:
+    r"""Escape control characters so the terminal does not interpret them.
+
+    Parameters:
+        text: The text to print.
+
+    Returns:
+        The text with each control character other than tab and newline
+        replaced by its ``\xNN`` escape sequence.
+    """
+    return _CONTROL_CHARS.sub(lambda m: f"\\x{ord(m.group()):02x}", text)
 
 
 def _format_name(address: str) -> str:
@@ -74,7 +91,7 @@ def view(event: Event) -> str:
         end = end.astimezone()
     end = end.strftime("%c")
 
-    return f"""    Organizer: {organizer}
+    return _escape_control_chars(f"""    Organizer: {organizer}
     Attendees:
 {attendees}
     Summary    : {summary}
@@ -84,7 +101,7 @@ def view(event: Event) -> str:
     Location   : {location}
     Comment    : {comment}
     Description:
-{description}"""
+{description}""")
 
 
 def main() -> None:
