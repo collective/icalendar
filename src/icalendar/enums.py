@@ -79,7 +79,7 @@ class StrEnum(str, Enum):
 
 
 class ACTION(StrEnum):
-    """Enum for ``ACTION`` on a :class:`~icalendar.cal.alarm.Alarm`.
+    """Enum for ACTION on an :class:`~icalendar.cal.alarm.Alarm`.
 
     Description:
         Values are defined by :rfc:`5545#section-3.8.6.1` and identify the
