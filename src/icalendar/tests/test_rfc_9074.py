@@ -1,7 +1,7 @@
 """Test the VALARM compatibility of RFC 9074.
 
 See https://www.rfc-editor.org/rfc/rfc9074.html
-and also https://github.com/collective/icalendar/issues/657
+and also https://github.com/PyCalendar/icalendar/issues/657
 """
 
 import pytest

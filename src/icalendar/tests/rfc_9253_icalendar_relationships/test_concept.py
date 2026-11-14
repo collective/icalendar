@@ -21,9 +21,9 @@ def test_concept_is_converted_to_a_vUri(component):
 
 def test_new_component_with_concept():
     """We can use new with just a string."""
-    component = Component.new(concepts="https://gihub.com/collective/icalendar/issues")
+    component = Component.new(concepts="https://gihub.com/PyCalendar/icalendar/issues")
     assert len(component.concepts) == 1
-    assert component.concepts[0].uri == "https://gihub.com/collective/icalendar/issues"
+    assert component.concepts[0].uri == "https://gihub.com/PyCalendar/icalendar/issues"
     assert isinstance(component.concepts[0], vUri)
 
 

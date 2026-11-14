@@ -1,7 +1,7 @@
 """The XML property.
 
 The tests follow the plan in
-https://github.com/collective/icalendar/pull/1958#discussion_r4324499271
+https://github.com/PyCalendar/icalendar/pull/1958#discussion_r4324499271
 
 > The value of this property is a single XML 1.0
 > [W3C.REC-xml-20081126] element.
@@ -215,7 +215,7 @@ def test_xml_property_to_xcal_keeps_the_whitespace(indent):
 def test_xml_property_to_xcal_example_file(calendars, indent):
     """The XML parts of the example file are in the same place after a round trip.
 
-    See https://github.com/collective/icalendar/pull/1958#discussion_r4324585541
+    See https://github.com/PyCalendar/icalendar/pull/1958#discussion_r4324585541
     """
     calendar = calendars.rfc_6321_xml_property_xcal
     expected = xml_parts(calendar.raw_xcal)
@@ -502,7 +502,7 @@ def set_xml(event: Event, setter: str, xml) -> None:
     params=[
         *(("add", value) for value in XML_VALUES),
         *(("XML", value) for value in XML_VALUES),
-        # For other values, see https://github.com/collective/icalendar/issues/1983
+        # For other values, see https://github.com/PyCalendar/icalendar/issues/1983
         ("[]", "vXml"),
     ],
     ids="-".join,

@@ -7,6 +7,7 @@ from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.string import _to_valid_xml_string
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
@@ -88,10 +89,80 @@ class vCalAddress(str):
     def from_ical(cls, ical: str | bytes) -> Self:
         return cls(ical)
 
+    def __eq__(self, other: object) -> bool:
+        """Compare calendar addresses by email address.
+
+        Two addresses are equal if their email addresses match
+        case-insensitively. The ``mailto:`` prefix is optional on either
+        side, so ``mailto:user@example.com`` equals ``user@example.com``.
+
+        A plain :class:`str` is converted to :class:`vCalAddress` before
+        comparing, so ``"me@example.com" == vCalAddress("MAILTO:me@example.com")``
+        is ``True``. This is what lets the common pattern
+        ``my_email in event.attendees`` work (see :pr:`1901`). If the
+        string cannot form a valid address (for example, it contains a newline),
+        comparison returns :data:`NotImplemented`, leaving the reflected
+        operation to decide.
+
+        Comparison against other types returns :data:`NotImplemented`.
+
+        Known limitation: hash consistency is guaranteed only between
+        two :class:`vCalAddress` instances. A plain :class:`str` hashes
+        by its literal value, so ``hash(vCalAddress(...))`` may differ
+        from ``hash(str(...))`` even when they compare equal. This is
+        accepted; see the discussion in :pr:`1901`.
+
+        See :issue:`1896`.
+        """
+        if isinstance(other, vCalAddress):
+            return self.email.lower() == other.email.lower()
+        if isinstance(other, str):
+            try:
+                other = vCalAddress(other)
+            except ValueError:
+                # for example, the string contains CR or LF and cannot be an address
+                return NotImplemented
+            return self == other
+        return NotImplemented
+
+    def __ne__(self, other: object) -> bool:
+        """Negation of :meth:`__eq__`.
+
+        This method is required because :class:`vCalAddress` extends
+        :class:`str`. Without it, ``!=`` would use :meth:`str.__ne__`
+        using plain string comparison and could disagree with
+        :meth:`__eq__`. For example, case-insensitively equal addresses would
+        be both ``==`` and ``!=`` at the same time.
+        """
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return result
+        return not result
+
+    def __hash__(self) -> int:
+        """Hash of the lowercased email address, consistent with :meth:`__eq__`."""
+        return hash(self.email.lower())
+
     @property
     def ical_value(self) -> str:
         """The ``mailto:`` part of the address."""
         return str(self)
+
+    @property
+    def uri(self) -> str:
+        """The calendar user address as a URI, usually the ``mailto:`` link.
+
+        This provides the same interface as :attr:`vUri.uri
+        <icalendar.prop.uri.vUri.uri>`.
+        Use :attr:`email` to get the address without ``mailto:``.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vCalAddress
+            >>> vCalAddress("mailto:jane_doe@example.com").uri
+            'mailto:jane_doe@example.com'
+        """
+        return self.ical_value
 
     @property
     def email(self) -> str:
@@ -100,12 +171,49 @@ class vCalAddress(str):
             return self[7:]
         return str(self)
 
+    def has_email(self, email: str) -> bool:
+        """Check whether an email matches this calendar user.
+
+        The email can match either the calendar address or its ``EMAIL``
+        parameter.
+        Comparison ignores case and an optional ``mailto:`` prefix on either
+        address. This method does not validate email syntax.
+
+        Parameters:
+            email: Required. The address to compare, with or without ``mailto:``.
+
+        Returns:
+            bool: ``True`` if either address matches, otherwise ``False``.
+
+        Examples:
+            .. code-block:: pycon
+
+                >>> from icalendar import vCalAddress
+                >>> attendee = vCalAddress("mailto:calendar@example.com")
+                >>> attendee.EMAIL = "contact@example.com"
+                >>> attendee.has_email("CALENDAR@example.com")
+                True
+                >>> attendee.has_email("mailto:contact@example.com")
+                True
+                >>> attendee.has_email("other@example.com")
+                False
+
+        .. versionadded:: 0.0.0
+        """
+        normalized = email.casefold().removeprefix("mailto:")
+        return any(
+            address is not None
+            and address.casefold().removeprefix("mailto:") == normalized
+            for address in (self.ical_value, self.EMAIL)
+        )
+
     from icalendar.param import (
         CN,
         CUTYPE,
         DELEGATED_FROM,
         DELEGATED_TO,
         DIR,
+        EMAIL,
         LANGUAGE,
         MEMBER,
         PARTSTAT,
@@ -300,7 +408,7 @@ class vCalAddress(str):
         """The xCal representation of this property according to :rfc:`6321`."""
         self.params.to_xcal(element)
         element = SubElement(element, "cal-address")
-        element.text = self.ical_value
+        element.text = _to_valid_xml_string(self.ical_value)
 
 
 __all__ = ["vCalAddress"]

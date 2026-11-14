@@ -7,7 +7,7 @@ This chapter describes how to perform automated fuzz testing.
 `Fuzz testing or fuzzing <https://en.wikipedia.org/wiki/Fuzzing>`_ is an automated software testing technique that involves providing invalid, unexpected, or random data as inputs to a computer program.
 The program is then monitored for exceptions such as crashes, failing built-in code assertions, or potential memory leaks.
 
-icalendar uses `OSS-Fuzz`_ and `GitHub Actions <https://github.com/collective/icalendar/actions/workflows/cifuzz.yml>`_ for fuzz testing.
+icalendar uses `OSS-Fuzz`_ and `GitHub Actions <https://github.com/PyCalendar/icalendar/actions/workflows/cifuzz.yml>`_ for fuzz testing.
 
 
 Identify uncaught fuzzing errors

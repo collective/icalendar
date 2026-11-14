@@ -34,7 +34,7 @@ help:  # This help message
 	@uv python install "$(PYTHONVERSION)"
 	@uv venv --python "$(PYTHONVERSION)"
 	@uv sync --group dev
-	@uv run pre-commit install
+	@uv run prek install
 
 .PHONY: sync
 sync:  ## Sync package requirements
@@ -174,6 +174,7 @@ rtd-prepare:  ## Prepare environment on Read the Docs
 
 .PHONY: rtd-pr-preview
 rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
+	@uvx towncrier build --version=Unreleased --yes
 	cd $(DOCS_DIR) && $(SPHINXBUILD) -b html $(ALLSPHINXOPTS) ${READTHEDOCS_OUTPUT}/html/
 # /deployment
 
