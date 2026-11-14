@@ -37,5 +37,25 @@ class vInline(str):
     def from_ical(cls, ical: ICAL_TYPE) -> Self:
         return cls(ical)
 
+    @property
+    def ical_value(self) -> str:
+        """The raw, unparsed text of the inline value.
+
+        The text is returned as a plain :class:`str`. It's neither split
+        into its separate values nor unescaped.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vInline
+                >>> vInline("Chair,Table").ical_value
+                'Chair,Table'
+
+        ..  seealso::
+
+            :rfc:`5545#section-3.1.2` for multiple values in one property.
+        """
+        return str(self)
+
 
 __all__ = ["vInline"]
