@@ -1,0 +1,1 @@
+Fixed :attr:`vSkip.ical_value <icalendar.prop.recur.skip.vSkip.ical_value>` returning ``vSkip.OMIT`` instead of the :rfc:`7529` value ``OMIT``. I used Claude Opus 5.5 to help locate the bug. @jakkoyang

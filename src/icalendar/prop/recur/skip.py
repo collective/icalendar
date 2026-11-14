@@ -45,6 +45,19 @@ class vSkip(vText, Enum):
     def __repr__(self):
         return f"{self.__class__.__name__}({self._name_!r})"
 
+    @property
+    def ical_value(self) -> str:
+        """The :rfc:`7529` SKIP value, for example ``OMIT``.
+
+        Example:
+            .. code-block:: pycon
+
+                >>> from icalendar import vSkip
+                >>> vSkip.FORWARD.ical_value
+                'FORWARD'
+        """
+        return self.name
+
     @classmethod
     def parse_jcal_value(cls, value: Any) -> Self:
         """Parse a jCal value for vSkip.
