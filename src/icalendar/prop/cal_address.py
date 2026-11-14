@@ -153,7 +153,10 @@ class vCalAddress(str):
 
         This provides the same interface as :attr:`vUri.uri
         <icalendar.prop.uri.vUri.uri>`.
-        Use :attr:`email` to get the address without ``mailto:``.
+        Use :attr:`address` to get the value without ``mailto:``.  Use
+        :attr:`email` when the address identifying or contacting the calendar
+        user should be used, including the RFC 7986 ``EMAIL`` parameter when
+        present.
 
         .. code-block:: pycon
 
@@ -164,11 +167,64 @@ class vCalAddress(str):
         return self.ical_value
 
     @property
+    def address(self) -> str:
+        """The calendar address value without a leading ``mailto:``.
+
+        Use this for the address represented by the CAL-ADDRESS value itself.
+        Use :attr:`uri` for the unchanged URI value and :attr:`email` for the
+        email address identifying or contacting the calendar user.  The latter
+        may come from the RFC 7986 ``EMAIL`` parameter instead.
+        """
+        return self._remove_mailto(self.ical_value)
+
+    @property
     def email(self) -> str:
-        """The email address without ``mailto:`` at the start."""
-        if self.lower().startswith("mailto:"):
-            return self[7:]
-        return str(self)
+        """The email address associated with this calendar user.
+
+        RFC 7986 section 6.2 allows the ``EMAIL`` parameter to identify or
+        contact a calendar user with an address different from the
+        CAL-ADDRESS value.  This property returns that parameter when present,
+        otherwise it falls back to :attr:`address`.  Use :attr:`EMAIL` to
+        access the parameter itself, :attr:`address` for the CAL-ADDRESS
+        value, and :attr:`uri` for the unchanged URI.
+        """
+        email = self.EMAIL
+        if email is not None:
+            return self._remove_mailto(email)
+        return self.address
+
+    @email.setter
+    def email(self, value: str | None) -> None:
+        """Set or remove the RFC 7986 ``EMAIL`` parameter."""
+        if value is None:
+            self.EMAIL = None
+        else:
+            self.EMAIL = self._remove_mailto(value)
+
+    @email.deleter
+    def email(self) -> None:
+        """Remove the RFC 7986 ``EMAIL`` parameter."""
+        del self.EMAIL
+
+    def has_email(self, email: str) -> bool:
+        """Return whether ``email`` matches the address or ``EMAIL`` value.
+
+        Matching is case-insensitive and ignores a leading ``mailto:`` in
+        either value.  This checks both the CAL-ADDRESS value and the optional
+        RFC 7986 ``EMAIL`` parameter.
+        """
+        normalized = self._remove_mailto(email).lower()
+        return normalized in {
+            self.address.lower(),
+            self.email.lower(),
+        }
+
+    @staticmethod
+    def _remove_mailto(value: str) -> str:
+        """Remove a leading ``mailto:`` prefix, regardless of its case."""
+        if value.lower().startswith("mailto:"):
+            return value[7:]
+        return value
 
     def has_email(self, email: str) -> bool:
         """Check whether an email matches this calendar user.
