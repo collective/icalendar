@@ -59,6 +59,23 @@ class TestVAdrCreation:
         assert adr.fields.country == "USA"
 
 
+class TestVAdrEquality:
+    """Test vAdr equality."""
+
+    @pytest.mark.parametrize(
+        ("other", "expected"),
+        [
+            (vAdr(";;123 Main St;Springfield;IL;62701;USA"), True),
+            (vAdr(";;456 Main St;Springfield;IL;62701;USA"), False),
+            (";;123 Main St;Springfield;IL;62701;USA", False),
+        ],
+    )
+    def test_adr_equality(self, other, expected):
+        """Only addresses with matching fields compare equal."""
+        adr = vAdr(("", "", "123 Main St", "Springfield", "IL", "62701", "USA"))
+        assert (adr == other) is expected
+
+
 class TestVAdrSerialization:
     """Test vAdr to_ical and from_ical."""
 
@@ -75,6 +92,18 @@ class TestVAdrSerialization:
         assert result == AdrFields(
             "", "", "123 Main St", "Springfield", "IL", "62701", "USA"
         )
+
+    @pytest.mark.parametrize(
+        "ical",
+        [
+            ";;123 Main St;Springfield;IL;62701",
+            ";;123 Main St;Springfield;IL;62701;USA;extra",
+        ],
+    )
+    def test_adr_from_ical_requires_7_fields(self, ical):
+        """Reject addresses with too few or too many fields."""
+        with pytest.raises(ValueError, match="ADR must have exactly 7 fields"):
+            vAdr.from_ical(ical)
 
     def test_adr_round_trip(self):
         """ADR survives round-trip through to_ical and from_ical."""
