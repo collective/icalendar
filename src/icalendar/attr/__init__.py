@@ -1776,15 +1776,18 @@ def get_start_end_duration_with_validation(
     end = getattr(component, end_property, None)
     duration = component.DURATION
 
-    # When both are present, prefer DURATION as the effective value. This
-    # follows the expected behavior in issue #1796: return a usable value
-    # instead of rejecting the component, and avoid inconsistent timezone
-    # calculations when deriving the end from DTSTART + DURATION.
+    # Issue #1796 asks for a usable effective value when both are present.
+    # Prefer a non-negative DURATION; a negative duration is ignored when the
+    # explicit end is valid and not earlier than DTSTART.
     if duration is not None and end is not None:
-        if start is not None and end != normalize_pytz(start + duration):
-            msg = f"{end_property} and DURATION specify different end times."
-            raise InvalidCalendar(msg)
-        end = None
+        if (
+            duration < timedelta(0)
+            and start is not None
+            and end >= start
+        ):
+            duration = None
+        else:
+            end = None
 
     # RFC 5545: When DTSTART is a date, DURATION must be of days or weeks
     if (
