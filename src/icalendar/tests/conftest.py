@@ -2,7 +2,9 @@
 
 import functools
 import itertools
+import os
 import sys
+import time
 import uuid
 import xml.etree.ElementTree as ET
 import zoneinfo
@@ -590,3 +592,12 @@ def mock():
 def xcal() -> ET.Element:
     """Shortcut to create an XML Element"""
     return ET.Element("vcalendar")
+
+
+def pytest_report_header():
+    """Show the local time zone of the tests.
+
+    See https://github.com/collective/icalendar/issues/468
+    """
+    tz_env = os.environ.get("TZ", "")
+    return f"local time zone: TZ={tz_env!r} {time.strftime('%Z %z')}"

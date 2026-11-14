@@ -1,0 +1,1 @@
+The tests in the CI now run in different time zones, west and east of UTC. tox passes the ``TZ`` environment variable to the tests. I used AI to help with this change. @arrudagba
