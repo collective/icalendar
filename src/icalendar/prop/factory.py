@@ -58,7 +58,7 @@ class TypesFactory(CaselessDict):
         return TypesFactory._instance
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Set keys to upper for initial dict"""
+        """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         self.all_types = (
             vBinary,
@@ -202,8 +202,11 @@ class TypesFactory(CaselessDict):
             "xml": "xml-text",
             # Miscellaneous Component Properties
             "request-status": "request-status-text",
-            ####################################
-            # parameter types (luckily there is no name overlap)
+        }
+    )
+
+    parameter_types_map = CaselessDict(
+        {
             "altrep": "uri",
             "cn": "text",
             "cutype": "text",
@@ -222,8 +225,8 @@ class TypesFactory(CaselessDict):
             "role": "text",
             "rsvp": "boolean",
             "sent-by": "cal-address",
+            "tzid": "text",
             "value": "text",
-            # rfc 9253 parameters
             "label": "text",
             "linkrel": "text",
             "gap": "duration",
@@ -231,10 +234,10 @@ class TypesFactory(CaselessDict):
     )
 
     def for_property(self, name, value_param: str | None = None) -> type[VPROPERTY]:
-        """Returns the type class for a property or parameter.
+        """Returns the type class for a property.
 
         Parameters:
-            name: Property or parameter name
+            name: Property name.
             value_param: Optional ``VALUE`` parameter, for example,
                 "DATE", "DATE-TIME", or other string.
 
@@ -243,6 +246,7 @@ class TypesFactory(CaselessDict):
         """
         name = name.upper()
         value_param = value_param.upper() if value_param else None
+
         # RFC 7265's UNKNOWN type is always represented verbatim, even for
         # properties such as RDATE/EXDATE that normally use list parsing.
         if value_param and value_param == "UNKNOWN":
@@ -254,6 +258,7 @@ class TypesFactory(CaselessDict):
             value_param is None or value_param in vDDDTypes.VALUE_MAP
         ):
             return self["date-time-list"]
+
         # Only use VALUE parameter for known properties that support multiple value
         # types (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map
@@ -265,6 +270,7 @@ class TypesFactory(CaselessDict):
             if value_type.default_value == value_param:
                 return value_type
             return self[value_param]
+
         if value_param and (value_param in self) and value_param != "IMAGE":
             return self[value_param]
 
@@ -294,14 +300,19 @@ class TypesFactory(CaselessDict):
         }
     )
 
+    def for_parameter(self, name: str) -> type[VPROPERTY]:
+        """Returns the type class for a parameter."""
+        return self[self.parameter_types_map.get(name.upper(), "unknown")]
+
     def default_value_type(self, name: str) -> str:
         """Return the default jCal value type for a property.
 
         The result is a lowercase :rfc:`7265` value type, for example
         ``"date-time"`` for ``DTSTART`` or ``"duration"`` for ``TRIGGER``.
         This is the value type a property uses when no explicit ``VALUE``
-        parameter is given, so it tells :meth:`Component.from_jcal <icalendar.cal.component.Component.from_jcal>` whether a
-        ``VALUE`` parameter has to be restored from the jCal type field.
+        parameter is given, so it tells
+        :meth:`Component.from_jcal <icalendar.cal.component.Component.from_jcal>`
+        whether a ``VALUE`` parameter has to be restored from the jCal type field.
 
         Parameters:
             name: Property name.
@@ -312,6 +323,7 @@ class TypesFactory(CaselessDict):
         internal = self.types_map.get(name, "unknown").lower()
         if internal in self._jcal_value_types:
             return internal
+
         # Internal keys such as ``categories`` or ``date-time-list`` are not
         # jCal value types themselves; ask the value class for the type it
         # actually serialises to.
@@ -321,14 +333,22 @@ class TypesFactory(CaselessDict):
         """Encodes a named value from a primitive python type to an icalendar
         encoded string.
         """
-        type_class = self.for_property(name)
+        name = name.upper()
+        if name in self.types_map:
+            type_class = self.for_property(name)
+        else:
+            type_class = self.for_parameter(name)
         return type_class(value).to_ical()
 
     def from_ical(self, name, value):
         """Decodes a named property or parameter value from an icalendar
         encoded string to a primitive python type.
         """
-        type_class = self.for_property(name)
+        name = name.upper()
+        if name in self.types_map:
+            type_class = self.for_property(name)
+        else:
+            type_class = self.for_parameter(name)
         return type_class.from_ical(value)
 
 
