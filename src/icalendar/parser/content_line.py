@@ -18,6 +18,12 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 # to the first line break of a run, making a failed attempt O(1) instead of a
 # full rescan, while matching exactly the same strings.
 UFOLD = re.compile(r"(?:(?<!\n)\r\n|(?<![\r\n])\n)(?:\r?\n)*[ \t]")
+# The same pattern on raw bytes, to unfold an undecodable input before
+# decoding it: a producer may fold a line in the middle of a multi-byte
+# UTF-8 sequence, and decoding first would replace those bytes with
+# U+FFFD before they can be rejoined (RFC 5545 section 3.1 anticipates
+# that producers may split multi-octet characters).
+UFOLD_BYTES = re.compile(rb"(?:(?<!\n)\r\n|(?<![\r\n])\n)(?:\r?\n)*[ \t]")
 NEWLINE = re.compile(r"\r?\n")
 
 OWS = " \t"
@@ -318,6 +324,12 @@ class Contentline(str):
     @classmethod
     def from_ical(cls, ical, strict=False):
         """Unfold the content lines in an iCalendar into long content lines."""
+        if isinstance(ical, bytes):
+            # unfold before decoding, so a fold inside a multi-byte UTF-8
+            # character can be rejoined instead of being replaced; folds
+            # cannot reappear during decoding, so the str unfold below is
+            # unnecessary for bytes input
+            return cls(to_unicode(UFOLD_BYTES.sub(b"", ical)), strict=strict)
         ical = to_unicode(ical)
         # a fold is carriage return followed by either a space or a tab
         return cls(UFOLD.sub("", ical), strict=strict)
@@ -342,10 +354,18 @@ class Contentlines(list[Contentline]):
     @classmethod
     def from_ical(cls, st):
         """Parses a string into content lines."""
-        st = to_unicode(st)
-        try:
+        if isinstance(st, bytes):
+            # unfold before decoding, so a fold inside a multi-byte UTF-8
+            # character can be rejoined instead of being replaced; folds
+            # cannot reappear during decoding, so the str unfold below is
+            # unnecessary for bytes input
+            st = to_unicode(UFOLD_BYTES.sub(b"", st))
+            unfolded = st
+        else:
+            st = to_unicode(st)
             # a fold is carriage return followed by either a space or a tab
             unfolded = UFOLD.sub("", st)
+        try:
             lines = cls(Contentline(line) for line in NEWLINE.split(unfolded) if line)
             lines.append("")  # '\r\n' at the end of every content line
         except Exception as e:

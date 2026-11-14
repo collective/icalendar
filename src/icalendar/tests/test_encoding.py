@@ -2,6 +2,8 @@ import datetime
 
 import pytest
 
+from icalendar import Calendar
+
 
 @pytest.mark.parametrize(
     ("field", "expected_value"),
@@ -96,3 +98,20 @@ def test_apple_xlocation(calendars):
     """
     for event in calendars.x_location.walk("vevent"):
         assert len(event.errors) == 0, "Got too many errors"
+
+
+def test_fold_inside_multibyte_utf8_sequence_issue_2077():
+    """A fold in the middle of a multi-byte UTF-8 sequence must not
+    garble the value into U+FFFD replacement characters: the raw bytes
+    are unfolded before decoding (issue #2077).
+    """
+    summary = "A" * 70 + "\U0001f389" + "B" * 20
+    raw = ("SUMMARY:" + summary).encode("utf-8")
+    split = raw.index(b"\xf0\x9f") + 1  # inside the 4-byte sequence
+    folded = raw[:split] + b"\r\n " + raw[split:]
+    ics = (
+        b"BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//t//EN\r\n"
+        b"BEGIN:VEVENT\r\nUID:1\r\n" + folded + b"\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n"
+    )
+    event = Calendar.from_ical(ics).walk("VEVENT")[0]
+    assert str(event["SUMMARY"]) == summary
