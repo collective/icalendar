@@ -1780,11 +1780,7 @@ def get_start_end_duration_with_validation(
     # Prefer a non-negative DURATION; a negative duration is ignored when the
     # explicit end is valid and not earlier than DTSTART.
     if duration is not None and end is not None:
-        if (
-            duration < timedelta(0)
-            and start is not None
-            and end >= start
-        ):
+        if duration < timedelta(0) and start is not None and end >= start:
             duration = None
         else:
             end = None
