@@ -894,8 +894,9 @@ _UID_MAX_OCTETS = 255
 def validate_uid(value: str) -> None:
     """Validate the given value as a well-formed UID.
 
-    When set, the value must be an :rfc:`5545` ``iana-token`` (ASCII letters,
-    digits and hyphens) shorter than 255 octets, as required by
+    When set, the value must be an :rfc:`5545#section-3.1`
+    iana-token consisting of only ASCII letters, digits, and
+    hyphens, and shorter than 255 octets, as required by
     :rfc:`7986#section-5.3`.
 
     Parameters:
