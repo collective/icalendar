@@ -43,7 +43,7 @@ According to `Amended documentation recommendation`_, in these Python versions, 
 icalendar's :file:`pyproject.toml` file requires a Python version that is safe for XML parsing.
 Therefore, icalendar is safe to use its configured built-in XML parsing.
 
-Developers can `open an issue <https://github.com/collective/icalendar/issues/new?template=empty-issue.md>`_ to use a different XML parser.
+Developers can `open an issue <https://github.com/PyCalendar/icalendar/issues/new?template=empty-issue.md>`_ to use a different XML parser.
 The parser is configurable through the setting :func:`icalendar.config.parse_xml`.
 
 .. seealso::

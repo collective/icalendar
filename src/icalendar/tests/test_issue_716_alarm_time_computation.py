@@ -10,7 +10,7 @@ Alarms can be in this state:
 The alarms can only work on the properties of the event like
 DTSTART, DTEND, and DURATION.
 
-See https://github.com/collective/icalendar/issues/716
+See https://github.com/PyCalendar/icalendar/issues/716
 """
 
 from datetime import date, datetime, timedelta, timezone
@@ -36,7 +36,7 @@ EXAMPLE_TRIGGER = datetime(1997, 3, 17, 13, 30, tzinfo=UTC)
 # If you add a new lowercase property to Alarm and it should NOT appear on
 # AlarmTime, add its name here with a short reason. Otherwise, add a
 # matching pass-through property to AlarmTime itself.
-# See https://github.com/collective/icalendar/issues/1421
+# See https://github.com/PyCalendar/icalendar/issues/1421
 
 INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES = {
     "comments",  # generic component annotation
@@ -558,7 +558,7 @@ def test_alarm_time_exposes_all_useful_alarm_properties():
     If this test fails, a new lowercase property was likely added to
     Alarm and needs either a matching pass-through property on
     AlarmTime, or a reasoned entry in INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES.
-    See https://github.com/collective/icalendar/issues/1421
+    See https://github.com/PyCalendar/icalendar/issues/1421
     """
     alarm_prop = set()
     alarm_time_prop = set()
@@ -573,5 +573,5 @@ def test_alarm_time_exposes_all_useful_alarm_properties():
     assert not unaccounted, (
         f"AlarmTime is missing pass-through properties for: {sorted(unaccounted)}. "
         f"Either add a getter, or add to INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES "
-        f"with a reason. See https://github.com/collective/icalendar/issues/1421"
+        f"with a reason. See https://github.com/PyCalendar/icalendar/issues/1421"
     )

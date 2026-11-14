@@ -520,7 +520,7 @@ def doctest_import(name, *args, **kw):
 NOW = datetime(2025, 5, 17, 8, 6, 12)
 NOW_UTC = NOW.replace(tzinfo=timezone.utc)
 UID_DEFAULT = "d755cef5-2311-46ed-a0e1-6733c9e15c63"
-DEFAULT_PRODID = "-//collective//icalendar//7.0.0//EN"
+DEFAULT_PRODID = "-//PyCalendar//icalendar//7.0.0//EN"
 
 
 @pytest.fixture

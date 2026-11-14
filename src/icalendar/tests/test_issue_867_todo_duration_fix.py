@@ -184,7 +184,7 @@ def test_component_duration_calculated_fallback(component_class):
 def test_todo_duration_due_without_dtstart_is_zero():
     """A VTODO with only DUE occupies that instant and has zero duration.
 
-    See https://github.com/collective/icalendar/issues/1786
+    See https://github.com/PyCalendar/icalendar/issues/1786
     """
     todo = Todo()
     todo.end = datetime(2026, 1, 1, 12, 0)

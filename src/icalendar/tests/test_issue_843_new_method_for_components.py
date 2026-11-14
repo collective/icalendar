@@ -6,7 +6,7 @@ This method MUST use property setters to set the properties defined in the keywo
 
 New keywords can be added over time.
 
-See https://github.com/collective/icalendar/issues/843
+See https://github.com/PyCalendar/icalendar/issues/843
 """
 
 from __future__ import annotations
@@ -867,8 +867,8 @@ rfc_7986_test_cases = [
         {Calendar},
         "source",
         "SOURCE",
-        "https://github.com/collective/icalendar",
-        "https://github.com/collective/icalendar",
+        "https://github.com/PyCalendar/icalendar",
+        "https://github.com/PyCalendar/icalendar",
         True,
         "setting a string",
     ),

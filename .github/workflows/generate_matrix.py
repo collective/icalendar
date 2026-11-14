@@ -144,7 +144,7 @@ def generate_matrix(git_ref, review, event_name=""):
     #
     # Note: If you change test names, also make sure that the
     #       branch protection rules are adjusted to the new names.
-    #       https://github.com/collective/icalendar/settings/branches
+    #       https://github.com/PyCalendar/icalendar/settings/branches
     #
 
     for run in matrix:
