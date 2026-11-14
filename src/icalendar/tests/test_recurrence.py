@@ -128,3 +128,18 @@ def test_byday_to_ical(freq, byday, dtstart, expected):
     event.add("DTSTART", dtstart)
     event.add("RRULE", {"FREQ": [freq], "BYDAY": byday})
     assert event.to_ical() == expected
+
+
+def test_vrecur_freq_property_keeps_string_and_typed_setter_equality():
+    from icalendar.prop import vRecur
+
+    parsed = vRecur.from_ical("FREQ=DAILY")
+
+    assigned_from_string = vRecur()
+    assigned_from_string.freq = "DAILY"
+
+    assigned_from_frequency = vRecur()
+    assigned_from_frequency.freq = parsed.freq
+
+    assert assigned_from_string == parsed
+    assert assigned_from_frequency == parsed
