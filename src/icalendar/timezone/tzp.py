@@ -141,7 +141,11 @@ class TZP:
         This can influence the result from timezone(): Once cached, the
         custom timezone is returned from timezone().
         """
-        _unclean_id = timezone_component["TZID"]
+        _unclean_id = timezone_component.get("TZID")
+        if not _unclean_id:
+            return
+        if isinstance(_unclean_id, list):
+            _unclean_id = _unclean_id[0]
         _id = self.clean_timezone_id(_unclean_id)
         if (
             not self.__provider.knows_timezone_id(_id)
@@ -161,13 +165,15 @@ class TZP:
         """
         return self.__provider.create_timezone(timezone_component)
 
-    def clean_timezone_id(self, tzid: str) -> str:
+    def clean_timezone_id(self, tzid: str | list[str]) -> str:
         """Return a clean version of the timezone id.
 
         Timezone ids can be a bit unclean, starting with a / for example.
         Internally, we should use this to identify timezones.
         """
-        return tzid.strip("/")
+        if isinstance(tzid, list):
+            tzid = tzid[0] if tzid else ""
+        return str(tzid).strip("/")
 
     def timezone(self, tz_id: str) -> tzinfo | None:
         """Return a timezone with an ID or ``None`` if we can't find it.

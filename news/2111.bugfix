@@ -1,0 +1,2 @@
+Handle duplicate TZID properties inside VTIMEZONE without crashing with AttributeError during timezone caching. @RajGahoi
+
