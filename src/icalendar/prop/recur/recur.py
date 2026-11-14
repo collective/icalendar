@@ -419,14 +419,12 @@ class vRecur(CaselessDict):
         """The INTERVAL part of the recurrence rule.
 
         This is the positive integer interval between occurrences of the
-        recurrence frequency. When omitted, :rfc:`5545#section-3.3.10`
-        defines the default as ``1``, but this accessor returns ``None``
-        instead so callers can distinguish an omitted value from an explicit
-        one.
+        recurrence frequency. When omitted, although :rfc:`5545#section-3.3.10`
+        defines the default as ``1``, this accessor returns ``None`` instead.
+        As such, callers can distinguish an omitted value from an explicit one.
 
-        If multiple values are present (although RFC 5545 permits only one),
-        only the first one is returned. If the value is missing or an empty
-        sequence, ``None`` is returned. Assigning
+        If multiple values are present, only the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned. Assigning
         ``None`` or deleting the property removes the entire INTERVAL entry,
         including all values in a multi-value entry.
 
