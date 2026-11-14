@@ -65,10 +65,10 @@ def test_input_can_be_bytes():
     assert c.prodid == "-//Example Inc.//Example Client//EN"
 
 
-def test_input_can_not_be_a_string():
-    """The string interface can be used."""
+def test_input_cannot_be_an_integer():
+    """Unsupported input types are rejected."""
     with pytest.raises(TypeError):
-        Component.from_xcal("")
+        Component.from_xcal(42)
 
 
 @pytest.mark.parametrize(

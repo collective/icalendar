@@ -6,9 +6,9 @@ import json
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, BinaryIO, ClassVar, Literal, overload
+from typing import IO, TYPE_CHECKING, Any, ClassVar, Literal, overload
 from xml.etree.ElementTree import Element, ElementTree, SubElement
 from xml.etree.ElementTree import indent as indent_xml
 
@@ -49,6 +49,9 @@ if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
 _marker = []
+
+SERIALIZED_INPUT = str | bytes | Path | IO[str] | IO[bytes]
+"""Serialized calendar data, a path to it, or an open text or binary stream."""
 
 
 @dataclass
@@ -583,13 +586,13 @@ class Component(CaselessDict):
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[False] = False
+        cls, st: SERIALIZED_INPUT, multiple: Literal[False] = False
     ) -> Component: ...
 
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[True]
+        cls, st: SERIALIZED_INPUT, multiple: Literal[True]
     ) -> list[Component]: ...
 
     @classmethod
@@ -599,15 +602,16 @@ class Component(CaselessDict):
 
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: bool = False
+        cls, st: SERIALIZED_INPUT, multiple: bool = False
     ) -> Component | list[Component]:
         """Parse iCalendar data into component instances.
 
         Handles standard and custom components (``X-*``, IANA-registered).
 
         Parameters:
-            st: iCalendar data as bytes or string, or a path to an iCalendar file as
-                :class:`pathlib.Path`.
+            st: iCalendar data as a string, bytes, :class:`pathlib.Path`, or an
+                open text or binary file. Open files are read from their current
+                position and left open. Strings are data, not file names.
             multiple: If ``True``, returns list. If ``False``, returns single component.
 
         Returns:
@@ -618,6 +622,8 @@ class Component(CaselessDict):
         """
         if isinstance(st, Path):
             st = st.read_bytes()
+        elif hasattr(st, "read"):
+            st = st.read()
         parser = cls._get_ical_parser(st)
         components = parser.parse()
         if multiple:
@@ -1055,11 +1061,14 @@ class Component(CaselessDict):
         )
 
     @classmethod
-    def from_jcal(cls, jcal: str | list) -> Component:
+    def from_jcal(cls, jcal: SERIALIZED_INPUT | list) -> Component:
         """Create a component from a jCal list.
 
         Parameters:
-            jcal: jCal list or JSON string according to :rfc:`7265`.
+            jcal: jCal list or JSON data according to :rfc:`7265`, as a string,
+                bytes, :class:`pathlib.Path`, or an open text or binary file.
+                Open files are read from their current position and left open.
+                Strings are data, not file names.
 
         Raises:
             ~icalendar.error.JCalParsingError: If the jCal provided is invalid.
@@ -1100,7 +1109,11 @@ class Component(CaselessDict):
             Planning meeting
 
         """
-        if isinstance(jcal, str):
+        if isinstance(jcal, Path):
+            jcal = jcal.read_bytes()
+        elif hasattr(jcal, "read"):
+            jcal = jcal.read()
+        if isinstance(jcal, (str, bytes)):
             jcal = json.loads(jcal)
         # Iterative tree build to avoid RecursionError on deeply nested jCal,
         # mirroring the iterative iCal parser (GH #1370). ``_node_from_jcal``
@@ -1303,11 +1316,14 @@ class Component(CaselessDict):
                 subcomponent.to_xcal(e_components)
 
     @classmethod
-    def from_xcal(cls, xcal: Element | bytes | Path | BinaryIO) -> list[Self]:
+    def from_xcal(cls, xcal: Element | SERIALIZED_INPUT) -> list[Self]:
         """Parse xCal according to :rfc:`6321`.
 
         Parameters:
-            xcal: The xCal element or data to parse.
+            xcal: An XML element or xCal data as a string, bytes,
+                :class:`pathlib.Path`, or an open text or binary file.
+                Open files are read from their current position and left open.
+                Strings are data, not file names.
 
         Returns:
             The parsed component.
@@ -1343,18 +1359,21 @@ class Component(CaselessDict):
         """
         from icalendar.parser.xcal.component import XCalComponentParser
 
-        if isinstance(xcal, Path):
-            xcal = xcal.open("rb")
-        elif isinstance(xcal, bytes):
-            xcal = BytesIO(xcal)
-        if hasattr(xcal, "read"):
-            element = config.parse_xml(xcal).getroot()
-        elif isinstance(xcal, Element):
+        if isinstance(xcal, Element):
             element = xcal
+        elif isinstance(xcal, Path):
+            with xcal.open("rb") as file:
+                element = config.parse_xml(file).getroot()
         else:
-            raise TypeError(
-                f"Expected an XML Element, bytes, Path, or file object. Got {xcal}"
-            )
+            if isinstance(xcal, bytes):
+                xcal = BytesIO(xcal)
+            elif isinstance(xcal, str):
+                xcal = StringIO(xcal)
+            if not hasattr(xcal, "read"):
+                raise TypeError(
+                    f"Expected an XML Element, string, bytes, Path, or file object. Got {xcal}"
+                )
+            element = config.parse_xml(xcal).getroot()
         parser = XCalComponentParser(
             element, cls._get_component_factory(), cls.types_factory
         )
@@ -1445,4 +1464,4 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
     return component, subcomponents
 
 
-__all__ = ["Component"]
+__all__ = ["SERIALIZED_INPUT", "Component"]

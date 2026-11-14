@@ -251,6 +251,23 @@ Read a calendar from a local :file:`.ics` file and view its events.
     International Women's Day
 
 
+The component parsers :meth:`~icalendar.cal.component.Component.from_ical`, :meth:`~icalendar.cal.component.Component.from_jcal`, and :meth:`~icalendar.cal.component.Component.from_xcal` accept serialized data as :class:`str`, :class:`bytes`, :class:`pathlib.Path`, or an open text or binary file.
+Strings contain calendar data, not file names.
+Use a :class:`~pathlib.Path` to read a file by name.
+The parsers close files that they open from paths.
+Files supplied by the caller stay open and are read from their current position.
+Open text files using their original encoding.
+The default XML parser does not reapply encoding declarations to text that you have already decoded.
+The jCal parser also accepts a :class:`list`, and the xCal parser accepts an XML element.
+
+For example, pass an open file to the iCalendar parser:
+
+.. code-block:: python
+
+    with ics_path.open("rb") as calendar_file:
+        calendar = icalendar.Calendar.from_ical(calendar_file)
+
+
 Read calendar from URL
 ''''''''''''''''''''''
 
