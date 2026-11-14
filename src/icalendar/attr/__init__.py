@@ -27,7 +27,7 @@ from icalendar.prop import (
 from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 from icalendar.timezone import tzp
-from icalendar.tools import is_date, normalize_pytz
+from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from collections.abc import Callable
