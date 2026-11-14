@@ -1,6 +1,6 @@
 """Issue #168 - Parsing invalid icalendars fails without any warning
 
-https://github.com/collective/icalendar/issues/168
+https://github.com/PyCalendar/icalendar/issues/168
 """
 
 

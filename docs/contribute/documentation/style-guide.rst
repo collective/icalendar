@@ -155,6 +155,7 @@ In icalendar's documentation, the most frequently used roles in the Python domai
 -   :rst:role:`mod <py:mod>`
 -   :rst:role:`func <py:func>`
 -   :rst:role:`attr <py:attr>`
+-   :rst:role:`exc <py:exc>`
 
 The target must be either a full dotted Python path or use a shortcut to disambiguate to which object it should be hyperlinked.
 
@@ -293,8 +294,8 @@ The following docstrings items are the most frequently used in icalendar, althou
 
     ..  seealso::
 
-        - `Document __new__ methods <https://github.com/collective/icalendar/issues/1118>`_
-        - `Merge __init__ or __new__ docstrings into their class's docstring <https://github.com/collective/icalendar/issues/1620>`_
+        - `Document __new__ methods <https://github.com/PyCalendar/icalendar/issues/1118>`_
+        - `Merge __init__ or __new__ docstrings into their class's docstring <https://github.com/PyCalendar/icalendar/issues/1620>`_
 
 Summary
     Docstrings must begin with a one-line summary of the Python object, terminated by a period.

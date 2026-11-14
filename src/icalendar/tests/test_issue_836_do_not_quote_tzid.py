@@ -1,6 +1,6 @@
 """Quoting the TZID parameter creates compatibility problems.
 
-See https://github.com/collective/icalendar/issues/836
+See https://github.com/PyCalendar/icalendar/issues/836
 
 :rfc:`5545`:
 

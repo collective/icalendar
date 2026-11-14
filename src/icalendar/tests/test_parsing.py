@@ -22,13 +22,13 @@ from icalendar.parser import (
     ("raw_content_line", "expected_output"),
     [
         # Issue #142 - Multivalued parameters. This is needed for VCard 3.0.
-        # see https://github.com/collective/icalendar/pull/142
+        # see https://github.com/PyCalendar/icalendar/pull/142
         (
             "TEL;TYPE=HOME,VOICE:000000000",
             ("TEL", Parameters({"TYPE": ["HOME", "VOICE"]}), "000000000"),
         ),
         # Issue #143 - Allow dots in property names. Another vCard related issue.
-        # see https://github.com/collective/icalendar/pull/143
+        # see https://github.com/PyCalendar/icalendar/pull/143
         (
             "ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.ADR:;;This is the Adress 08; Some City;;12345;Germany",
             (
@@ -86,7 +86,7 @@ def test_percent_escapes_in_parameter_values_are_preserved(
 def test_timezone_info_present_in_ical_issue_112(events, timezone_info):
     """Issue #112 - No timezone info on EXDATE
 
-    https://github.com/collective/icalendar/issues/112
+    https://github.com/PyCalendar/icalendar/issues/112
     """
     assert timezone_info in events.issue_112_missing_tzinfo_on_exdate.to_ical()
 
@@ -94,7 +94,7 @@ def test_timezone_info_present_in_ical_issue_112(events, timezone_info):
 def test_timezone_name_parsed_issue_112(events):
     """Issue #112 - No timezone info on EXDATE
 
-    https://github.com/collective/icalendar/issues/112
+    https://github.com/PyCalendar/icalendar/issues/112
     """
     assert (
         events.issue_112_missing_tzinfo_on_exdate["exdate"][0].dts[0].dt.tzname()
@@ -105,7 +105,7 @@ def test_timezone_name_parsed_issue_112(events):
 def test_issue_157_removes_trailing_semicolon(events):
     """Issue #157 - Recurring rules and trailing semicolons
 
-    https://github.com/collective/icalendar/pull/157
+    https://github.com/PyCalendar/icalendar/pull/157
     """
     recur = events.issue_157_removes_trailing_semicolon.decoded("RRULE")
     assert isinstance(recur, vRecur)
@@ -115,7 +115,7 @@ def test_issue_157_removes_trailing_semicolon(events):
 @pytest.mark.parametrize(
     "event_name",
     [
-        # https://github.com/collective/icalendar/pull/100
+        # https://github.com/PyCalendar/icalendar/pull/100
         ("issue_100_transformed_doctests_into_unittests"),
         ("issue_184_broken_representation_of_period"),
         # PERIOD should be put back into shape
@@ -133,7 +133,7 @@ def test_event_to_ical_is_inverse_of_from_ical(events, event_name):
 
 def test_decode_rrule_attribute_error_issue_70(events):
     # Issue #70 - e.decode("RRULE") causes Attribute Error
-    # see https://github.com/collective/icalendar/issues/70
+    # see https://github.com/PyCalendar/icalendar/issues/70
     recur = events.issue_70_rrule_causes_attribute_error.decoded("RRULE")
     assert isinstance(recur, vRecur)
     assert recur.to_ical() == b"FREQ=WEEKLY;UNTIL=20070619T225959;INTERVAL=1"
@@ -142,7 +142,7 @@ def test_decode_rrule_attribute_error_issue_70(events):
 def test_description_parsed_properly_issue_53(events):
     """Issue #53 - Parsing failure on some descriptions?
 
-    https://github.com/collective/icalendar/issues/53
+    https://github.com/PyCalendar/icalendar/issues/53
     """
     assert (
         b"July 12 at 6:30 PM"
@@ -197,7 +197,7 @@ def test_raises_value_error_for_properties_without_parent_pull_179():
     """Found an issue where from_ical() would raise IndexError for
     properties without parent components.
 
-    https://github.com/collective/icalendar/pull/179
+    https://github.com/PyCalendar/icalendar/pull/179
     """
     with pytest.raises(ValueError):
         Calendar.from_ical("VERSION:2.0")
@@ -206,7 +206,7 @@ def test_raises_value_error_for_properties_without_parent_pull_179():
 def test_tzid_parsed_properly_issue_53(timezones):
     """Issue #53 - Parsing failure on some descriptions?
 
-    https://github.com/collective/icalendar/issues/53
+    https://github.com/PyCalendar/icalendar/issues/53
     """
     assert (
         timezones.issue_53_tzid_parsed_properly["tzid"].to_ical() == b"America/New_York"
@@ -215,7 +215,7 @@ def test_tzid_parsed_properly_issue_53(timezones):
 
 def test_timezones_to_ical_is_inverse_of_from_ical(timezones):
     """Issue #55 - Parse error on utc-offset with seconds value
-    see https://github.com/collective/icalendar/issues/55"""
+    see https://github.com/PyCalendar/icalendar/issues/55"""
     timezone = timezones["issue_55_parse_error_on_utc_offset_with_seconds"]
     assert timezone.to_ical() == timezone.raw_ics
 
@@ -231,8 +231,8 @@ def test_no_tzid_when_utc(utc, date, expected_output):
     """Issue #58  - TZID on UTC DATE-TIMEs
        Issue #335 - UTC timezone identification is broken
 
-    https://github.com/collective/icalendar/issues/58
-    https://github.com/collective/icalendar/issues/335
+    https://github.com/PyCalendar/icalendar/issues/58
+    https://github.com/PyCalendar/icalendar/issues/335
     """
     # According to RFC 5545: "The TZID property parameter MUST NOT be
     # applied to DATE-TIME or TIME properties whose time values are
@@ -246,7 +246,7 @@ def test_no_tzid_when_utc(utc, date, expected_output):
 def test_vBinary_base64_encoded_issue_82():
     """Issue #82 - vBinary __repr__ called rather than to_ical from
                    container types
-    https://github.com/collective/icalendar/issues/82
+    https://github.com/PyCalendar/icalendar/issues/82
     """
     b = vBinary("text")
     b.params["FMTTYPE"] = "text/plain"
@@ -256,7 +256,7 @@ def test_vBinary_base64_encoded_issue_82():
 def test_creates_event_with_base64_encoded_attachment_issue_82(events):
     """Issue #82 - vBinary __repr__ called rather than to_ical from
                    container types
-    https://github.com/collective/icalendar/issues/82
+    https://github.com/PyCalendar/icalendar/issues/82
     """
     b = vBinary("text")
     b.params["FMTTYPE"] = "text/plain"
@@ -269,7 +269,7 @@ def test_creates_event_with_base64_encoded_attachment_issue_82(events):
     "calendar_name",
     [
         # Issue #466 - [BUG] TZID timezone is ignored when forward-slash is used
-        # https://github.com/collective/icalendar/issues/466
+        # https://github.com/PyCalendar/icalendar/issues/466
         "issue_466_respect_unique_timezone",
         "issue_466_convert_tzid_with_slash",
     ],

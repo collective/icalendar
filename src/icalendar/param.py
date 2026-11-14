@@ -5,7 +5,7 @@ Related:
 - :rfc:`5545`, Section 3.2. Property Parameters
 - :rfc:`7986`, Section 6. Property Parameters
 - :rfc:`9253`
-- https://github.com/collective/icalendar/issues/798
+- https://github.com/PyCalendar/icalendar/issues/798
 """
 
 from __future__ import annotations
@@ -241,6 +241,24 @@ Description:
     :rfc:`4516`, and MID :rfc:`2392` are the URI schemes most commonly
     used by current implementations.
 """,  # noqa: E501
+)
+
+EMAIL = string_parameter(
+    "EMAIL",
+    """Specify an email address for a calendar user.
+
+Description:
+    This parameter can be specified on the ``ORGANIZER`` and ``ATTENDEE``
+    properties. It provides an email address for identifying or contacting the
+    calendar user, which can differ from the calendar address value.
+    See :rfc:`7986#section-6.2`.
+
+    Returns ``None`` when absent. Assign ``None`` or delete this property to
+    remove the parameter.
+
+    This is distinct from :attr:`email`, which returns the
+    calendar address value without its ``mailto:`` prefix.
+""",
 )
 
 
@@ -827,6 +845,7 @@ __all__ = [
     "DELEGATED_FROM",
     "DELEGATED_TO",
     "DIR",
+    "EMAIL",
     "FBTYPE",
     "FMTTYPE",
     "GAP",

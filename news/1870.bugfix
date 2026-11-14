@@ -1,0 +1,1 @@
+Properties with quoted parameter values that contain an escaped double quote now treat it as a literal quote instead of being silently dropped. I used AI to assist me with this change. @Pushpak731

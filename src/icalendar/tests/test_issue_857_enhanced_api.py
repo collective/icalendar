@@ -48,7 +48,7 @@ def test_calendar_new_no_organization_uses_default_prodid():
     calendar = Calendar.new(name="Test Calendar")
 
     # Should use the default icalendar prodid
-    assert "collective" in calendar.prodid
+    assert "PyCalendar" in calendar.prodid
     assert "icalendar" in calendar.prodid
 
 

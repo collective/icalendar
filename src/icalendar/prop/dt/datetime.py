@@ -5,7 +5,7 @@ from typing import Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.adapter import ElementAdapter
 from icalendar.parser.xcal.base import XCalParser
@@ -120,7 +120,17 @@ class vDatetime(TimeBase):
 
     @staticmethod
     def from_ical(ical, timezone=None):
-        """Create a datetime from the RFC string."""
+        """Create a datetime from the RFC string.
+
+        Parameters:
+            ical (str | bytes): Required. The iCalendar DATE-TIME value to parse.
+            timezone (str | datetime.tzinfo | None): The time zone name or object
+                used to localize the result. If ``None``, a trailing ``Z`` selects
+                UTC and other values remain floating.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid DATE-TIME.
+        """
         ical = to_unicode(ical)
         tzinfo = None
         if isinstance(timezone, str):
@@ -134,7 +144,10 @@ class vDatetime(TimeBase):
         ical_value = ical.rpartition(":")[2]
 
         if len(ical_value) < 15 or ical_value[8] != "T":
-            raise ValueError(f"Wrong datetime format: {ical}")
+            raise ICalParsingError(
+                "Wrong datetime format",
+                value=ical,
+            )
 
         try:
             timetuple = (
@@ -152,8 +165,14 @@ class vDatetime(TimeBase):
             if ical_value[15:] == "Z":
                 return tzp.localize_utc(datetime(*timetuple))
         except Exception as e:
-            raise ValueError(f"Wrong datetime format: {ical}") from e
-        raise ValueError(f"Wrong datetime format: {ical}")
+            raise ICalParsingError(
+                "Wrong datetime format",
+                value=ical,
+            ) from e
+        raise ICalParsingError(
+            "Wrong datetime format",
+            value=ical,
+        )
 
     @classmethod
     def examples(cls) -> list[Self]:
@@ -271,6 +290,38 @@ class vDatetime(TimeBase):
         if utc:
             dt = tzp.localize_utc(dt)
         return dt
+
+    @property
+    def ical_value(self) -> datetime:
+        """The datetime value of this property.
+
+        Returns:
+            The datetime of the property. If its ``tzinfo`` was set, then it's timezone-aware, else it's naive and set to ``None``.
+
+        Examples:
+            The following represents a datetime where ``tzinfo`` is set to ``None``:
+
+            ..  code-block:: pycon
+
+                >>> from datetime import datetime, timezone
+                >>> from icalendar import vDatetime
+                >>> naive = vDatetime(datetime(2025, 11, 10, 16, 52))
+                >>> naive.ical_value
+                datetime.datetime(2025, 11, 10, 16, 52)
+                >>> print(naive.ical_value.tzinfo)
+                None
+
+            The following represents a datetime where ``tzinfo`` is set to ``timezone.utc``:
+
+            ..  code-block:: pycon
+
+                >>> aware = vDatetime(datetime(2025, 11, 10, 16, 52, tzinfo=timezone.utc))
+                >>> aware.ical_value
+                datetime.datetime(2025, 11, 10, 16, 52, tzinfo=datetime.timezone.utc)
+                >>> print(aware.ical_value.tzinfo)
+                UTC
+        """
+        return self.dt
 
     @classmethod
     @from_xcal_wrapper
