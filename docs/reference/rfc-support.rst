@@ -38,4 +38,7 @@ The maintainers of icalendar do not claim compatibility with the following RFCs.
 :rfc:`6350`
     vCard 4.0. See :issue:`859`.
 :rfc:`9073`
-    Event Publishing Extensions to iCalendar. This might work partially. See :issue:`656`.
+    Event Publishing Extensions to iCalendar.
+    Support is partial: :class:`~icalendar.cal.location.Location` supports ``VLOCATION`` with ``UID``, ``NAME``, ``DESCRIPTION``, ``GEO``, and multiple values in ``LOCATION-TYPE``.
+    See :ref:`add-multiple-locations` for examples.
+    The remaining extensions are tracked in :issue:`656`.

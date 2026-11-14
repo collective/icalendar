@@ -96,6 +96,21 @@ def test_non_calendar_components_are_parsed_correctly(component_name):
     assert not component.is_lazy()
 
 
+@pytest.mark.parametrize("component_name", ["VALARM", "X-COMPONENT"])
+def test_repeated_nested_component_search(component_name):
+    """Nested components remain searchable after their parent is cached."""
+    calendar = LazyCalendar.from_ical(
+        "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\n"
+        f"BEGIN:{component_name}\r\nEND:{component_name}\r\n"
+        "END:VEVENT\r\nEND:VCALENDAR\r\n"
+    )
+    first = calendar.walk(component_name)
+    assert len(first) == 1
+    assert calendar.walk(component_name)[0] is first[0]
+    assert len(calendar.walk("VEVENT")) == 1
+    assert calendar.walk(component_name)[0] is first[0]
+
+
 def test_big_calendar_is_initially_lazy(lazy_calendars):
     """Test that the BigCalendar is initially lazy."""
     calendar = lazy_calendars.example

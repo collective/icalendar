@@ -6,6 +6,7 @@ and also https://github.com/PyCalendar/icalendar/issues/657
 
 import pytest
 
+from icalendar import Location
 from icalendar.prop import vDDDTypes, vText
 
 
@@ -41,4 +42,7 @@ def test_proximity(events):
     assert alarm["PROXIMITY"] == "DEPART"
     assert len(alarm.subcomponents) == 1
     location = alarm.subcomponents[0]
+    assert isinstance(location, Location)
     assert location["UID"] == "123456-abcdef-98765432"
+    assert location["NAME"] == "Office"
+    assert location["URL"] == "geo:40.443,-79.945;u=10"

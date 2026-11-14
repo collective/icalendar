@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, ClassVar
 from icalendar.error import ICalParsingError, InvalidToken
 from icalendar.parser.content_line import Contentline, Contentlines
 from icalendar.parser.property import split_on_unescaped_comma
-from icalendar.prop import vBroken
+from icalendar.prop import vBroken, vCategory
 from icalendar.timezone import tzp
 
 if TYPE_CHECKING:
@@ -208,12 +208,11 @@ class ComponentIcalParser:
         tzid = params.get("TZID") if params and name in self.datetime_names else None
 
         # Handle special cases for value list preparation
-        if name == "CATEGORIES":
-            if self.handle_categories(params, vals, line):
-                return
-            # Fallback to normal processing if we can't find colon
-            vals_list = [vals]
-        elif name == "FREEBUSY":
+        if name == "CATEGORIES" and self.handle_categories(params, vals, line):
+            return
+        if name == "LOCATION-TYPE" and self._handle_text_list(name, params, line):
+            return
+        if name == "FREEBUSY":
             # Handle FREEBUSY comma-separated values
             vals_list = vals.split(",")
         # Workaround broken ICS files with empty RDATE
@@ -283,13 +282,26 @@ class ComponentIcalParser:
     def handle_categories(
         self, params: Parameters, vals: str, line: Contentline
     ) -> bool:
-        """Handle the special case of CATEGORIES property.
+        """Handle the special case of the CATEGORIES property.
+
+        Parameters:
+            params: The parameters of the property.
+            vals: The value of the property.
+            line: The original content line.
 
         Returns:
             ``True`` if handled, else ``False``.
         """
-        # Special handling for CATEGORIES - need raw value
-        # before unescaping to properly split on unescaped commas
+        return self._handle_text_list("CATEGORIES", params, line)
+
+    def _handle_text_list(
+        self, name: str, params: Parameters, line: Contentline
+    ) -> bool:
+        """Parse a comma-separated TEXT list from its original content line."""
+        factory = self.get_factory_for_property(name, params)
+        if not issubclass(factory, vCategory):
+            return False
+        # Use the raw value to split on commas before unescaping text.
         line_str = str(line)
         # The value separator is the first colon outside a quoted parameter
         # section. ``rfind`` here would pick a colon that belongs to the value
@@ -297,18 +309,12 @@ class ComponentIcalParser:
         colon_idx = line.value_separator_index()
         if colon_idx > 0:
             raw_value = line_str[colon_idx + 1 :]
-            # Parse categories immediately (not lazily) for both
-            # strict and tolerant components.
-            # CATEGORIES needs special comma handling
             try:
                 category_list = split_on_unescaped_comma(raw_value)
-                factory = self.get_factory_for_property("CATEGORIES", params)
                 vals_inst = factory(category_list)
                 vals_inst.params = params
-                self.component.add("CATEGORIES", vals_inst, encode=0)
+                self.component.add(name, vals_inst, encode=0)
             except ValueError as e:
-                self.handle_property_parse_error(
-                    e, "CATEGORIES", params, raw_value, line
-                )
+                self.handle_property_parse_error(e, name, params, raw_value, line)
             return True
         return False

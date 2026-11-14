@@ -597,6 +597,64 @@ The following example filters through all subcomponents of the calendar, and if 
     >>> print(calendar.events[1].summary)
     ORTHODOX CHRISTMAS
 
+.. _add-multiple-locations:
+
+Add multiple locations
+''''''''''''''''''''''
+
+Use a :class:`~icalendar.cal.location.Location` for each distinct place associated with an event or task, as defined in :rfc:`9073#section-7.2`.
+Each location requires a ``UID`` and can have a ``NAME``, ``DESCRIPTION``, ``GEO``, and ``LOCATION-TYPE``.
+The ``name`` attribute identifies the component as ``VLOCATION``; access its display name through ``location["NAME"]``.
+
+Create a hotel that also has a restaurant.
+Pass a list to ``LOCATION-TYPE`` to describe multiple types of the same place.
+
+.. code-block:: pycon
+
+    >>> from icalendar import Calendar, Event, Location, Todo
+    >>> from datetime import datetime, timezone
+    >>> event = Event.new(
+    ...     uid="conference@example.com",
+    ...     summary="Conference",
+    ...     start=datetime(2026, 1, 15, 12, tzinfo=timezone.utc),
+    ... )
+    >>> hotel = Location()
+    >>> hotel.add("uid", "hotel@example.com")
+    >>> hotel.add("name", "Central Hotel")
+    >>> hotel.add("description", "Hotel and restaurant for the conference")
+    >>> hotel.add("geo", (48.2, 16.37))
+    >>> hotel.add("location-type", ["hotel", "restaurant"])
+    >>> hotel["LOCATION-TYPE"].to_ical()
+    b'hotel,restaurant'
+    >>> event.add_component(hotel)
+
+Represent the nearby car park as a separate location.
+
+.. code-block:: pycon
+
+    >>> parking = Location()
+    >>> parking.add("uid", "parking@example.com")
+    >>> parking.add("name", "Conference parking")
+    >>> parking.add("location-type", "parking")
+    >>> event.add_component(parking)
+    >>> calendar = Calendar.new(subcomponents=[event])
+    >>> restored = Calendar.from_ical(calendar.to_ical())
+    >>> [str(place["NAME"]) for place in restored.events[0].walk("VLOCATION")]
+    ['Central Hotel', 'Conference parking']
+
+Use the same methods to associate a location with a :class:`~icalendar.cal.todo.Todo`.
+
+.. code-block:: pycon
+
+    >>> task = Todo.new(uid="delivery@example.com", summary="Deliver supplies")
+    >>> task.add_component(hotel)
+    >>> str(task.walk("VLOCATION")[0]["NAME"])
+    'Central Hotel'
+
+This supports the location properties listed above.
+Support for the remaining extensions in RFC 9073 is described in :doc:`/reference/rfc-support`.
+
+
 Add timezones to a calendar
 '''''''''''''''''''''''''''
 
