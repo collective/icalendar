@@ -1,0 +1,1 @@
+Fixed broken documentation links to :class:`~icalendar.cal.event.Event` and :class:`~icalendar.cal.todo.Todo` in :class:`~icalendar.prop.recur.recur.vRecur` docstring. @dyno511
