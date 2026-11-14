@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   icalendar.attr
    icalendar.cal
    icalendar.parser
    icalendar.prop
@@ -19,7 +20,6 @@ Submodules
    :maxdepth: 4
 
    icalendar.alarms
-   icalendar.attr
    icalendar.caselessdict
    icalendar.cli
    icalendar.compatibility

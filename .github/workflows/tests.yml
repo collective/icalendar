@@ -46,15 +46,17 @@ jobs:
       run: echo "Skipped ${{ matrix.test_name }} (not required for this trigger)"
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       if: ${{ !matrix.skip }}
+      with:
+        fetch-tags: true
     - name: Install uv and Python ${{ matrix.python_version }}
       if: ${{ !matrix.skip }}
-      uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         # zizmor: ignore[cache-poisoning] - run-tests does not produce release artifacts
         enable-cache: true
         # UV_VERSION can be set in the repository settings:
         # Settings -> Secrets and variables -> Actions or click here:
-        # https://github.com/collective/icalendar/settings/variables/actions
+        # https://github.com/PyCalendar/icalendar/settings/variables/actions
         # -> Variables -> UV_VERSION
         version: "${{ vars.UV_VERSION }}"
         python-version: ${{ matrix.python_version }}
@@ -103,7 +105,7 @@ jobs:
       with:
         persist-credentials: false
     - name: Install uv and Python
-      uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         enable-cache: false
         version: "0.11.6"
@@ -127,12 +129,12 @@ jobs:
         name: built-packages
         path: dist
     - name: Install uv and Python 3.14
-      uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         enable-cache: false
         # UV_VERSION can be set in the repository settings:
         # Settings -> Secrets and variables -> Actions or click here:
-        # https://github.com/collective/icalendar/settings/variables/actions
+        # https://github.com/PyCalendar/icalendar/settings/variables/actions
         # -> Variables -> UV_VERSION
         version: "${{ vars.UV_VERSION }}"
         python-version: "3.14"

@@ -24,7 +24,7 @@ def test_x_property_broken_value():
     """X-properties with VALUE=PERIOD but invalid content should yield vBroken (issue #1238).
 
     View the discussion:
-    https://github.com/collective/icalendar/pull/1288#discussion_r2962648845
+    https://github.com/PyCalendar/icalendar/pull/1288#discussion_r2962648845
     """
 
     cal_str = "BEGIN:VCALENDAR\r\nX-FILTER-DATE-RANGE;VALUE=PERIOD:this-is-not-a-period\r\nEND:VCALENDAR\r\n"

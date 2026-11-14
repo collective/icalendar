@@ -61,7 +61,7 @@ def _to_valid_xml_string(string: str) -> str:
 
         `XML Character Range <https://www.w3.org/TR/REC-xml/#charsets>`_,
         `~icalendar.prop.text._strip_unsafe_text_chars`,
-        `Issue 1888 <https://github.com/collective/icalendar/issues/1888>`_,
+        `Issue 1888 <https://github.com/PyCalendar/icalendar/issues/1888>`_,
     """
     return _INVALID_XML_CHARACTERS.sub("", string)
 

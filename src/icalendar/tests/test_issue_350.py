@@ -1,6 +1,6 @@
 """Issue #350 - Ignore X-... properties also at end of file?
 
-https://github.com/collective/icalendar/issues/350
+https://github.com/PyCalendar/icalendar/issues/350
 """
 
 
