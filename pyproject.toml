@@ -109,6 +109,7 @@ dev = [
 test = [
     "coverage",
     "hypothesis",
+    "langcodes",
     "mypy>=1.0",
     "pytest",
     "pytz>=2025.2",

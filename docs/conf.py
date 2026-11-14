@@ -27,6 +27,9 @@ extensions = [
 ]
 source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
+suppress_warnings = [
+    "design.card_legacy",
+]
 
 project = "icalendar"
 this_year = datetime.date.today().year  # noqa: DTZ011
