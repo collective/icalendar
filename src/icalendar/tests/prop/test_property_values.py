@@ -3,6 +3,7 @@
 from datetime import datetime
 
 from icalendar.cal.event import Event
+from icalendar.prop import vUri
 
 
 def test_vDDDLists_timezone(tzp):
@@ -17,3 +18,12 @@ def test_vDDDLists_timezone(tzp):
 
     assert b"RDATE;TZID=Europe/Vienna:20130101T000000,20130102T000000" in ical
     assert b"EXDATE;TZID=Europe/Vienna:20130103T000000" in ical
+
+
+def test_vUri_ical_value():
+    """Test the string value returned by vUri.ical_value."""
+    direct = vUri("https://example.com/resource", params={"VALUE": "URI"})
+    parsed = vUri.from_ical("https://example.com/resource")
+
+    assert direct.ical_value == "https://example.com/resource"
+    assert parsed.ical_value == "https://example.com/resource"
