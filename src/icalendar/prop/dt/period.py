@@ -96,7 +96,7 @@ class vPeriod(TimeBase):
     Raises:
         TypeError: If the start is not a date or a datetime, or if the end is
             not a date, a datetime, or a duration.
-        ValueError: If the start is after the end.
+        ValueError: If the start is after or equal to the end.
 
     Examples:
         A period from 18:00:00 UTC on January 1, 1997 to 07:00:00 UTC on
@@ -163,6 +163,8 @@ class vPeriod(TimeBase):
             duration = normalize_pytz(end - start)
         if start > end:
             raise ValueError("Start time is greater than end time")
+        if not isinstance(end_or_duration, timedelta) and start == end:
+            raise ValueError("Start time is equal to end time")
 
         self.params = Parameters(params or {"value": "PERIOD"})
         # set the timezone identifier
@@ -198,7 +200,16 @@ class vPeriod(TimeBase):
             end_or_duration = vDDDTypes.from_ical(end_or_duration, timezone=timezone)
         except Exception as e:
             raise ValueError(f"Expected period format, got: {ical}") from e
-        return _to_period_datetimes(start, end_or_duration)
+        start, end_or_duration = _to_period_datetimes(start, end_or_duration)
+        if isinstance(end_or_duration, timedelta):
+            end = normalize_pytz(start + end_or_duration)
+        else:
+            end = end_or_duration
+        if start > end:
+            raise ValueError("Start time is greater than end time")
+        if not isinstance(end_or_duration, timedelta) and start == end:
+            raise ValueError("Start time is equal to end time")
+        return start, end_or_duration
 
     def __repr__(self) -> str:
         p = (self.start, self.duration) if self.by_duration else (self.start, self.end)
