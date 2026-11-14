@@ -1,0 +1,1 @@
+Fix jCal and xCal parameter serialization when parameters such as MEMBER, DELEGATED-TO, and DELEGATED-FROM are stored as tuples. @RajGahoi
