@@ -243,6 +243,9 @@ BROKEN_SOURCE_FILES = (
     "pr_480_summary_with_colon.ics",
     "parsing_error_in_UTC_offset.ics",
     "parsing_error.ics",
+    "pr_2047_vtimezone_secondly_rrule_ical.ics",
+    "pr_2047_vtimezone_secondly_rrule_jcal.jcal",
+    "pr_2047_vtimezone_secondly_rrule_xcal.xml",
 )
 
 

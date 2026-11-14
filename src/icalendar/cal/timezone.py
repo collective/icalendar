@@ -131,6 +131,28 @@ class Timezone(Component):
             is_dst = 1
         return is_dst, transitions
 
+    def _check_rrule_frequency(self) -> None:
+        """Check that the timezone components only repeat yearly.
+
+        Timezones created from a VTIMEZONE expand its RRULE from DTSTART,
+        so an RRULE such as ``FREQ=SECONDLY`` could exhaust memory and CPU.
+
+        Raises:
+            ValueError: If an RRULE has a frequency other than ``YEARLY``.
+        """
+        for component in self.walk():
+            if isinstance(component, Timezone):
+                continue
+            ical_rrules = component.get("RRULE", [])
+            if not isinstance(ical_rrules, list):
+                ical_rrules = [ical_rrules]
+            for ical_rrule in ical_rrules:
+                if ical_rrule.get("FREQ") != ["YEARLY"]:
+                    raise ValueError(
+                        "Invalid iCalendar VTIMEZONE: expected an RRULE with"
+                        f" FREQ=YEARLY, got {ical_rrule.to_ical().decode()!r}."
+                    )
+
     @staticmethod
     def _make_unique_tzname(tzname, tznames):
         """
@@ -157,6 +179,7 @@ class Timezone(Component):
             tz = tzp.timezone(self.tz_name)
             if tz is not None:
                 return tz
+        self._check_rrule_frequency()
         return tzp.create_timezone(self)
 
     @property
@@ -180,6 +203,7 @@ class Timezone(Component):
         - transition_info = [(TZOFFSETTO, dts_offset, tzname)]
 
         """
+        self._check_rrule_frequency()
         zone = self.tz_name
         transitions = []
         dst = {}
