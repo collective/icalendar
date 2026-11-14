@@ -79,6 +79,11 @@ class vUri(str):
         return self
 
     def to_ical(self) -> bytes:
+        """Return the URI encoded for iCalendar content.
+
+        Returns:
+            The encoded URI as bytes.
+        """
         return self.encode(DEFAULT_ENCODING)
 
     @classmethod
