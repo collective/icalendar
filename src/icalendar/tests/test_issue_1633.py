@@ -193,5 +193,5 @@ def test_an_end_date_before_the_start_is_rejected():
     the start, so the period is invalid. Reading the end as the end of that
     day would invent a duration the calendar never stated.
     """
-    with pytest.raises(ValueError, match="Start time is greater than end time"):
+    with pytest.raises(ValueError, match="Start time is not before end time"):
         vPeriod(vPeriod.from_ical("19970102T120000Z/19970102"))

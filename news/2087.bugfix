@@ -1,0 +1,1 @@
+:class:`~icalendar.prop.dt.period.vPeriod` now rejects a zero-length period whose end equals its start, as :rfc:`5545#section-3.3.9` requires the end to come after the start.

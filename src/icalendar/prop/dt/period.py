@@ -161,8 +161,8 @@ class vPeriod(TimeBase):
         else:
             end = end_or_duration
             duration = normalize_pytz(end - start)
-        if start > end:
-            raise ValueError("Start time is greater than end time")
+        if start >= end:
+            raise ValueError("Start time is not before end time")
 
         self.params = Parameters(params or {"value": "PERIOD"})
         # set the timezone identifier
@@ -334,7 +334,7 @@ class vPeriod(TimeBase):
             if duration_element is None:
                 raise XCalParsingError("Expected <end> or <duration>", None, element)
             end = vDuration.from_xcal(duration_element).td
-            if end < timedelta(0):
+            if end <= timedelta(0):
                 raise XCalParsingError(
                     "Expected positive duration",
                     duration_element.get_xsd_token(),

@@ -55,12 +55,28 @@ def test_timezoned_with_timedelta(tzp):
         ((datetime(2000, 1, 1), "20000102T000000"), TypeError),
         ((datetime(2000, 1, 2), datetime(2000, 1, 1)), ValueError),
         ((datetime(2000, 1, 2), timedelta(-1)), ValueError),
+        # a zero-length period has no end after its start (#2087)
+        ((datetime(2000, 1, 1), datetime(2000, 1, 1)), ValueError),
+        ((datetime(2000, 1, 1), timedelta(0)), ValueError),
     ],
 )
 def test_invalid_parameters(period, error):
     """The parameters are of wrong type or of wrong order."""
     with pytest.raises(error):
         vPeriod(period)
+
+
+def test_a_zero_length_period_is_rejected():
+    """A period whose end equals its start is rejected, like a reversed one.
+
+    :rfc:`5545#section-3.3.9` requires the end to come after the start, so
+    a period with no length is as invalid as one that runs backwards (#2087).
+    """
+    start = datetime(2026, 11, 10, 10, 0)
+    with pytest.raises(ValueError, match="Start time is not before end time"):
+        vPeriod((start, start))
+    with pytest.raises(ValueError, match="Start time is not before end time"):
+        vPeriod((start, timedelta(0)))
 
 
 def test_ical_value_with_end():
