@@ -1,0 +1,1 @@
+Honor a legacy ``CHARSET`` property parameter when parsing bytes: a value that declares its encoding (e.g. ``SUMMARY;CHARSET=ISO-8859-1:...``) now decodes with that charset instead of coming back as U+FFFD replacement characters. I used AI to help with this change. @rahul05ranjan

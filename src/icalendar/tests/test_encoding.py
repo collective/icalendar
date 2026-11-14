@@ -2,6 +2,8 @@ import datetime
 
 import pytest
 
+from icalendar import Calendar
+
 
 @pytest.mark.parametrize(
     ("field", "expected_value"),
@@ -96,3 +98,46 @@ def test_apple_xlocation(calendars):
     """
     for event in calendars.x_location.walk("vevent"):
         assert len(event.errors) == 0, "Got too many errors"
+
+
+def test_charset_parameter_decodes_legacy_non_utf8_value_issue_2078():
+    """A legacy CHARSET parameter declares the encoding of the property
+    value: latin-1 bytes decode with the declared charset instead of
+    coming back as U+FFFD replacement characters (issue #2078).
+    """
+    ics = (
+        b"BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//t//EN\r\n"
+        b"BEGIN:VEVENT\r\nUID:1\r\nDTSTART:20261108T190000Z\r\n"
+        b"SUMMARY;CHARSET=ISO-8859-1:Caf\xe9 Meeting\r\n"
+        b"END:VEVENT\r\nEND:VCALENDAR\r\n"
+    )
+    event = Calendar.from_ical(ics).walk("VEVENT")[0]
+    assert str(event["SUMMARY"]) == "Caf\u00e9 Meeting"
+
+
+def test_unknown_charset_falls_back_gracefully_issue_2078():
+    """An unknown CHARSET must not raise; the value degrades exactly as
+    it did before the CHARSET parameter was honored (issue #2078)."""
+    ics = (
+        b"BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//t//EN\r\n"
+        b"BEGIN:VEVENT\r\nUID:1\r\n"
+        b"SUMMARY;CHARSET=BOGUS-XYZ:Caf\xe9 Meeting\r\n"
+        b"END:VEVENT\r\nEND:VCALENDAR\r\n"
+    )
+    event = Calendar.from_ical(ics).walk("VEVENT")[0]
+    assert "Meeting" in str(event["SUMMARY"])
+
+
+def test_charset_text_inside_quoted_param_value_is_not_a_directive_issue_2078():
+    """UTF-8 text with a quoted parameter value mentioning CHARSET= must
+    still decode as UTF-8, not as the encoding named in the quotes."""
+    summary = "Caf\u00e9 Meeting"
+    ics = (
+        b"BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//t//EN\r\n"
+        b"BEGIN:VEVENT\r\nUID:1\r\n"
+        b'SUMMARY;ALTREP="cid:x;CHARSET=ISO-8859-1":'
+        + summary.encode("utf-8")
+        + b"\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n"
+    )
+    event = Calendar.from_ical(ics).walk("VEVENT")[0]
+    assert str(event["SUMMARY"]) == summary

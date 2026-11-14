@@ -18,6 +18,11 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 # to the first line break of a run, making a failed attempt O(1) instead of a
 # full rescan, while matching exactly the same strings.
 UFOLD = re.compile(r"(?:(?<!\n)\r\n|(?<![\r\n])\n)(?:\r?\n)*[ \t]")
+NEWLINE_BYTES = re.compile(rb"\r?\n")
+# a legacy CHARSET parameter declares the encoding of one property value
+CHARSET_PARAM_BYTES = re.compile(
+    rb";[ \t]*CHARSET[ \t]*=[ \t]*([^;:\r\n]+)", re.IGNORECASE
+)
 NEWLINE = re.compile(r"\r?\n")
 
 OWS = " \t"
@@ -119,6 +124,32 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
         out.extend(pending_ws)
 
     return "".join(out).strip()
+
+
+def _decode_with_charset(value: bytes) -> str:
+    """Decode content lines, honoring a legacy ``CHARSET`` parameter.
+
+    When the input is not valid UTF-8 as a whole, decode each content
+    line with the charset its ``CHARSET`` parameter declares, so a value
+    that names its encoding does not come back as U+FFFD. Lines without
+    a ``CHARSET`` parameter (or with an unknown one) keep the previous
+    best-effort UTF-8 decoding.
+    """
+    lines = []
+    for line in NEWLINE_BYTES.split(value):
+        # the parameters end at the first colon: a parameter VALUE quoting
+        # the text "CHARSET=..." must not select an encoding
+        head, _sep, _tail = line.partition(b":")
+        match = CHARSET_PARAM_BYTES.search(head)
+        if match:
+            charset = match.group(1).decode("ascii", "replace").strip().strip('"')
+            try:
+                lines.append(line.decode(charset))
+                continue
+            except (LookupError, UnicodeDecodeError):
+                pass
+        lines.append(to_unicode(line))
+    return "\r\n".join(lines)
 
 
 class Contentline(str):
@@ -318,7 +349,9 @@ class Contentline(str):
     @classmethod
     def from_ical(cls, ical, strict=False):
         """Unfold the content lines in an iCalendar into long content lines."""
-        ical = to_unicode(ical)
+        ical = (
+            _decode_with_charset(ical) if isinstance(ical, bytes) else to_unicode(ical)
+        )
         # a fold is carriage return followed by either a space or a tab
         return cls(UFOLD.sub("", ical), strict=strict)
 
@@ -342,7 +375,7 @@ class Contentlines(list[Contentline]):
     @classmethod
     def from_ical(cls, st):
         """Parses a string into content lines."""
-        st = to_unicode(st)
+        st = _decode_with_charset(st) if isinstance(st, bytes) else to_unicode(st)
         try:
             # a fold is carriage return followed by either a space or a tab
             unfolded = UFOLD.sub("", st)
