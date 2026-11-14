@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
@@ -53,10 +53,18 @@ class vFrequency(str):
 
     @classmethod
     def from_ical(cls, ical: str | bytes) -> Self:
+        """Parse an iCalendar frequency value.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid frequency.
+        """
         try:
             return cls(ical.upper())
         except Exception as e:
-            raise ValueError(f"Expected frequency, got: {ical}") from e
+            raise ICalParsingError(
+                "Expected frequency",
+                value=ical,
+            ) from e
 
     @classmethod
     def parse_jcal_value(cls, value: Any) -> Self:

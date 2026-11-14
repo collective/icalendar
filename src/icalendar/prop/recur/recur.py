@@ -7,7 +7,12 @@ from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
+from icalendar.error import (
+    ICalParsingError,
+    InvalidCalendar,
+    JCalParsingError,
+    XCalParsingError,
+)
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
@@ -245,6 +250,11 @@ class vRecur(CaselessDict):
 
     @classmethod
     def from_ical(cls, ical: str):
+        """Parse an iCalendar recurrence rule.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the recurrence rule is invalid.
+        """
         if isinstance(ical, cls):
             return ical
         try:
@@ -259,10 +269,13 @@ class vRecur(CaselessDict):
                 key = cls._normalize_key(key)
                 recur[key] = cls.parse_type(key, vals)
             return cls(recur)
-        except ValueError:
+        except ICalParsingError:
             raise
         except Exception as e:
-            raise ValueError(f"Error in recurrence rule: {ical}") from e
+            raise ICalParsingError(
+                "Error in recurrence rule",
+                value=ical,
+            ) from e
 
     @classmethod
     def examples(cls) -> list[Self]:
