@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+from icalendar.error import JCalParsingError
 from icalendar.prop import vN
 from icalendar.prop.n import NFields
 
@@ -54,8 +55,25 @@ class TestVNCreation:
         assert n.fields.suffix == "Jr."
 
 
+class TestVNEquality:
+    """Test vN equality."""
+
+    @pytest.mark.parametrize(
+        ("other", "expected"),
+        [
+            (vN("Doe;John;M.;Dr.;Jr."), True),
+            (vN("Roe;John;M.;Dr.;Jr."), False),
+            ("Doe;John;M.;Dr.;Jr.", False),
+        ],
+    )
+    def test_n_equality(self, other, expected):
+        """Only names with matching fields compare equal."""
+        n = vN(("Doe", "John", "M.", "Dr.", "Jr."))
+        assert (n == other) is expected
+
+
 class TestVNSerialization:
-    """Test vN to_ical and from_ical."""
+    """Test vN serialization."""
 
     def test_n_to_ical(self):
         """N to_ical generates semicolon-separated format."""
@@ -68,6 +86,24 @@ class TestVNSerialization:
         result = vN.from_ical("Doe;John;M.;Dr.;Jr.")
         assert isinstance(result, NFields)
         assert result == NFields("Doe", "John", "M.", "Dr.", "Jr.")
+
+    @pytest.mark.parametrize("ical", ["Doe;John;M.;Dr.", "Doe;John;M.;Dr.;Jr.;extra"])
+    def test_n_from_ical_requires_5_fields(self, ical):
+        """Reject names with too few or too many fields."""
+        with pytest.raises(ValueError, match="N must have exactly 5 fields"):
+            vN.from_ical(ical)
+
+    @pytest.mark.parametrize(
+        "fields",
+        [
+            ["Doe", "John", "M.", "Dr."],
+            ["Doe", "John", "M.", "Dr.", "Jr.", "extra"],
+        ],
+    )
+    def test_n_from_jcal_requires_5_fields(self, fields):
+        """Reject jCal names with too few or too many fields."""
+        with pytest.raises(JCalParsingError, match="N must have 8 elements"):
+            vN.from_jcal(["n", {}, "text", *fields])
 
     def test_n_round_trip(self):
         """N survives round-trip through to_ical and from_ical."""
