@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import sys
 from contextlib import contextmanager, suppress
 from copy import copy, deepcopy
 from io import BytesIO
@@ -23,10 +24,23 @@ if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
 # The text is already decoded, so an encoding in the XML declaration does not apply.
-_DECLARED_ENCODING = re.compile(
-    r"""^(\ufeff?<\?xml\s[^>]*?)\s+encoding\s*=\s*("[^"]*"|'[^']*')""",
+# A single ``\s`` before ``encoding`` keeps the match linear.
+# The whitespace that stays in the declaration is valid XML.
+_DECLARED_ENCODING_PY310 = re.compile(
+    r"""^(\ufeff?<\?xml\s[^>]*?)\sencoding\s*=\s*("[^"]*"|'[^']*')""",
     re.ASCII,
 )
+if sys.version_info >= (3, 11):
+    # Possessive quantifiers match the declaration as alternating runs of
+    # whitespace and other characters that are never given back, so the match is
+    # linear and all whitespace before ``encoding`` is removed.
+    _DECLARED_ENCODING = re.compile(
+        r"""^(\ufeff?<\?xml\s[^\s>]*+(?:\s++[^\s>]++)*?)\s++encoding\s*+=\s*+"""
+        r"""("[^"]*+"|'[^']*+')""",
+        re.ASCII,
+    )
+else:
+    _DECLARED_ENCODING = _DECLARED_ENCODING_PY310
 # Bytes are decoded with the encoding of their XML declaration.
 _DECLARED_ENCODING_OF_BYTES = re.compile(
     rb"""^<\?xml\s[^>]*?\sencoding\s*=\s*["']([A-Za-z][A-Za-z0-9._-]*)["']"""
