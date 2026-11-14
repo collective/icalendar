@@ -564,7 +564,7 @@ def single_string_property(
     def fset(self: Component, value: str | None):
         """Set the value.
 
-        Setting the value to None will delete it.
+        Setting the value to ``None`` will delete it.
         """
         if value is not None:
             if not isinstance(value, (str, UUID)):
