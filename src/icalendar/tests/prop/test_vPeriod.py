@@ -54,6 +54,7 @@ def test_timezoned_with_timedelta(tzp):
         (("20000101T000000", datetime(2000, 1, 2)), TypeError),
         ((datetime(2000, 1, 1), "20000102T000000"), TypeError),
         ((datetime(2000, 1, 2), datetime(2000, 1, 1)), ValueError),
+        ((datetime(2000, 1, 1), datetime(2000, 1, 1)), ValueError),
         ((datetime(2000, 1, 2), timedelta(-1)), ValueError),
     ],
 )

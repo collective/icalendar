@@ -1,0 +1,1 @@
+Reject zero-length periods in vPeriod and vPeriod.from_ical when start and end datetimes are identical. @RajGahoi
