@@ -44,7 +44,7 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Callable, Iterable
 
     from icalendar.compatibility import Self
 
@@ -272,11 +272,11 @@ class Component(CaselessDict):
         """Returns True, CaselessDict would return False if it had no items."""
         return True
 
-    def __getitem__(self, key) -> VPROPERTY:
+    def __getitem__(self, key: str) -> VPROPERTY:
         """Get property value from the component dictionary."""
         return super().__getitem__(key)
 
-    def get(self, key, default=None) -> Any:
+    def get(self, key: str, default: Any = None) -> Any:
         """Get property value with default."""
         try:
             return self[key]
@@ -344,7 +344,7 @@ class Component(CaselessDict):
         self,
         name: str,
         value,
-        parameters: dict[str, str] | Parameters = None,
+        parameters: dict[str, str] | Parameters | None = None,
         encode: bool = True,
     ) -> None:
         """Add a property to this component.
@@ -460,7 +460,7 @@ class Component(CaselessDict):
             return [self._decode(name, val) for val in vals]
         return vals
 
-    def set_inline(self, name, values, encode=1):
+    def set_inline(self, name: str, values: list, encode: int = 1) -> None:
         """Converts a list of values into comma separated string and sets value
         to that.
         """
@@ -476,7 +476,7 @@ class Component(CaselessDict):
         self.subcomponents.append(component)
 
     def _walk(
-        self, name: str | None, select: callable[[Component], bool]
+        self, name: str | None, select: Callable[[Component], bool]
     ) -> list[Component]:
         """Walk to given component."""
         result = []
@@ -491,7 +491,7 @@ class Component(CaselessDict):
     def walk(
         self,
         name: str | None = None,
-        select: callable[[Component], bool] = lambda _: True,
+        select: Callable[[Component], bool] = lambda _: True,
     ) -> list[Component]:
         """Return this component and its subcomponents that match the filters.
 
@@ -524,7 +524,7 @@ class Component(CaselessDict):
         """
         return self.walk(select=lambda c: c.uid == uid)
 
-    def _validate_name(self):
+    def _validate_name(self) -> None:
         """Make sure the component has a name.
 
         Raises:
@@ -645,12 +645,14 @@ class Component(CaselessDict):
             return f"{error_description}: {bad_input[:truncate_to]} {elipsis}"
         return f"{error_description}: {bad_input}"
 
-    def content_line(self, name, value, sorted: bool = True):
+    def content_line(
+        self, name: str, value: object, sorted: bool = True
+    ) -> Contentline:
         """Returns property as content line."""
         params = getattr(value, "params", Parameters())
         return Contentline.from_parts(name, params, value, sorted=sorted)
 
-    def content_lines(self, sorted: bool = True):
+    def content_lines(self, sorted: bool = True) -> Contentlines:
         """Converts the Component and subcomponents into content lines."""
         contentlines = Contentlines()
         for name, value in self.property_items(sorted=sorted):
@@ -659,7 +661,7 @@ class Component(CaselessDict):
         contentlines.append("")  # remember the empty string in the end
         return contentlines
 
-    def to_ical(self, sorted: bool = True):
+    def to_ical(self, sorted: bool = True) -> bytes:
         """
         :param sorted: Whether parameters and properties should be
                        lexicographically sorted.
@@ -850,11 +852,11 @@ class Component(CaselessDict):
         return self.LAST_MODIFIED or self.DTSTAMP
 
     @last_modified.setter
-    def last_modified(self, value):
+    def last_modified(self, value: date | None) -> None:
         self.LAST_MODIFIED = value
 
     @last_modified.deleter
-    def last_modified(self):
+    def last_modified(self) -> None:
         del self.LAST_MODIFIED
 
     @property
@@ -867,11 +869,11 @@ class Component(CaselessDict):
         return self.CREATED or self.DTSTAMP
 
     @created.setter
-    def created(self, value):
+    def created(self, value: date | None) -> None:
         self.CREATED = value
 
     @created.deleter
-    def created(self):
+    def created(self) -> None:
         del self.CREATED
 
     def is_thunderbird(self) -> bool:
@@ -921,7 +923,9 @@ class Component(CaselessDict):
     _validate_new = True
 
     @staticmethod
-    def _validate_start_and_end(start, end):
+    def _validate_start_and_end(
+        start: date | datetime | None, end: date | datetime | None
+    ) -> None:
         """This validates start and end.
 
         Raises:
