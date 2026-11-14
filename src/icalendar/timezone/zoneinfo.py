@@ -118,6 +118,10 @@ class ZONEINFO(TZProvider):
         """Whether we use pytz."""
         return False
 
+    def uses_pyicu(self) -> bool:
+        """Whether we use pyicu."""
+        return False
+    
     def uses_zoneinfo(self) -> bool:
         """Whether we use zoneinfo."""
         return True
