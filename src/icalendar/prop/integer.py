@@ -243,4 +243,29 @@ class vNonNegativeInt(vInt):
     XCAL_TYPE = "xsd:nonNegativeInteger"
 
 
-__all__ = ["vInt", "vNonNegativeInt"]
+class vPositiveInt(vInt):
+    """This is an integer that is supposed to be at least 1."""
+
+    min: ClassVar[int] = 1
+
+    @classmethod
+    def examples(cls) -> list[vInt]:
+        """Examples of vPositiveInt."""
+        return [cls(1000), cls(1)]
+
+    XCAL_TYPE = "xsd:positiveInteger"
+
+    @classmethod
+    def from_xcal_element(cls, element: ElementAdapter, params: Parameters) -> Self:
+        """Parse a positive integer from xCal."""
+        value = super().from_xcal_element(element, params)
+        if value < cls.min:
+            raise XCalParsingError(
+                f"Expected {cls.XCAL_TYPE}",
+                element.get_xsd_token(),
+                element,
+            )
+        return value
+
+
+__all__ = ["vInt", "vNonNegativeInt", "vPositiveInt"]

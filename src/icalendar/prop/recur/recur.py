@@ -12,7 +12,7 @@ from icalendar.parser import Parameters
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
-from icalendar.prop.integer import vInt, vNonNegativeInt
+from icalendar.prop.integer import vInt, vNonNegativeInt, vPositiveInt
 from icalendar.prop.recur.frequency import vFrequency
 from icalendar.prop.recur.month import vMonth
 from icalendar.prop.recur.skip import vSkip
@@ -170,7 +170,7 @@ class vRecur(CaselessDict):
     ] = CaselessDict(
         {
             "COUNT": vNonNegativeInt,
-            "INTERVAL": vNonNegativeInt,
+            "INTERVAL": vPositiveInt,
             "BYSECOND": vNonNegativeInt,
             "BYMINUTE": vNonNegativeInt,
             "BYHOUR": vNonNegativeInt,
@@ -413,6 +413,71 @@ class vRecur(CaselessDict):
     def count(self) -> None:
         """Delete the COUNT part of the recurrence rule."""
         self.pop("COUNT", None)
+
+    @property
+    def interval(self) -> int | None:
+        """The INTERVAL part of the recurrence rule.
+
+        This is the positive integer interval between occurrences of the
+        recurrence frequency. When omitted, although :rfc:`5545#section-3.3.10`
+        defines the default as ``1``, this accessor returns ``None`` instead.
+        As such, callers can distinguish an omitted value from an explicit one.
+
+        If multiple values are present, only the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned. Assigning
+        ``None`` or deleting the property removes the entire INTERVAL entry,
+        including all values in a multi-value entry.
+
+        Raises:
+            InvalidCalendar: if a directly stored value cannot be read as an
+                :class:`int` or is less than ``1``, or when setting a value
+                less than ``1``.
+            TypeError: when setting a value that is not an :class:`int`.
+
+        Parsing an invalid iCalendar RRULE value raises ``ValueError`` before
+        the accessor can be read.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2").interval
+                2
+                >>> vRecur(FREQ=["DAILY"], INTERVAL=[2, 3]).interval
+                2
+                >>> vRecur.from_ical("FREQ=DAILY").interval is None
+                True
+        """
+        values = self.get("INTERVAL")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        if isinstance(value, bool):
+            raise InvalidCalendar("INTERVAL must be an int")
+        try:
+            interval = int(value)
+        except (TypeError, ValueError) as e:
+            raise InvalidCalendar("INTERVAL must be an int") from e
+        if interval < 1:
+            raise InvalidCalendar(f"INTERVAL must be >= 1, got {interval}")
+        return interval
+
+    @interval.setter
+    def interval(self, value: int | None) -> None:
+        """Set the INTERVAL part of the recurrence rule, or delete it if ``None``."""
+        if value is None:
+            del self.interval
+            return
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise TypeError(f"interval must be an int, got {value!r}")
+        if value < 1:
+            raise InvalidCalendar(f"INTERVAL must be >= 1, got {value}")
+        self["INTERVAL"] = [vPositiveInt(value)]
+
+    @interval.deleter
+    def interval(self) -> None:
+        """Delete the INTERVAL part of the recurrence rule."""
+        self.pop("INTERVAL", None)
 
     @property
     def wkst(self) -> vWeekday | None:
