@@ -7,7 +7,7 @@ These are the defined components.
 from .alarm import Alarm
 from .availability import Availability
 from .available import Available
-from .calendar import Calendar
+from .calendar import Calendar, parse
 from .component import Component
 from .component_factory import ComponentFactory
 from .event import Event
@@ -32,4 +32,5 @@ __all__ = [
     "TimezoneDaylight",
     "TimezoneStandard",
     "Todo",
+    "parse",
 ]
