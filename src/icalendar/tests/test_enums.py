@@ -1,5 +1,6 @@
 """Test the enums for values."""
 
+import inspect
 import pickle
 
 import pytest
@@ -39,8 +40,13 @@ def test_all_enums_are_public(enum_name):
 
 
 def test_enum_has_description(enum):
-    """We should have a docstring."""
-    assert "Description:" in enum.__doc__
+    """Each enum documents itself with a summary and a description."""
+    doc = enum.__dict__.get("__doc__")
+    assert doc, f"{enum.__name__} has no docstring"
+    summary, separator, description = inspect.cleandoc(doc).partition("\n\n")
+    assert summary.strip(), f"{enum.__name__} has no summary"
+    assert separator, f"{enum.__name__} has no description paragraph"
+    assert description.strip(), f"{enum.__name__} has an empty description"
 
 
 def test_enum_can_be_pickled(enum):
