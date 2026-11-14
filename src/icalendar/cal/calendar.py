@@ -627,7 +627,7 @@ Example:
             prodid: The :attr:`prodid` of the component. If ``None`` and ``organization`` is provided,
                 generates a `prodid` in the format of "-//organization//name//language".
                 If ``None`` and ``organization`` is not provided, sets it to
-                :attr:`~icalendar.cal.calendar.DEFAULT_PRODID`.
+                ``DEFAULT_PRODID``.
             refresh_interval: The :attr:`refresh_interval` of the calendar.
             refids: :attr:`~icalendar.cal.component.Component.refids` of the calendar.
             related_to: :attr:`~icalendar.cal.component.Component.related_to` of the calendar.
